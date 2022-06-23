@@ -130,6 +130,114 @@ const verify = (payload: object) => {
       console.log('in catch verify', e);
     });
 };
+const addPost = (payload, data) => {
+  console.log('data of payload', JSON.stringify(data));
+  const request = `/create-post`;
+  return axios
+    .post(request, data, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in add post', e);
+    });
+};
+const viewAllPost = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/view-post`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in add post', e);
+    });
+};
+const likeDislike = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/like-dislike`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in likedislike', e);
+    });
+};
+const createComment = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/create-comment`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in create comment', e);
+    });
+};
+const viewComment = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/view-post-comments/${payload.id}`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in viewComment', e);
+    });
+};
+const profile = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/profile/${payload.id}`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in profile', e);
+    });
+};
 export {
   login,
   register,
@@ -140,4 +248,10 @@ export {
   verify,
   otp,
   resetPassword,
+  addPost,
+  viewAllPost,
+  likeDislike,
+  createComment,
+  viewComment,
+  profile,
 };

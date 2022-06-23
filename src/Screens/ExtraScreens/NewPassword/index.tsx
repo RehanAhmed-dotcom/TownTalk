@@ -124,6 +124,7 @@ const NewPassword = ({navigation}) => {
                     borderBottomColor: oldPasswordErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -149,6 +150,7 @@ const NewPassword = ({navigation}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                   }}
                 />
               </View>
@@ -173,6 +175,7 @@ const NewPassword = ({navigation}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                   }}
                 />
               </View>

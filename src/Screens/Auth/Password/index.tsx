@@ -80,6 +80,7 @@ const Password = ({navigation, route}: {navigation: any; route: any}) => {
               style={{
                 borderBottomColor: passwordErr ? 'red' : 'grey',
                 borderBottomWidth: 1,
+                color: 'grey',
                 height: 50,
               }}
             />
@@ -103,6 +104,7 @@ const Password = ({navigation, route}: {navigation: any; route: any}) => {
               style={{
                 borderBottomColor: confirmPasswordErr ? 'red' : 'grey',
                 borderBottomWidth: 1,
+                color: 'grey',
                 height: 50,
               }}
             />

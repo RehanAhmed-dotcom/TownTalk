@@ -161,6 +161,7 @@ const Login = ({navigation}: {navigation: any}) => {
                       borderBottomColor: emailErr ? 'red' : 'grey',
                       borderBottomWidth: 1,
                       height: 50,
+                      color: 'grey',
                       fontFamily: 'MontserratAlternates-Regular',
                     }}
                   />
@@ -193,6 +194,7 @@ const Login = ({navigation}: {navigation: any}) => {
                         // backgroundColor: 'red',
                         width: '85%',
                         height: 50,
+                        color: 'grey',
                         // borderBottomColor: passwrodErr ? 'red' : 'grey',
                         // borderBottomWidth: 1,
                         fontFamily: 'MontserratAlternates-Regular',
@@ -355,6 +357,7 @@ const Login = ({navigation}: {navigation: any}) => {
                       borderBottomColor: phoneErr ? 'red' : 'grey',
                       borderBottomWidth: 1,
                       height: 50,
+                      color: 'grey',
                       fontFamily: 'MontserratAlternates-Regular',
                     }}
                   />

@@ -9,10 +9,18 @@ import {
   Text,
 } from 'react-native';
 import LikeDislike from './LikeDislike';
+
+import {useSelector} from 'react-redux';
+import moment from 'moment';
+import {likeDislike} from '../lib/api';
 // import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
-const Posts = () => {
+const Posts = props => {
+  const {item, navigation, press} = props;
+  const {userData} = useSelector(({USER}) => USER);
+
+  // console.log('likecount', item.is_like);
   const renderItem3 = ({item}) => (
     <View
       style={{
@@ -65,7 +73,11 @@ const Posts = () => {
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image
-            source={require('../assets/Images/girl.jpg')}
+            source={
+              item?.user?.image
+                ? {uri: item?.user?.image}
+                : require('../assets/Images/girl.jpg')
+            }
             style={{width: 50, height: 50, borderRadius: 50}}
           />
           <View style={{marginLeft: 10}}>
@@ -75,7 +87,7 @@ const Posts = () => {
                 fontSize: 16,
                 color: 'black',
               }}>
-              Olivia Benson
+              {`${item?.user?.firstname} ${item?.user?.lastname}`}
             </Text>
             <Text
               style={{
@@ -83,27 +95,36 @@ const Posts = () => {
                 fontFamily: 'MontserratAlternates-Regular',
                 marginTop: 5,
               }}>
-              Today, 03:24 PM
+              {item?.created_at}
             </Text>
           </View>
         </View>
-        <Icon
+        {/* <Icon
           name="dots-three-horizontal"
           size={20}
           color={'black'}
           style={{bottom: 10}}
-        />
+        /> */}
       </View>
       <View
         style={{
           marginTop: 10,
           width: '100%',
           // flexDirection: 'row',
-          alignItems: 'center',
+          // alignItems: 'center',
           // backgroundColor: 'red',
           overflow: 'hidden',
         }}>
-        <FlatList horizontal data={arr} renderItem={renderItem3} />
+        <Text
+          style={{
+            marginRight: 5,
+            fontSize: 13,
+            fontFamily: 'MontserratAlternates-Medium',
+            color: '#5F95F0',
+          }}>
+          {item?.hashtag}
+        </Text>
+        {/* <FlatList horizontal data={arr} renderItem={renderItem3} /> */}
         {/* {arr.map(item => (
         <View>
           <Text
@@ -125,39 +146,15 @@ const Posts = () => {
             color: 'black',
             fontFamily: 'MontserratAlternates-Regular',
           }}>
-          Better mental health - It can lighten your mood and make you feel
-          happier
+          {item?.description}
         </Text>
-        <Text
-          style={{
-            marginTop: 5,
-            fontSize: 13,
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          Lower your risk of dementla - social Interaction is good for your
-          brain health
-        </Text>
-        <Text
-          style={{
-            marginTop: 5,
-            fontSize: 13,
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          Promotes a sence of safety, belonging and security
-        </Text>
-        <Text
-          style={{
-            marginTop: 5,
-            fontSize: 13,
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          Allows you to confide in others and let them confide in you
-        </Text>
+
         <Image
-          source={require('../assets/Images/social.jpg')}
+          source={
+            item?.media[0]?.media
+              ? {uri: item?.media[0]?.media}
+              : require('../assets/Images/social.jpg')
+          }
           style={{height: 150, borderRadius: 10, width: '100%', marginTop: 10}}
         />
       </View>
@@ -168,7 +165,82 @@ const Posts = () => {
           alignItems: 'center',
           marginTop: 10,
         }}>
-        <LikeDislike />
+        <LikeDislike item={item} press={press} />
+        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity
+            onPress={() => {
+              setLike(!like);
+              setDislike(false);
+              // press();
+              likeDislike({
+                Auth: userData.token,
+                creator_id: item?.user?.id,
+                post_id: item?.id,
+                is_like: 1,
+              })
+                .then(res => {
+                  console.log('res', res);
+                  press();
+                })
+                .catch(err => {
+                  console.log('err', err);
+                });
+            }}
+            style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon
+              name="thumbs-up"
+              size={20}
+              color={like ? '#5F95F0' : 'grey'}
+            />
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 13,
+                marginLeft: 5,
+                color: 'black',
+              }}>
+              {likecount}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setDislike(!dislike);
+              setLike(false);
+              press();
+              likeDislike({
+                Auth: userData.token,
+                creator_id: item?.user?.id,
+                post_id: item?.id,
+                is_like: 0,
+              })
+                .then(res => {
+                  console.log('res', res);
+                })
+                .catch(err => {
+                  console.log('err', err);
+                });
+            }}
+            style={{
+              flexDirection: 'row',
+              marginLeft: 10,
+              alignItems: 'center',
+            }}>
+            <Icon
+              name="thumbs-down"
+              size={20}
+              color={dislike ? '#5F95F0' : 'grey'}
+            />
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 13,
+                marginLeft: 5,
+                color: 'black',
+              }}>
+              {dislikecount}
+            </Text>
+          </TouchableOpacity>
+        </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             // onPress={() => {
@@ -193,7 +265,7 @@ const Posts = () => {
           </TouchableOpacity>
           {!show && (
             <TouchableOpacity
-              onPress={() => setShow(true)}
+              onPress={() => navigation.navigate('Comments', {id: item.id})}
               // onPress={() => {
               //   setLike(!like);
               //   setDislike(false);

@@ -86,6 +86,7 @@ const Email = ({navigation}: {navigation: any}) => {
                 borderBottomColor: emailErr ? 'red' : 'grey',
                 borderBottomWidth: 1,
                 height: 50,
+                color: 'grey',
               }}
             />
           </View>

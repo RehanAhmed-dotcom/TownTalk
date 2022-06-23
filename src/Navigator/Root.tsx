@@ -15,6 +15,7 @@ import RestaurantsDetail from '../Screens/ExtraScreens/RestaurantsDetail';
 import SingleChat from '../Screens/ExtraScreens/SingleChat';
 import EditProfile from '../Screens/ExtraScreens/EditProfile';
 // import Group from '../Components/Group';
+import Comments from '../Screens/ExtraScreens/Comments';
 import {useSelector} from 'react-redux';
 import GroupPage from '../Screens/ExtraScreens/GroupsPage';
 import GroupDetails from '../Screens/ExtraScreens/GroupDetails';
@@ -57,7 +58,7 @@ const Root = () => {
             <Stack.Screen name="SingleChat" component={SingleChat} />
 
             <Stack.Screen name="GroupDetails" component={GroupDetails} />
-
+            <Stack.Screen name="Comments" component={Comments} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen

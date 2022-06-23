@@ -1,29 +1,43 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
   FlatList,
   TextInput,
   ScrollView,
+  Platform,
   SafeAreaView,
   TouchableOpacity,
   Image,
   Text,
   ImageBackground,
+  PermissionsAndroid,
 } from 'react-native';
+
+import Geolocation from 'react-native-geolocation-service';
 import MapView from 'react-native-maps';
+import {addPost} from '../../../lib/api';
+import MyModal from '../../../Components/MyModal';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Hotel from '../../../Components/Hotel';
+import {useSelector} from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import Swiper from 'react-native-swiper';
 const Create = ({navigation}) => {
-  const [name, setName] = useState('Olivia Benson');
-  const [img, setImg] = useState([]);
+  const {userData} = useSelector(({USER}) => USER);
+  const [name, setName] = useState('');
+  const [img, setImg] = useState('');
   const [zip, setZip] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [description, setDescription] = useState('');
+  const [hash, setHash] = useState('');
+  const [latitude, setlatitude] = useState(0);
+  const [longitude, setlongitude] = useState(0);
+  // console.log('userdata', latitude, longitude);
   const picker = () => {
     ImagePicker.openPicker({
       // multiple: true,
@@ -33,11 +47,82 @@ const Create = ({navigation}) => {
     }).then(image => {
       // setShow(!show);
       // images.push(image.path);
-      setImg([...img, {image: image.path}]);
+      setImg(image.path);
+      // setImg([...img, {image: image.path}]);
       console.log(image);
       // setImgErr('');
     });
   };
+  const add = () => {
+    setShowModal(true);
+    const data = new FormData();
+    data.append('hashtags', hash);
+    data.append('zipcode', zip);
+    data.append('latitude', latitude);
+    data.append('longitude', longitude);
+    data.append('description', description);
+    data.append('title', name);
+    data.append('media_type', 'image');
+    data.append('media[]', {
+      uri: img,
+      type: 'image/jpeg',
+      name: `image${Math.random()}.jpg`,
+    });
+    data.append('title', name);
+    addPost({Auth: userData.token}, data)
+      .then(res => {
+        setShowModal(false);
+        console.log('res', res);
+        if (res.status == 'success') {
+          navigation.goBack();
+        }
+      })
+      .catch(err => {
+        setShowModal(false);
+        console.log('err', err);
+      });
+  };
+  const cuRRentlocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        setlatitude(position.coords.latitude);
+        setlongitude(position.coords.longitude);
+        // getPlace(position.coords.latitude, position.coords.longitude);
+        // getPlace('47.751076', '-120.740135');
+        console.log('users location', position.coords.longitude);
+
+        console.log('users location', position.coords.latitude);
+      },
+      error => {
+        console.log('error in loc', error);
+      },
+      {
+        enableHighAccuracy: true,
+        // timeout: 15000,
+        // maximumAge: 10000
+      },
+    );
+  };
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        cuRRentlocation();
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  useEffect(() => {
+    Platform.OS == 'ios'
+      ? Geolocation.requestAuthorization('always').then(res => {
+          cuRRentlocation();
+          console.log('res', res);
+        })
+      : requestLocationPermission();
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -73,7 +158,7 @@ const Create = ({navigation}) => {
         <ScrollView>
           <View style={{marginTop: 20, paddingHorizontal: 15}}>
             <View style={{flexDirection: 'row'}}>
-              {img.length > 0 && (
+              {/* {img.length > 0 && (
                 <View style={{width: 150, marginRight: 10, height: 150}}>
                   <Swiper
                     showsPagination={true}
@@ -95,20 +180,27 @@ const Create = ({navigation}) => {
                     ))}
                   </Swiper>
                 </View>
-              )}
+              )} */}
               <TouchableOpacity
                 onPress={() => picker()}
                 style={{
                   height: 150,
-                  width: 150,
-                  borderWidth: 1,
+                  width: '100%',
+                  borderWidth: img ? 0 : 1,
 
                   alignItems: 'center',
                   justifyContent: 'center',
                   borderRadius: 5,
                   borderColor: '#5F95F0',
                 }}>
-                <Icon2 name="images-outline" size={50} color={'#5F95F0'} />
+                {img ? (
+                  <Image
+                    source={{uri: img}}
+                    style={{height: 150, width: '100%', borderRadius: 5}}
+                  />
+                ) : (
+                  <Icon2 name="images-outline" size={50} color={'#5F95F0'} />
+                )}
               </TouchableOpacity>
             </View>
             <View style={{marginTop: 30}}>
@@ -120,9 +212,9 @@ const Create = ({navigation}) => {
                 }}>
                 Name
               </Text>
-              <TextInput
-                value={name}
-                placeholderTextColor={'grey'}
+              {/* <TextInput
+                value={`${userData.userdata.firstname} ${userData.userdata.lastname}`}
+                placeholderTextColor={'black'}
                 editable={false}
                 // onChangeText={text => {
 
@@ -132,7 +224,21 @@ const Create = ({navigation}) => {
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   borderBottomColor: 'grey',
-                  // color: 'black',
+                  color: 'black',
+                  borderBottomWidth: 1,
+                }}
+              /> */}
+              <TextInput
+                value={name}
+                placeholderTextColor={'black'}
+                // editable={false}
+                onChangeText={text => {
+                  setName(text);
+                }}
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  borderBottomColor: 'grey',
+                  color: 'black',
                   borderBottomWidth: 1,
                 }}
               />
@@ -157,6 +263,7 @@ const Create = ({navigation}) => {
                   fontFamily: 'MontserratAlternates-Regular',
                   borderBottomColor: 'grey',
                   borderBottomWidth: 1,
+                  color: 'grey',
                 }}
               />
             </View>
@@ -170,11 +277,12 @@ const Create = ({navigation}) => {
                 Post description
               </Text>
               <TextInput
-                value={zip}
+                textAlignVertical="top"
+                value={description}
                 multiline
                 numberOfLines={5}
                 onChangeText={text => {
-                  setZip(text);
+                  setDescription(text);
                   // setEmailErr('');
                 }}
                 style={{
@@ -183,6 +291,7 @@ const Create = ({navigation}) => {
                   borderWidth: 1,
                   marginTop: 10,
                   borderRadius: 5,
+                  color: 'grey',
                   height: 100,
                 }}
               />
@@ -197,16 +306,20 @@ const Create = ({navigation}) => {
                 Hash Tag
               </Text>
               <TextInput
-                value={zip}
+                value={hash}
+                textAlignVertical="top"
                 multiline
                 numberOfLines={5}
+                placeholder="#Walking #Talking"
+                placeholderTextColor="#ccc"
                 onChangeText={text => {
-                  setZip(text);
+                  setHash(text);
                   // setEmailErr('');
                 }}
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   borderColor: 'grey',
+                  color: 'grey',
                   marginTop: 10,
                   borderWidth: 1,
                   borderRadius: 5,
@@ -215,6 +328,7 @@ const Create = ({navigation}) => {
               />
             </View>
             <TouchableOpacity
+              onPress={() => add()}
               style={{
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -460,6 +574,7 @@ const Create = ({navigation}) => {
           </View>
         </ScrollView> */}
       </ImageBackground>
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

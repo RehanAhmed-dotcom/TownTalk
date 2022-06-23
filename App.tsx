@@ -24,22 +24,6 @@ import {
 import Root from './src/Navigator/Root';
 import {SafeAreaView} from 'react-native-safe-area-context';
 const App = () => {
-  const latitude = 33.5344737;
-  const longitude = 73.0525821;
-  const handleRestaurantSearch = () => {
-    console.log('here');
-    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
-    const location = `location=${latitude},${longitude}`;
-    const radius = '&radius=2000';
-    const type = '&keyword=restaurant';
-    const key = '&key=AIzaSyDtkp4KHqYIYddiYheGVMPqO9ko5ZtwYAU';
-    const restaurantSearchUrl = url + location + radius + type + key;
-    fetch(restaurantSearchUrl)
-      .then(response => response.json())
-      .then(result => console.log('result', result))
-      // .then(result => this.setState({restaurantList: result}))
-      .catch(e => console.log(e));
-  };
   return (
     // <SafeAreaView style={{flex: 1}}>
     <Provider store={Store}>

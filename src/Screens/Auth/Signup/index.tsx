@@ -131,6 +131,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     borderBottomColor: firstNameErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -154,6 +155,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     borderBottomColor: lastNameErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -177,6 +179,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     borderBottomColor: zipErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -200,6 +203,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     borderBottomColor: emailErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -224,6 +228,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     borderBottomColor: passwordErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -250,6 +255,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     borderBottomColor: phoneErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />

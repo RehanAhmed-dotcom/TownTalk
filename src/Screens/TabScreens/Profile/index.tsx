@@ -1,39 +1,60 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
   FlatList,
-  TextInput,
-  ScrollView,
   TouchableOpacity,
   Image,
   SafeAreaView,
   Text,
   ImageBackground,
 } from 'react-native';
-import {useSelector} from 'react-redux';
+import {profile} from '../../../lib/api';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import {logoutuser} from '../../../redux/actions';
-import MapView from 'react-native-maps';
-import LikeDislike from '../../../Components/LikeDislike';
-import Comments from '../../../Components/Comments';
-import Icon2 from 'react-native-vector-icons/Ionicons';
+
 import Icon from 'react-native-vector-icons/Entypo';
-import Icon1 from 'react-native-vector-icons/AntDesign';
-import {useDispatch} from 'react-redux';
-import Hotel from '../../../Components/Hotel';
+import {useDispatch, useSelector} from 'react-redux';
+
 const Profile = ({navigation}) => {
   const [like, setLike] = useState(false);
   const [dislike, setDislike] = useState(false);
   const [select, setSelect] = useState('Posts');
+  const [posts, setPosts] = useState([]);
+  const [change, setChange] = useState(false);
   const {userData} = useSelector(({USER}) => USER);
   const dispatch = useDispatch();
-  const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
+  const alter = () => {
+    console.log('alter called');
+    setChange(!change);
+  };
   const render = ({item}) => (
-    <View>{select == 'Groups' ? <Group /> : <Posts />}</View>
+    <View>
+      {select == 'Groups' ? (
+        <Group />
+      ) : (
+        <Posts item={item} press={alter} navigation={navigation} />
+      )}
+    </View>
   );
-  console.log('user', userData);
+  useEffect(() => {
+    profile({Auth: userData.token, id: userData.userdata.id}).then(res => {
+      console.log('res', JSON.stringify(res));
+      setPosts(res.data.posts);
+    });
+  }, [change]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      profile({Auth: userData.token, id: userData.userdata.id}).then(res => {
+        console.log('res', JSON.stringify(res));
+        setPosts(res.data.posts);
+      });
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -241,7 +262,7 @@ const Profile = ({navigation}) => {
           </View>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={arr}
+            data={posts}
             renderItem={render}
           />
         </View>

@@ -361,6 +361,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                   }}
                 />
               </View>
@@ -384,6 +385,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                   }}
                 />
               </View>
@@ -407,6 +409,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                   }}
                 />
               </View>
@@ -431,6 +434,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
+                    color: 'grey',
                   }}
                 />
               </View>
