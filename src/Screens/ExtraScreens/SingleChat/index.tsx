@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -11,15 +11,43 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
-import MapView from 'react-native-maps';
-import LikeDislike from '../../../Components/LikeDislike';
-import Comments from '../../../Components/Comments';
+import moment from 'moment';
+import {recieverMsg, senderImgMsg, senderMsg} from '../../../lib/messageUtils';
+import {useSelector} from 'react-redux';
+import database from '@react-native-firebase/database';
 import Icon2 from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/AntDesign';
-import Hotel from '../../../Components/Hotel';
-const SingleChat = ({navigation}) => {
+const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
+  const {item} = route.params;
+  const image = route?.params?.image;
+  const items = route?.params?.items;
+  const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const {userData} = useSelector(({USER}) => USER);
+  const guestData = {
+    id: item.id,
+    firstname: item.firstname,
+    lastname: item.lastname,
+    email: item.email,
+    // fcm_token: fcm_token ? fcm_token : item.fcm_token,
+    fcm_token: item.fcm_token,
+    image: item.image,
+    // distance: item.distance,
+    // isOn: on ? on : item.message_status,
+    // hours: time.getHours(),
+    // mins: time.getMinutes(),
+  };
+  const user = {
+    id: userData.userdata.id,
+    firstname: userData.userdata.firstname,
+    lastname: userData.userdata.lastname,
+    email: userData.userdata.email,
+    fcm_token: userData.userdata.fcm_token,
+    image: userData.userdata.image,
+  };
   const [name, setName] = useState('Olivia Benson');
+
+  console.log('item in chat', item);
   const [zip, setZip] = useState('');
   const ary = [
     {
@@ -59,45 +87,181 @@ const SingleChat = ({navigation}) => {
     //   unread: '1',
     // },
   ];
-  const render = ({item, index}) => (
-    <View
-      style={{
-        // backgroundColor: 'red',
-        // height: 50,
-        alignItems: item.unread == 0 ? 'flex-end' : 'flex-start',
-        marginBottom: 10,
-        marginTop: index == 0 ? 30 : 10,
-      }}>
+  const _chatUsers = async () => {
+    try {
+      console.log('user going to db', guestData);
+      database()
+        .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .set({
+          latestMessage: message,
+          timestamp: database.ServerValue.TIMESTAMP,
+          counter: 0,
+          screen: image && items,
+          user: guestData,
+        });
+
+      database()
+        .ref('users/' + guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .child(userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .once('value', snapshot => {
+          const counts = snapshot?.val()?.counter;
+          database()
+            .ref('users/' + guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+            .child(userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+            .set({
+              latestMessage: message,
+              timestamp: database.ServerValue.TIMESTAMP,
+              counter: counts ? counts + 1 : 1,
+              screen: image && items,
+              user: user,
+            });
+        });
+    } catch (error) {}
+  };
+  const handleSend = () => {
+    setMessage('');
+
+    // console.log('message is here', message);
+    senderMsg(
+      message,
+      userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+      guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+      Date.now(),
+      items,
+      // quote,
+    );
+
+    _chatUsers()
+      .then(() => {})
+      .catch(err => {
+        // console.log('error inside screen', err);
+      });
+
+    recieverMsg(
+      message,
+      userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+      guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+      Date.now(),
+      items,
+      // quote,
+    );
+    _chatUsers()
+      .then(() => {})
+      .catch(err => {});
+
+    // _handlePushNotification()
+  };
+  const _getMeesages = async () => {
+    try {
+      database()
+        .ref('messeges')
+        .child(userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .on('value', dataSnapshot => {
+          let msgs = [];
+          dataSnapshot.forEach(child => {
+            // console.log('child', child);
+            msgs.push({
+              sendBy: child.val().messege.sender,
+              recievedBy: child.val().messege.reciever,
+              msg: child.val().messege.msg,
+              date: child.val().messege.date,
+              // Type: child.val().messege.type,
+              screen: child.val().messege.screen,
+              // quote: child.val().messege.quote,
+            });
+            return undefined;
+          });
+          setMessages(msgs.reverse());
+
+          // console.log('msssssssssssssggggggggggsssssssss', msgs);
+        });
+    } catch (error) {}
+  };
+  useEffect(() => {
+    if (image) {
+      setMessage(image);
+    }
+  }, [image]);
+  useEffect(() => {
+    _getMeesages();
+  }, []);
+  const render = ({item, index}) => {
+    console.log('item in chat', item);
+    const check = word => {
+      if (word.substring(word.length - 4) == '.jpg') {
+        return true;
+      }
+    };
+    return (
       <View
         style={{
-          padding: 10,
-          borderRadius: 5,
-          maxWidth: '90%',
-          // lineSpacing:1,
-
-          backgroundColor: item.unread == 0 ? '#5F95F0' : '#ccc',
+          // backgroundColor: 'red',
+          // height: 50,
+          alignItems:
+            item.sendBy == userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, '')
+              ? 'flex-end'
+              : 'flex-start',
+          marginBottom: 10,
+          marginTop: index == 0 ? 10 : 10,
         }}>
-        <Text
-          style={{
-            lineHeight: 20,
-            fontFamily: 'MontserratAlternates-Regular',
-            color: item.unread == 0 ? 'white' : 'black',
-          }}>
-          {item.mesg}
-        </Text>
-        <View style={{alignItems: 'flex-end'}}>
-          <Text
+        {check(item.msg) == true ? (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('PostDetails', {item: item.screen})
+            }>
+            <Image
+              source={{uri: item.msg}}
+              style={{height: 200, width: 250, borderRadius: 5}}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View
             style={{
-              fontSize: 10,
-              fontFamily: 'MontserratAlternates-Regular',
-              color: item.unread == 0 ? 'white' : 'grey',
+              padding: 10,
+              borderRadius: 5,
+              maxWidth: '90%',
+              // lineSpacing:1,
+
+              backgroundColor:
+                item.sendBy ==
+                userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, '')
+                  ? '#5F95F0'
+                  : '#ccc',
             }}>
-            {item.time}
-          </Text>
-        </View>
+            <Text
+              style={{
+                lineHeight: 20,
+                fontFamily: 'MontserratAlternates-Regular',
+                color:
+                  item.sendBy ==
+                  userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, '')
+                    ? 'white'
+                    : 'black',
+              }}>
+              {item.msg}
+            </Text>
+            <View style={{alignItems: 'flex-end'}}>
+              <Text
+                style={{
+                  fontSize: 10,
+                  fontFamily: 'MontserratAlternates-Regular',
+                  color:
+                    item.sendBy ==
+                    userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, '')
+                      ? 'white'
+                      : 'grey',
+                }}>
+                {moment(item.date).format('DD/MM/YYYY HH:MM')}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
-    </View>
-  );
+    );
+  };
+  // console.log('messages', messages);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -118,7 +282,11 @@ const SingleChat = ({navigation}) => {
               <Icon1 name="left" color="black" size={20} />
             </TouchableOpacity>
             <Image
-              source={require('../../../assets/Images/girl.jpg')}
+              source={
+                item?.image
+                  ? {uri: item?.image}
+                  : require('../../../assets/Images/girl.jpg')
+              }
               style={{height: 40, marginLeft: 20, width: 40, borderRadius: 20}}
             />
             <View style={{marginLeft: 10}}>
@@ -128,15 +296,15 @@ const SingleChat = ({navigation}) => {
                   fontFamily: 'MontserratAlternates-SemiBold',
                   color: 'black',
                 }}>
-                Jason Moody
+                {`${item?.firstname} ${item?.lastname}`}
               </Text>
-              <Text
+              {/* <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   color: 'black',
                 }}>
                 online
-              </Text>
+              </Text> */}
             </View>
           </View>
 
@@ -147,7 +315,9 @@ const SingleChat = ({navigation}) => {
         </View>
         <View style={{paddingHorizontal: 15, flex: 1}}>
           <FlatList
-            data={ary}
+            inverted
+            showsVerticalScrollIndicator={false}
+            data={messages}
             renderItem={render}
             // style={{paddingVertical: 20}}
           />
@@ -163,6 +333,8 @@ const SingleChat = ({navigation}) => {
           }}>
           <Icon1 name="plus" size={20} color="grey" />
           <TextInput
+            value={message}
+            onChangeText={text => setMessage(text)}
             placeholder="Write your message here..."
             style={{
               backgroundColor: 'white',
@@ -175,6 +347,7 @@ const SingleChat = ({navigation}) => {
             placeholderTextColor={'grey'}
           />
           <TouchableOpacity
+            onPress={() => handleSend()}
             style={{
               backgroundColor: '#5F95F0',
               borderRadius: 30,

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 
 import {
   View,
@@ -11,16 +11,15 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
-import MapView from 'react-native-maps';
-import LikeDislike from '../../../Components/LikeDislike';
-import Comments from '../../../Components/Comments';
-import Icon2 from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Entypo';
-import Icon1 from 'react-native-vector-icons/AntDesign';
-import Hotel from '../../../Components/Hotel';
+import {useSelector} from 'react-redux';
+import moment from 'moment';
+
+import database from '@react-native-firebase/database';
 const Chat = ({navigation}) => {
   const [name, setName] = useState('Olivia Benson');
   const [zip, setZip] = useState('');
+  const [list, setList] = useState([]);
+  const {userData} = useSelector(({USER}) => USER);
   const ary = [
     {
       image: require('../../../assets/Images/girl.jpg'),
@@ -58,68 +57,118 @@ const Chat = ({navigation}) => {
       unread: '1',
     },
   ];
-  const render = ({item}) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('SingleChat')}
-      style={{
-        flexDirection: 'row',
-        marginTop: 20,
-        justifyContent: 'space-between',
-        borderBottomWidth: 1,
-        alignItems: 'center',
-        paddingBottom: 20,
-        borderBottomColor: '#ccc',
-      }}>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <Image
-          source={require('../../../assets/Images/girl.jpg')}
-          style={{height: 50, width: 50, borderRadius: 30}}
-        />
-        <View style={{marginLeft: 10}}>
+  console.log('list', list);
+  const render = ({item}) => {
+    const check = word => {
+      if (word.substring(word.length - 4) == '.jpg') {
+        return true;
+      }
+    };
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('SingleChat', {item: item.user})}
+        style={{
+          flexDirection: 'row',
+          marginTop: 20,
+          justifyContent: 'space-between',
+          borderBottomWidth: 1,
+          alignItems: 'center',
+          paddingBottom: 20,
+          borderBottomColor: '#ccc',
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image
+            source={
+              item.user.image
+                ? {uri: item.user.image}
+                : require('../../../assets/Images/girl.jpg')
+            }
+            style={{height: 50, width: 50, borderRadius: 30}}
+          />
+          <View style={{marginLeft: 10}}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: 'MontserratAlternates-SemiBold',
+                color: item.unread ? 'black' : 'black',
+              }}>
+              {`${item.user.firstname} ${item.user.lastname}`}
+            </Text>
+            {check(item.latestMessage) == true ? (
+              <Text
+                style={{
+                  marginTop: 5,
+                  color: 'black',
+                  fontFamily: 'MontserratAlternates-Regular',
+                }}>
+                Image
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  marginTop: 5,
+                  color: 'black',
+                  fontFamily: 'MontserratAlternates-Regular',
+                }}>
+                {item.latestMessage.slice(0, 23)}
+              </Text>
+            )}
+          </View>
+        </View>
+        <View style={{alignItems: 'center'}}>
+          {item.counter ? (
+            <View
+              style={{
+                backgroundColor: '#5F95F0',
+                height: 20,
+                width: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 30,
+                marginBottom: 5,
+              }}>
+              <Text style={{color: 'white', fontSize: 12}}>{item.counter}</Text>
+              <Text>{moment(item.timestamp).format('DD/MM/YYYY HH:MM')}</Text>
+            </View>
+          ) : (
+            <Text style={{fontSize: 12}}>
+              {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}
+            </Text>
+          )}
           <Text
             style={{
-              fontSize: 14,
-              fontFamily: 'MontserratAlternates-SemiBold',
-              color: item.unread ? 'black' : 'black',
-            }}>
-            {item.name}
-          </Text>
-          <Text
-            style={{
-              marginTop: 5,
               color: 'black',
               fontFamily: 'MontserratAlternates-Regular',
+              fontSize: 10,
             }}>
-            {item.mesg}
+            {item.time}
           </Text>
         </View>
-      </View>
-      <View style={{alignItems: 'center'}}>
-        {item.unread && (
-          <View
-            style={{
-              backgroundColor: '#5F95F0',
-              height: 20,
-              width: 20,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 30,
-              marginBottom: 5,
-            }}>
-            <Text style={{color: 'white', fontSize: 12}}>{item.unread}</Text>
-          </View>
-        )}
-        <Text
-          style={{
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-            fontSize: 10,
-          }}>
-          {item.time}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
+  const _usersList = useCallback(async () => {
+    try {
+      // setLoading(true);
+      database()
+        .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .orderByChild('timestamp')
+        .on('value', dataSnapshot => {
+          let users = [];
+          dataSnapshot.forEach(child => {
+            users.push(child.val());
+          });
+          // console.log('users', users);
+          setList(users.reverse());
+          // setLoading(false);
+
+          // console.log("user list in chat list ", JSON.stringify(users))
+        });
+    } catch (error) {}
+  }, []);
+  useEffect(() => {
+    _usersList();
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -157,7 +206,7 @@ const Chat = ({navigation}) => {
           />
         </View>
         <View style={{paddingHorizontal: 15}}>
-          <FlatList data={ary} renderItem={render} />
+          <FlatList data={list} renderItem={render} />
         </View>
         {/* <ScrollView>
           <Image

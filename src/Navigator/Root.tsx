@@ -9,6 +9,8 @@ import Code from '../Screens/Auth/Code';
 import Email from '../Screens/Auth/Email';
 import Password from '../Screens/Auth/Password';
 import TabNavigator from './Tab';
+import UserProfile from '../Screens/ExtraScreens/UserProfile';
+import PostDetails from '../Screens/ExtraScreens/PostDetails';
 import Search from '../Screens/ExtraScreens/Search';
 import ResturantsNearby from '../Screens/ExtraScreens/ResturantsNearby';
 import RestaurantsDetail from '../Screens/ExtraScreens/RestaurantsDetail';
@@ -52,11 +54,11 @@ const Root = () => {
           <>
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="CreateGroup" component={CreateGroup} />
-
+            <Stack.Screen name="UserProfile" component={UserProfile} />
             <Stack.Screen name="GroupPage" component={GroupPage} />
             <Stack.Screen name="NewPassword" component={NewPassword} />
             <Stack.Screen name="SingleChat" component={SingleChat} />
-
+            <Stack.Screen name="PostDetails" component={PostDetails} />
             <Stack.Screen name="GroupDetails" component={GroupDetails} />
             <Stack.Screen name="Comments" component={Comments} />
             <Stack.Screen name="EditProfile" component={EditProfile} />

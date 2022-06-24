@@ -11,45 +11,18 @@ import {
 import LikeDislike from './LikeDislike';
 
 import {useSelector} from 'react-redux';
-import moment from 'moment';
-import {likeDislike} from '../lib/api';
-// import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 const Posts = props => {
-  const {item, navigation, press} = props;
+  const {item, navigation, onShare, onPress, press} = props;
   const {userData} = useSelector(({USER}) => USER);
 
-  // console.log('likecount', item.is_like);
-  const renderItem3 = ({item}) => (
-    <View
-      style={{
-        // height: 30,
-        // backgroundColor: 'white',
-        // marginRight: 10,
-        // marginLeft: 3,
-        // marginVertical: 3,
-        // elevation: 3,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // minWidth: 100,
-        borderRadius: 5,
-      }}>
-      <Text
-        style={{
-          marginRight: 5,
-          fontSize: 13,
-          fontFamily: 'MontserratAlternates-Medium',
-          color: '#5F95F0',
-        }}>
-        #{item}
-      </Text>
-    </View>
-  );
   const [show, setShow] = useState(false);
-  const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
+
   return (
-    <View
+    <TouchableOpacity
+      activeOpacity={1}
+      onPress={onPress}
       style={{
         // height: 30,
         backgroundColor: 'white',
@@ -64,7 +37,8 @@ const Posts = props => {
         padding: 12,
         borderRadius: 5,
       }}>
-      <View
+      <TouchableOpacity
+        onPress={() => navigation.navigate('UserProfile', {item})}
         style={{
           // marginTop: 5,
           flexDirection: 'row',
@@ -105,7 +79,7 @@ const Posts = props => {
           color={'black'}
           style={{bottom: 10}}
         /> */}
-      </View>
+      </TouchableOpacity>
       <View
         style={{
           marginTop: 10,
@@ -243,7 +217,9 @@ const Posts = props => {
         </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
-            // onPress={() => {
+            onPress={() => {
+              onShare();
+            }}
             //   setLike(!like);
             //   setDislike(false);
             // }}
@@ -294,202 +270,9 @@ const Posts = props => {
           )}
         </View>
       </View>
-      {show && (
-        <>
-          <View
-            style={{
-              marginTop: 30,
-            }}>
-            <TouchableOpacity onPress={() => setShow(false)}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                }}>
-                Comments
-              </Text>
-            </TouchableOpacity>
 
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                <Image
-                  source={require('../assets/Images/girl.jpg')}
-                  style={{width: 50, height: 50, borderRadius: 50}}
-                />
-                <View style={{marginLeft: 10}}>
-                  <Text
-                    style={{
-                      fontFamily: 'MontserratAlternates-SemiBold',
-                      fontSize: 14,
-                      color: 'black',
-                      // color: '#5F95F0',
-                    }}>
-                    Kurt Mailey
-                  </Text>
-                  {/* <Text
-                  style={{
-                    fontSize: 12,
-                    fontFamily: 'MontserratAlternates-Regular',
-                    marginTop: 5,
-                  }}>
-                  Today, 03:24 PM
-                </Text> */}
-                </View>
-              </View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  // color: 'black',
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Nov 15, 2015
-              </Text>
-            </View>
-            <Text
-              style={{
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Regular',
-                marginTop: 10,
-              }}>
-              After reading Clayton Christensen, Geoffery Moore and Steve Blank,
-              I was expacting a lot from Lean Startup by Eric Ries. I was
-              disappointed...
-            </Text>
-          </View>
-          <View
-            style={{
-              marginTop: 30,
-            }}>
-            {/* <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-              }}>
-              Comments
-            </Text> */}
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                <Image
-                  source={require('../assets/Images/girl.jpg')}
-                  style={{width: 50, height: 50, borderRadius: 50}}
-                />
-                <View style={{marginLeft: 10}}>
-                  <Text
-                    style={{
-                      fontFamily: 'MontserratAlternates-SemiBold',
-                      fontSize: 14,
-                      color: 'black',
-                    }}>
-                    Kurt Mailey
-                  </Text>
-                  {/* <Text
-                 style={{
-                   fontSize: 12,
-                   fontFamily: 'MontserratAlternates-Regular',
-                   marginTop: 5,
-                 }}>
-                 Today, 03:24 PM
-               </Text> */}
-                </View>
-              </View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Nov 15, 2015
-              </Text>
-            </View>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                marginTop: 10,
-                color: 'black',
-              }}>
-              After reading Clayton Christensen, Geoffery Moore and Steve Blank,
-              I was expacting a lot from Lean Startup by Eric Ries. I was
-              disappointed...
-            </Text>
-          </View>
-          <View
-            style={{
-              marginTop: 30,
-            }}>
-            {/* <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-              }}>
-              Comments
-            </Text> */}
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}>
-              <View style={{alignItems: 'center', flexDirection: 'row'}}>
-                <Image
-                  source={require('../assets/Images/girl.jpg')}
-                  style={{width: 50, height: 50, borderRadius: 50}}
-                />
-                <View style={{marginLeft: 10}}>
-                  <Text
-                    style={{
-                      fontFamily: 'MontserratAlternates-SemiBold',
-                      fontSize: 14,
-
-                      color: 'black',
-                    }}>
-                    Kurt Mailey
-                  </Text>
-                  {/* <Text
-                style={{
-                  fontSize: 12,
-                  fontFamily: 'MontserratAlternates-Regular',
-                  marginTop: 5,
-                }}>
-                Today, 03:24 PM
-              </Text> */}
-                </View>
-              </View>
-              <Text
-                style={{
-                  fontSize: 12,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Nov 15, 2015
-              </Text>
-            </View>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                marginTop: 10,
-                color: 'black',
-              }}>
-              After reading Clayton Christensen, Geoffery Moore and Steve Blank,
-              I was expacting a lot from Lean Startup by Eric Ries. I was
-              disappointed...
-            </Text>
-          </View>
-        </>
-      )}
       {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}
-    </View>
+    </TouchableOpacity>
   );
 };
 

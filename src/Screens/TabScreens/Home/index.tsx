@@ -1,11 +1,12 @@
-import React, {useState, useEffect} from 'react';
-
+import React, {useState, useCallback, useEffect} from 'react';
+import moment from 'moment';
 import {
   View,
   FlatList,
   ScrollView,
   TouchableOpacity,
   Image,
+  Modal,
   Text,
   Platform,
   PermissionsAndroid,
@@ -13,16 +14,15 @@ import {
   ImageBackground,
 } from 'react-native';
 import Axios from 'axios';
+import database from '@react-native-firebase/database';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import Icon from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
 import {viewAllPost} from '../../../lib/api';
 import Geolocation from 'react-native-geolocation-service';
-import LikeDislike from '../../../Components/LikeDislike';
-import Comments from '../../../Components/Comments';
-import Icon from 'react-native-vector-icons/Entypo';
 import Posts from '../../../Components/Posts';
 const Home = ({navigation}) => {
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
@@ -30,8 +30,30 @@ const Home = ({navigation}) => {
   const [longitude, setlongitude] = useState(0);
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
+  const [specific, setSpecific] = useState({});
+  const [showModal, setShowModal] = useState(false);
   const {userData} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
+  const [list, setList] = useState([]);
+  const _usersList = useCallback(async () => {
+    try {
+      // setLoading(true);
+      database()
+        .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .orderByChild('timestamp')
+        .on('value', dataSnapshot => {
+          let users = [];
+          dataSnapshot.forEach(child => {
+            users.push(child.val());
+          });
+          console.log('users', users);
+          setList(users.reverse());
+          // setLoading(false);
+
+          // console.log("user list in chat list ", JSON.stringify(users))
+        });
+    } catch (error) {}
+  }, []);
   const renderItem = ({item}) => (
     <View
       style={{
@@ -98,6 +120,7 @@ const Home = ({navigation}) => {
   }, []);
   useEffect(() => {
     handleRestaurantSearch();
+    _usersList();
     viewAllPost({Auth: userData.token, latitude, longitude}).then(res => {
       // console.log('res', res);
       setData(res.posts.data);
@@ -114,9 +137,143 @@ const Home = ({navigation}) => {
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
+  const render = ({item}) => (
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate('SingleChat', {
+          item: item.user,
+          image: specific.media[0].media,
+          items: specific,
+        })
+      }
+      style={{
+        flexDirection: 'row',
+        marginTop: 20,
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        alignItems: 'center',
+        paddingBottom: 20,
+        borderBottomColor: '#ccc',
+      }}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Image
+          source={
+            item.user.image
+              ? {uri: item.user.image}
+              : require('../../../assets/Images/girl.jpg')
+          }
+          style={{height: 50, width: 50, borderRadius: 30}}
+        />
+        <View style={{marginLeft: 10}}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: item.unread ? 'black' : 'black',
+            }}>
+            {`${item.user.firstname} ${item.user.lastname}`}
+          </Text>
+          {/* <Text
+            style={{
+              marginTop: 5,
+              color: 'black',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}>
+            {/* {item.latestMessage} 
+          </Text> */}
+        </View>
+      </View>
+      <View style={{alignItems: 'center'}}>
+        {/* {item.counter ? (
+          <View
+            style={{
+              backgroundColor: '#5F95F0',
+              height: 20,
+              width: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 30,
+              marginBottom: 5,
+            }}>
+            <Text style={{color: 'white', fontSize: 12}}>{item.counter}</Text>
+            <Text>{moment(item.timestamp).format('DD/MM/YYYY HH:MM')}</Text>
+          </View>
+        ) : (
+          <Text style={{fontSize: 12}}>
+            {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}
+          </Text>
+        )} */}
+        {/* <Text
+          style={{
+            color: 'black',
+            fontFamily: 'MontserratAlternates-Regular',
+            fontSize: 10,
+          }}>
+          {item.time}
+        </Text> */}
+      </View>
+    </TouchableOpacity>
+  );
+  const MyModal = (show: boolean) => {
+    //   console.log('show', show);
+    return (
+      <Modal animationType="slide" transparent={true} visible={show}>
+        <View
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <View
+            style={{
+              height: '60%',
+              width: '90%',
+              backgroundColor: 'white',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginTop: 15,
+                marginRight: 15,
+              }}>
+              <Icon
+                name="circle-with-cross"
+                size={20}
+                color="black"
+                onPress={() => setShowModal(false)}
+              />
+            </View>
+            <View style={{paddingHorizontal: 10}}>
+              <FlatList data={list} renderItem={render} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
   // console.log('data', datas);
   const renderItem1 = ({item}) => (
-    <Posts item={item} press={alter} navigation={navigation} />
+    <Posts
+      item={item}
+      onShare={() => {
+        setSpecific(item);
+        setShowModal(true);
+      }}
+      onPress={() => {
+        navigation.navigate('PostDetails', {item});
+      }}
+      press={alter}
+      navigation={navigation}
+    />
   );
   const getPlace = (latitude, longitude) => {
     // console.log('inside get place fuction');
@@ -130,7 +287,7 @@ const Home = ({navigation}) => {
     // let request = `https://maps.googleapis.com/maps/api/geocode/json?address=${lot},${logo}&key=${mapKey}`;
     return Axios.get(request)
       .then(({data, status}) => {
-        console.log('data', data.results[0].address_components);
+        // console.log('data', data.results[0].address_components);
         // setLocation("Rawalpindi")
         // console.log('whole responce', JSON.stringify(data));
         // const currentCity = data.results[0].address_components.filter(
@@ -252,6 +409,7 @@ const Home = ({navigation}) => {
       {/* </ScrollView> */}
 
       {/* <Text>Home</Text> */}
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

@@ -184,6 +184,24 @@ const likeDislike = payload => {
       console.log('in likedislike', e);
     });
 };
+const likeDislikeProfile = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/like-dislike-profile`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in likedislike', e);
+    });
+};
 const createComment = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/create-comment`;
@@ -238,6 +256,24 @@ const profile = payload => {
       console.log('in profile', e);
     });
 };
+const postDetail = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/view-post/${payload.id}`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in post detail', e);
+    });
+};
 export {
   login,
   register,
@@ -254,4 +290,6 @@ export {
   createComment,
   viewComment,
   profile,
+  postDetail,
+  likeDislikeProfile,
 };
