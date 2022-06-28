@@ -100,35 +100,37 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     } catch (error) {}
   };
   const handleSend = () => {
-    setMessage('');
+    if (message) {
+      setMessage('');
 
-    // console.log('message is here', message);
-    senderMsg(
-      message,
-      userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
-      guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
-      Date.now(),
-      items,
-      // quote,
-    );
+      // console.log('message is here', message);
+      senderMsg(
+        message,
+        userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+        guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+        Date.now(),
+        items,
+        // quote,
+      );
 
-    _chatUsers()
-      .then(() => {})
-      .catch(err => {
-        // console.log('error inside screen', err);
-      });
+      _chatUsers()
+        .then(() => {})
+        .catch(err => {
+          // console.log('error inside screen', err);
+        });
 
-    recieverMsg(
-      message,
-      userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
-      guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
-      Date.now(),
-      items,
-      // quote,
-    );
-    _chatUsers()
-      .then(() => {})
-      .catch(err => {});
+      recieverMsg(
+        message,
+        userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+        guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+        Date.now(),
+        items,
+        // quote,
+      );
+      _chatUsers()
+        .then(() => {})
+        .catch(err => {});
+    }
 
     // _handlePushNotification()
   };
