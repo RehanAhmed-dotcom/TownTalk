@@ -30,7 +30,7 @@ import Swiper from 'react-native-swiper';
 const Create = ({navigation}) => {
   const {userData} = useSelector(({USER}) => USER);
   const [name, setName] = useState('');
-  const [img, setImg] = useState('');
+  const [img, setImg] = useState([]);
   const [zip, setZip] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState('');
@@ -47,9 +47,9 @@ const Create = ({navigation}) => {
     }).then(image => {
       // setShow(!show);
       // images.push(image.path);
-      setImg(image.path);
-      // setImg([...img, {image: image.path}]);
-      console.log(image);
+      // setImg(image.path);
+      setImg([...img, {image: image.path}]);
+      // console.log(image);
       // setImgErr('');
     });
   };
@@ -63,11 +63,14 @@ const Create = ({navigation}) => {
     data.append('description', description);
     data.append('title', name);
     data.append('media_type', 'image');
-    data.append('media[]', {
-      uri: img,
-      type: 'image/jpeg',
-      name: `image${Math.random()}.jpg`,
+    img.forEach(item => {
+      data.append('media[]', {
+        uri: item.image,
+        type: 'image/jpeg',
+        name: `image${Math.random()}.jpg`,
+      });
     });
+
     data.append('title', name);
     addPost({Auth: userData.token}, data)
       .then(res => {
@@ -158,7 +161,7 @@ const Create = ({navigation}) => {
         <ScrollView>
           <View style={{marginTop: 20, paddingHorizontal: 15}}>
             <View style={{flexDirection: 'row'}}>
-              {/* {img.length > 0 && (
+              {img.length > 0 && (
                 <View style={{width: 150, marginRight: 10, height: 150}}>
                   <Swiper
                     showsPagination={true}
@@ -180,27 +183,27 @@ const Create = ({navigation}) => {
                     ))}
                   </Swiper>
                 </View>
-              )} */}
+              )}
               <TouchableOpacity
                 onPress={() => picker()}
                 style={{
                   height: 150,
-                  width: '100%',
-                  borderWidth: img ? 0 : 1,
+                  width: '45%',
+                  borderWidth: 1,
 
                   alignItems: 'center',
                   justifyContent: 'center',
                   borderRadius: 5,
                   borderColor: '#5F95F0',
                 }}>
-                {img ? (
+                {/* {img ? (
                   <Image
                     source={{uri: img}}
                     style={{height: 150, width: '100%', borderRadius: 5}}
                   />
-                ) : (
-                  <Icon2 name="images-outline" size={50} color={'#5F95F0'} />
-                )}
+                ) : ( */}
+                <Icon2 name="images-outline" size={50} color={'#5F95F0'} />
+                {/* )} */}
               </TouchableOpacity>
             </View>
             <View style={{marginTop: 30}}>

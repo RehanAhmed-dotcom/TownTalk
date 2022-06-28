@@ -117,19 +117,26 @@ const Chat = ({navigation}) => {
         </View>
         <View style={{alignItems: 'center'}}>
           {item.counter ? (
-            <View
-              style={{
-                backgroundColor: '#5F95F0',
-                height: 20,
-                width: 20,
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 30,
-                marginBottom: 5,
-              }}>
-              <Text style={{color: 'white', fontSize: 12}}>{item.counter}</Text>
-              <Text>{moment(item.timestamp).format('DD/MM/YYYY HH:MM')}</Text>
-            </View>
+            <>
+              <View
+                style={{
+                  backgroundColor: '#5F95F0',
+                  height: 20,
+                  width: 20,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  borderRadius: 30,
+                  marginBottom: 5,
+                }}>
+                <Text style={{color: 'white', fontSize: 12}}>
+                  {item.counter}
+                </Text>
+                {/* <Text>{moment(item.timestamp).format('DD/MM/YYYY HH:MM')}</Text> */}
+              </View>
+              <Text style={{color: 'grey'}}>
+                {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}
+              </Text>
+            </>
           ) : (
             <Text style={{fontSize: 12}}>
               {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}

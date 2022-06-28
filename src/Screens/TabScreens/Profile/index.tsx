@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useCallback, useEffect} from 'react';
 
 import {
   View,
@@ -6,14 +6,16 @@ import {
   TouchableOpacity,
   Image,
   SafeAreaView,
+  Modal,
   Text,
   ImageBackground,
 } from 'react-native';
 import {profile} from '../../../lib/api';
+import Icon1 from 'react-native-vector-icons/Entypo';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import {logoutuser} from '../../../redux/actions';
-
+import database from '@react-native-firebase/database';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -23,13 +25,17 @@ const Profile = ({navigation}) => {
   const [select, setSelect] = useState('Posts');
   const [posts, setPosts] = useState([]);
   const [change, setChange] = useState(false);
+  const [data, setData] = useState({});
   const {userData} = useSelector(({USER}) => USER);
+  const [showModal, setShowModal] = useState(false);
+  const [specific, setSpecific] = useState({});
+  const [list, setList] = useState([]);
   const dispatch = useDispatch();
   const alter = () => {
     console.log('alter called');
     setChange(!change);
   };
-  const render = ({item}) => (
+  const renders = ({item}) => (
     <View>
       {select == 'Groups' ? (
         <Group />
@@ -39,23 +45,172 @@ const Profile = ({navigation}) => {
           onPress={() => {
             navigation.navigate('PostDetails', {item});
           }}
+          onShare={() => {
+            setSpecific(item);
+            setShowModal(true);
+          }}
           press={alter}
           navigation={navigation}
         />
       )}
     </View>
   );
+  const _usersList = useCallback(async () => {
+    try {
+      // setLoading(true);
+      database()
+        .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .orderByChild('timestamp')
+        .on('value', dataSnapshot => {
+          let users = [];
+          dataSnapshot.forEach(child => {
+            users.push(child.val());
+          });
+          console.log('users', users);
+          setList(users.reverse());
+          // setLoading(false);
+
+          // console.log("user list in chat list ", JSON.stringify(users))
+        });
+    } catch (error) {}
+  }, []);
+  const render = ({item}) => (
+    <TouchableOpacity
+      onPress={() => {
+        setShowModal(false);
+        navigation.navigate('SingleChat', {
+          item: item.user,
+          image: specific.media[0].media,
+          items: specific,
+        });
+      }}
+      style={{
+        flexDirection: 'row',
+        marginTop: 20,
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        alignItems: 'center',
+        paddingBottom: 20,
+        borderBottomColor: '#ccc',
+      }}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Image
+          source={
+            item.user.image
+              ? {uri: item.user.image}
+              : require('../../../assets/Images/girl.jpg')
+          }
+          style={{height: 50, width: 50, borderRadius: 30}}
+        />
+        <View style={{marginLeft: 10}}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: item.unread ? 'black' : 'black',
+            }}>
+            {`${item.user.firstname} ${item.user.lastname}`}
+          </Text>
+          {/* <Text
+            style={{
+              marginTop: 5,
+              color: 'black',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}>
+            {/* {item.latestMessage} 
+          </Text> */}
+        </View>
+      </View>
+      <View style={{alignItems: 'center'}}>
+        {/* {item.counter ? (
+          <View
+            style={{
+              backgroundColor: '#5F95F0',
+              height: 20,
+              width: 20,
+              justifyContent: 'center',
+              alignItems: 'center',
+              borderRadius: 30,
+              marginBottom: 5,
+            }}>
+            <Text style={{color: 'white', fontSize: 12}}>{item.counter}</Text>
+            <Text>{moment(item.timestamp).format('DD/MM/YYYY HH:MM')}</Text>
+          </View>
+        ) : (
+          <Text style={{fontSize: 12}}>
+            {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}
+          </Text>
+        )} */}
+        {/* <Text
+          style={{
+            color: 'black',
+            fontFamily: 'MontserratAlternates-Regular',
+            fontSize: 10,
+          }}>
+          {item.time}
+        </Text> */}
+      </View>
+    </TouchableOpacity>
+  );
+  const MyModal = (show: boolean) => {
+    //   console.log('show', show);
+    return (
+      <Modal animationType="slide" transparent={true} visible={show}>
+        <View
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <View
+            style={{
+              height: '60%',
+              width: '90%',
+              borderRadius: 10,
+              backgroundColor: 'white',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginTop: 15,
+                marginRight: 15,
+              }}>
+              <Icon1
+                name="circle-with-cross"
+                size={20}
+                color="black"
+                onPress={() => setShowModal(false)}
+              />
+            </View>
+            <View style={{paddingHorizontal: 10}}>
+              <FlatList data={list} renderItem={render} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
   useEffect(() => {
+    _usersList();
     profile({Auth: userData.token, id: userData.userdata.id}).then(res => {
       console.log('res', JSON.stringify(res));
-      setPosts(res.data.posts);
+      setPosts(res.data);
     });
   }, [change]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       profile({Auth: userData.token, id: userData.userdata.id}).then(res => {
         console.log('res', JSON.stringify(res));
-        setPosts(res.data.posts);
+        setPosts(res.data);
       });
     });
 
@@ -151,10 +306,11 @@ const Profile = ({navigation}) => {
               marginTop: 20,
             }}>
             <TouchableOpacity
-              onPress={() => {
-                setLike(!like);
-                setDislike(false);
-              }}
+              activeOpacity={1}
+              // onPress={() => {
+              //   setLike(!like);
+              //   setDislike(false);
+              // }}
               style={{
                 // flexDirection: 'column',
                 alignItems: 'center',
@@ -178,14 +334,15 @@ const Profile = ({navigation}) => {
                   color: 'black',
                   marginLeft: 5,
                 }}>
-                700K
+                {posts.like_count ? posts.like_count : 0}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
-                setDislike(!dislike);
-                setLike(false);
-              }}
+              activeOpacity={1}
+              // onPress={() => {
+              //   setDislike(!dislike);
+              //   setLike(false);
+              // }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -206,7 +363,7 @@ const Profile = ({navigation}) => {
                   color: 'black',
                   marginLeft: 5,
                 }}>
-                100K
+                {posts.dislike_count ? posts.dislike_count : 0}
               </Text>
             </TouchableOpacity>
           </View>
@@ -269,12 +426,13 @@ const Profile = ({navigation}) => {
           </View>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={posts}
-            renderItem={render}
+            data={posts.posts}
+            renderItem={renders}
           />
         </View>
         {/* <Text>abc</Text> */}
       </ImageBackground>
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

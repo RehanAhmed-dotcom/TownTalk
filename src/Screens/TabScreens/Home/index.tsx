@@ -139,13 +139,14 @@ const Home = ({navigation}) => {
   }, [navigation]);
   const render = ({item}) => (
     <TouchableOpacity
-      onPress={() =>
+      onPress={() => {
+        setShowModal(false);
         navigation.navigate('SingleChat', {
           item: item.user,
           image: specific.media[0].media,
           items: specific,
-        })
-      }
+        });
+      }}
       style={{
         flexDirection: 'row',
         marginTop: 20,
@@ -236,6 +237,7 @@ const Home = ({navigation}) => {
             style={{
               height: '60%',
               width: '90%',
+              borderRadius: 10,
               backgroundColor: 'white',
             }}>
             <View

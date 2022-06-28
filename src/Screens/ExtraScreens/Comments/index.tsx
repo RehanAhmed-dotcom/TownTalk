@@ -182,6 +182,7 @@ const Comments = ({navigation, route}) => {
             }}
             style={{
               width: '80%',
+              height: 50,
               borderRadius: 30,
               paddingHorizontal: 10,
               backgroundColor: '#717F8E',

@@ -275,6 +275,10 @@ const Login = ({navigation}: {navigation: any}) => {
                               //     ToastAndroid.SHORT,
                               //   );
                               Alert.alert(`${error.response.data.message}`);
+                            } else if (
+                              error.response.data.message == 'User not Found'
+                            ) {
+                              Alert.alert(`${error.response.data.message}`);
                             }
                           }
                         });

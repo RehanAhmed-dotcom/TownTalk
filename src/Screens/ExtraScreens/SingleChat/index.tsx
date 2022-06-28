@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   Image,
   Text,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   ImageBackground,
 } from 'react-native';
 import moment from 'moment';
@@ -21,9 +24,11 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const {item} = route.params;
   const image = route?.params?.image;
   const items = route?.params?.items;
+  const [keyboardStatus, setKeyboardStatus] = useState('');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const {userData} = useSelector(({USER}) => USER);
+  const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
   const guestData = {
     id: item.id,
     firstname: item.firstname,
@@ -49,44 +54,19 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
 
   console.log('item in chat', item);
   const [zip, setZip] = useState('');
-  const ary = [
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Veronica Bardot',
-      mesg: 'Nadal, Can you please let me know a price of that condo?',
-      time: '5:45 PM',
-      unread: '1',
-    },
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Veronica Bardot',
-      mesg: 'I am thinking to take it!!',
-      time: '5:45 PM',
-      unread: '0',
-    },
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Veronica Bardot',
-      mesg: 'Hey Melvin. I need to check. That post is quite old.',
-      time: '5:45 PM',
-      unread: '1',
-    },
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Veronica Bardot',
-      mesg: 'Yeah! sure but its really cool',
-      time: '5:45 PM',
-      unread: '1',
-    },
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
 
-    // {
-    //   image: require('../../../assets/Images/girl.jpg'),
-    //   name: 'Veronica Bardot',
-    //   mesg: 'Shall we meet today',
-    //   time: '5:45 PM',
-    //   unread: '1',
-    // },
-  ];
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   const _chatUsers = async () => {
     try {
       console.log('user going to db', guestData);
@@ -186,7 +166,28 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   }, [image]);
   useEffect(() => {
     _getMeesages();
+    _updateChatCount();
   }, []);
+  const _updateChatCount = async () => {
+    try {
+      database()
+        .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .once('value', snapshot => {
+          if (snapshot.val() != null) {
+            database()
+              .ref(
+                'users/' +
+                  userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+              )
+              .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+              .update({
+                counter: 0,
+              });
+          }
+        });
+    } catch (error) {}
+  };
   const render = ({item, index}) => {
     console.log('item in chat', item);
     const check = word => {
@@ -267,98 +268,112 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
       <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}>
-        <View
-          style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 15,
-            justifyContent: 'space-between',
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon1 name="left" color="black" size={20} />
-            </TouchableOpacity>
-            <Image
-              source={
-                item?.image
-                  ? {uri: item?.image}
-                  : require('../../../assets/Images/girl.jpg')
-              }
-              style={{height: 40, marginLeft: 20, width: 40, borderRadius: 20}}
-            />
-            <View style={{marginLeft: 10}}>
-              <Text
+        <Wrapper behavior="padding" style={{flex: 1}}>
+          <View
+            style={{
+              height: 80,
+              backgroundColor: 'white',
+              elevation: 3,
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 15,
+              justifyContent: 'space-between',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity onPress={() => navigation.goBack()}>
+                <Icon1 name="left" color="black" size={20} />
+              </TouchableOpacity>
+              <Image
+                source={
+                  item?.image
+                    ? {uri: item?.image}
+                    : require('../../../assets/Images/girl.jpg')
+                }
                 style={{
-                  fontSize: 16,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: 'black',
-                }}>
-                {`${item?.firstname} ${item?.lastname}`}
-              </Text>
-              {/* <Text
+                  height: 40,
+                  marginLeft: 20,
+                  width: 40,
+                  borderRadius: 20,
+                }}
+              />
+              <View style={{marginLeft: 10}}>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                    color: 'black',
+                  }}>
+                  {`${item?.firstname} ${item?.lastname}`}
+                </Text>
+                {/* <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   color: 'black',
                 }}>
                 online
               </Text> */}
+              </View>
             </View>
-          </View>
 
-          {/* <Image
+            {/* <Image
             source={require('../../../assets/Images/search.png')}
             style={{height: 20, width: 20}}
           /> */}
-        </View>
-        <View style={{paddingHorizontal: 15, flex: 1}}>
-          <FlatList
-            inverted
-            showsVerticalScrollIndicator={false}
-            data={messages}
-            renderItem={render}
-            // style={{paddingVertical: 20}}
-          />
-        </View>
-        <View
-          style={{
-            height: 70,
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingHorizontal: 15,
-            backgroundColor: '#ccc',
-          }}>
-          <Icon1 name="plus" size={20} color="grey" />
-          <TextInput
-            value={message}
-            onChangeText={text => setMessage(text)}
-            placeholder="Write your message here..."
+          </View>
+          <View style={{paddingHorizontal: 15, flex: 1}}>
+            <FlatList
+              inverted
+              showsVerticalScrollIndicator={false}
+              data={messages}
+              renderItem={render}
+              // style={{paddingVertical: 20}}
+            />
+          </View>
+          <View
             style={{
-              backgroundColor: 'white',
-              width: '80%',
-              height: 50,
-              paddingHorizontal: 10,
-              fontFamily: 'MontserratAlternates-Regular',
-              borderRadius: 30,
-            }}
-            placeholderTextColor={'grey'}
-          />
-          <TouchableOpacity
-            onPress={() => handleSend()}
-            style={{
-              backgroundColor: '#5F95F0',
-              borderRadius: 30,
-              width: 35,
-              height: 35,
+              height: 70,
+              flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 15,
+              backgroundColor: '#ccc',
+              marginBottom:
+                Platform.OS == 'android'
+                  ? 0
+                  : keyboardStatus == 'Keyboard Shown'
+                  ? 20
+                  : 0,
             }}>
-            <Icon2 name="ios-send" size={15} color="white" />
-          </TouchableOpacity>
-        </View>
+            <Icon1 name="plus" size={20} color="grey" />
+            <TextInput
+              value={message}
+              onChangeText={text => setMessage(text)}
+              placeholder="Write your message here..."
+              style={{
+                backgroundColor: 'white',
+                width: '80%',
+                height: 50,
+                paddingHorizontal: 10,
+                color: 'black',
+                fontFamily: 'MontserratAlternates-Regular',
+                borderRadius: 30,
+              }}
+              placeholderTextColor={'grey'}
+            />
+            <TouchableOpacity
+              onPress={() => handleSend()}
+              style={{
+                backgroundColor: '#5F95F0',
+                borderRadius: 30,
+                width: 35,
+                height: 35,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Icon2 name="ios-send" size={15} color="white" />
+            </TouchableOpacity>
+          </View>
+        </Wrapper>
       </ImageBackground>
     </SafeAreaView>
   );
