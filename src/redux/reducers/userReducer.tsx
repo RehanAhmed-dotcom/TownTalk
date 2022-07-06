@@ -10,6 +10,7 @@ const InitialCalState = {
   passwoord: '',
   notificationSymbol: false,
   tog: false,
+  CityAdd: [],
 };
 
 export default (state = InitialCalState, {type, payload}) => {
@@ -21,6 +22,10 @@ export default (state = InitialCalState, {type, payload}) => {
         isLoggedIn: true,
         userData: {...payload},
       };
+    }
+    case ActionType.CITYADD: {
+      console.log('reducer payload', payload);
+      return {...state, CityAdd: [...state.CityAdd, payload]};
     }
     case ActionType.VERIFY: {
       return {

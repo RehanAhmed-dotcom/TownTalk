@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 import {
   View,
@@ -10,88 +10,18 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
-import MapView from 'react-native-maps';
-import LikeDislike from '../../../Components/LikeDislike';
-import Comments from '../../../Components/Comments';
-import Icon2 from 'react-native-vector-icons/Fontisto';
-import Icon from 'react-native-vector-icons/Entypo';
+import {config} from '../../../../config';
+import StarRating from 'react-native-star-rating';
+import MapView, {Marker} from 'react-native-maps';
+import ImageModal from '../../../Components/ImageModal';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Swiper from 'react-native-swiper';
-import Hotel from '../../../Components/Hotel';
-const RestaurantsDetail = ({navigation}) => {
-  const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
-  const renderItem = ({item}) => (
-    <View
-      style={{
-        height: 30,
-        backgroundColor: 'white',
-        marginRight: 10,
-        marginLeft: 3,
-        marginVertical: 3,
-        elevation: 3,
-        alignItems: 'center',
-        justifyContent: 'center',
-        minWidth: 100,
-        borderRadius: 5,
-      }}>
-      <Text
-        style={{color: '#5F95F0', fontFamily: 'MontserratAlternates-Medium'}}>
-        #{item}
-      </Text>
-    </View>
-  );
-  const renderPagination = (index, total, context) => {
-    return (
-      <View
-        style={{
-          position: 'absolute',
-          bottom: 10,
-          backgroundColor: 'black',
-          height: 30,
-          width: 40,
-          alignItems: 'center',
-          borderRadius: 10,
-          right: 10,
-        }}>
-        <Text style={{color: 'grey'}}>
-          <Text
-            style={{
-              color: 'white',
-              fontSize: 20,
-            }}>
-            {index + 1}
-          </Text>
-          /{total}
-        </Text>
-      </View>
-    );
+const RestaurantsDetail = ({navigation, route}) => {
+  const {item} = route.params;
+  const [showModal, setShowModal] = useState(false);
+  const alter = () => {
+    setShowModal(!showModal);
   };
-  const renderItem3 = ({item}) => (
-    <View
-      style={{
-        // height: 30,
-        // backgroundColor: 'white',
-        // marginRight: 10,
-        // marginLeft: 3,
-        // marginVertical: 3,
-        // elevation: 3,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // minWidth: 100,
-        borderRadius: 5,
-      }}>
-      <Text
-        style={{
-          marginRight: 5,
-          fontSize: 13,
-          fontFamily: 'MontserratAlternates-Medium',
-          color: '#5F95F0',
-        }}>
-        #{item}
-      </Text>
-    </View>
-  );
-  const renderItem1 = ({item}) => <Hotel navigation={navigation} />;
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -127,35 +57,20 @@ const RestaurantsDetail = ({navigation}) => {
           </View>
         </View>
         <ScrollView>
-          <View style={{height: 200, width: '100%'}}>
-            <Swiper
-              renderPagination={renderPagination}
-              autoplay={true}
-              dot={
-                <View
-                  style={{
-                    backgroundColor: 'rgba(0,0,0,.2)',
-                    // width: 20,
-                    height: 5,
-                    borderRadius: 4,
-                    marginLeft: 3,
-                    marginRight: 3,
-                    // width: '100%',
-                    position: 'absolute',
-                    // marginTop: 100,
-                    marginBottom: 3,
-                  }}
-                />
+          <TouchableOpacity
+            onPress={() => setShowModal(true)}
+            style={{height: 200, width: '100%'}}>
+            <Image
+              source={
+                item.photos
+                  ? {
+                      uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${item.photos[0].photo_reference}&key=${config}`,
+                    }
+                  : require('../../../assets/Images/imagePlaceholder.png')
               }
-              showsButtons={false}>
-              {['1', '1', '1', '1', '1'].map(item => (
-                <Image
-                  source={require('../../../assets/Images/restaurants.jpg')}
-                  style={{height: '100%', width: '100%'}}
-                />
-              ))}
-            </Swiper>
-          </View>
+              style={{height: 200, width: '100%'}}
+            />
+          </TouchableOpacity>
           {/* <Image
             source={require('../../../assets/Images/restaurants.jpg')}
             style={{height: 200, width: '100%'}}
@@ -176,16 +91,8 @@ const RestaurantsDetail = ({navigation}) => {
                   fontFamily: 'MontserratAlternates-SemiBold',
                   color: 'black',
                 }}>
-                Hunain Restaurant
+                {item.name}
               </Text>
-              {/* <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: 'black',
-                }}>
-                Hotel Rawalpindi
-              </Text> */}
             </View>
             <View
               style={{
@@ -201,78 +108,44 @@ const RestaurantsDetail = ({navigation}) => {
                     color: 'black',
                     fontFamily: 'MontserratAlternates-Medium',
                   }}>
-                  7th road Lahore Pakistan
+                  {item.vicinity}
                 </Text>
               </View>
             </View>
-            {/* <View style={{width: '100%', marginTop: 10, alignItems: 'center'}}>
-              <TouchableOpacity
-                style={{
-                  width: 200,
-                  height: 40,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#5F95F0',
-                  marginTop: 10,
-                  borderRadius: 5,
-                }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {item.types.map(element => (
                 <Text
                   style={{
-                    fontSize: 10,
-                    color: 'white',
-                    fontFamily: 'MontserratAlternates-SemiBold',
+                    fontSize: 12,
+                    fontFamily: 'MontserratAlternates-Medium',
+                    // marginTop: 5,
+                    color: 'black',
                   }}>
-                  View Deal
+                  {element},{' '}
                 </Text>
-              </TouchableOpacity>
-            </View> */}
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: 'MontserratAlternates-Medium',
-                // marginTop: 5,
-                color: 'black',
-              }}>
-              Italian, Chinese, Asian, Fastfood
-            </Text>
-            <TouchableOpacity
-              style={{
-                borderBottomColor: 'black',
-                width: 25,
-                borderBottomWidth: 1,
-              }}>
+              ))}
+            </View>
+            <View style={{width: 100, marginTop: 10}}>
               <Text
                 style={{
-                  fontSize: 12,
-                  // letterSpacing: 0.1,
-                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
                   marginTop: 10,
                   color: 'black',
+                  fontFamily: 'MontserratAlternates-Medium',
+                  marginBottom: 10,
                 }}>
-                Call
+                Rating
               </Text>
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                color: 'black',
-                marginTop: 40,
-                fontFamily: 'MontserratAlternates-SemiBold',
-              }}>
-              About
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                marginTop: 10,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Medium',
-              }}>
-              Pearl Continental Hotels & Resorts is the largest chain of
-              five-star hotels in Pakistan with properties in Karachi, Lahore,
-              Rawalpindi, Peshawar, Gawadar, Bhurban, Muzaffarabad and Malam
-              Jabba
-            </Text>
+              <StarRating
+                disabled={true}
+                maxStars={5}
+                rating={item.rating}
+                starSize={20}
+                // style={{marginTop: 10}}
+                // selectedStar={(rating) => this.onStarRatingPress(rating)}
+              />
+              <Text style={{marginTop: 10}}>{item.rating}</Text>
+            </View>
             <Text
               style={{
                 fontSize: 16,
@@ -282,90 +155,31 @@ const RestaurantsDetail = ({navigation}) => {
               }}>
               Amneties
             </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 5,
-                alignItems: 'center',
-              }}>
-              {/* <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/drink.png')}
-                style={{width: 15, height: 15}}
-              /> */}
-              <Text
+            {item.types.map(element => (
+              <View
                 style={{
-                  fontSize: 12,
-                  // marginLeft: 10,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-Medium',
+                  flexDirection: 'row',
+                  marginTop: 5,
+                  alignItems: 'center',
                 }}>
-                Italian
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 5,
-                alignItems: 'center',
-              }}>
-              {/* <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/family.png')}
-                style={{width: 15, height: 15}}
-              /> */}
-              <Text
-                style={{
-                  fontSize: 12,
-                  // marginLeft: 10,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-Medium',
-                }}>
-                Chinese
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 5,
-                alignItems: 'center',
-              }}>
-              {/* <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/clean.png')}
-                style={{width: 15, height: 15}}
-              /> */}
-              <Text
-                style={{
-                  fontSize: 12,
-                  // marginLeft: 10,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-Medium',
-                }}>
-                Asian
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 5,
-                alignItems: 'center',
-              }}>
-              {/* <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/clean.png')}
-                style={{width: 15, height: 15}}
-              /> */}
-              <Text
-                style={{
-                  fontSize: 12,
-                  // marginLeft: 10,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-Medium',
-                }}>
-                FastFood
-              </Text>
-            </View>
+                {/* <Image
+               resizeMode="contain"
+               source={require('../../../assets/Images/drink.png')}
+               style={{width: 15, height: 15}}
+             /> */}
+                <Text
+                  style={{
+                    fontSize: 12,
+                    marginTop: 5,
+                    // marginLeft: 10,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-Medium',
+                  }}>
+                  {element}
+                </Text>
+              </View>
+            ))}
+
             <View style={{height: 10}} />
           </View>
           <View style={{marginTop: 20, paddingHorizontal: 15}}>
@@ -382,28 +196,44 @@ const RestaurantsDetail = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-Medium',
               }}>
-              7th road Lahore Pakistan
+              {item.vicinity}
             </Text>
             <View
               style={{
                 height: 200,
-                marginBottom: 10,
+                marginBottom: 30,
                 marginTop: 20,
                 borderRadius: 10,
               }}>
               <MapView
                 style={{flex: 1, borderRadius: 10}}
                 initialRegion={{
-                  latitude: 37.78825,
-                  longitude: -122.4324,
+                  latitude: item.geometry.location.lat,
+                  longitude: item.geometry.location.lng,
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.0421,
-                }}
-              />
+                }}>
+                <Marker
+                  // key={index}
+                  coordinate={{
+                    latitude: item.geometry.location.lat,
+                    longitude: item.geometry.location.lng,
+                  }}
+                  title={'location'}
+                  // description={marker.description}
+                />
+              </MapView>
             </View>
           </View>
         </ScrollView>
       </ImageBackground>
+      {ImageModal(
+        showModal,
+        `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${
+          item.photos ? item?.photos[0]?.photo_reference : null
+        }&key=${config}`,
+        alter,
+      )}
     </SafeAreaView>
   );
 };

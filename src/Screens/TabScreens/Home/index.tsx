@@ -14,6 +14,10 @@ import {
   ImageBackground,
 } from 'react-native';
 import Axios from 'axios';
+// import GooglePlacesAutocomplete, {
+//   geocodeByAddress,
+//   getLatLng,
+// } from 'react-google-places-autocomplete';
 import database from '@react-native-firebase/database';
 import {
   widthPercentageToDP as wp,
@@ -89,6 +93,14 @@ const Home = ({navigation}) => {
       console.warn(err);
     }
   };
+  // const handleAddress = e => {
+  //   // setSelectedAddress(e);
+  //   geocodeByAddress('Rawalpindi')
+  //     .then(results => getLatLng(results[0]))
+  //     .then(({lat, lng}) =>
+  //       console.log('Successfully got latitude and longitude', {lat, lng}),
+  //     );
+  // };
   const cuRRentlocation = () => {
     Geolocation.getCurrentPosition(
       position => {
@@ -111,6 +123,7 @@ const Home = ({navigation}) => {
     );
   };
   useEffect(() => {
+    // handleAddress('solo');
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
           cuRRentlocation();
@@ -119,7 +132,6 @@ const Home = ({navigation}) => {
       : requestLocationPermission();
   }, []);
   useEffect(() => {
-    handleRestaurantSearch();
     _usersList();
     viewAllPost({Auth: userData.token, latitude, longitude}).then(res => {
       // console.log('res', res);
@@ -319,20 +331,7 @@ const Home = ({navigation}) => {
   // console.log('location', location);
   const lat = 33.5344737;
   const long = 73.0525821;
-  const handleRestaurantSearch = () => {
-    console.log('here');
-    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
-    const location = `location=${lat},${long}`;
-    const radius = '&radius=2000';
-    const type = '&keyword=restaurant';
-    const key = '&key=AIzaSyDtkp4KHqYIYddiYheGVMPqO9ko5ZtwYAU';
-    const restaurantSearchUrl = url + location + radius + type + key;
-    fetch(restaurantSearchUrl)
-      .then(response => response.json())
-      .then(result => console.log('result', result))
-      // .then(result => this.setState({restaurantList: result}))
-      .catch(e => console.log(e));
-  };
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -8,42 +8,20 @@ import {
   Image,
   Text,
 } from 'react-native';
+import Axios from 'axios';
 import LikeDislike from './LikeDislike';
+import {config} from '../../config';
 // import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/Fontisto';
 const Hotel = props => {
-  //   console.log('props', props);
-  const {navigation} = props;
-  const renderItem3 = ({item}) => (
-    <View
-      style={{
-        // height: 30,
-        // backgroundColor: 'white',
-        // marginRight: 10,
-        // marginLeft: 3,
-        // marginVertical: 3,
-        // elevation: 3,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // minWidth: 100,
-        borderRadius: 5,
-      }}>
-      <Text
-        style={{
-          marginRight: 5,
-          fontSize: 13,
-          fontFamily: 'MontserratAlternates-Medium',
-          color: '#5F95F0',
-        }}>
-        #{item}
-      </Text>
-    </View>
-  );
+  // console.log('confing', config);
+  const {navigation, item} = props;
+  // console.log('opne', item?.opening_hours?.open_now);
+  const [image, setImage] = useState('');
   const [show, setShow] = useState(false);
-  const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('RestaurantsDetail')}
+      onPress={() => navigation.navigate('RestaurantsDetail', {item})}
       style={{
         // height: 30,
         backgroundColor: 'white',
@@ -77,16 +55,30 @@ const Hotel = props => {
               width: '100%',
               justifyContent: 'space-between',
             }}>
-            <View>
+            <View style={{width: '90%'}}>
               <Text
                 style={{
                   fontFamily: 'MontserratAlternates-SemiBold',
                   fontSize: 16,
                   color: 'black',
                 }}>
-                Hunain Restaurant
+                {item.name}
               </Text>
-              <Text
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {item.types.map(element => (
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      fontFamily: 'MontserratAlternates-Medium',
+                      marginTop: 5,
+                      color: 'black',
+                    }}>
+                    {element},
+                  </Text>
+                ))}
+              </View>
+
+              {/* <Text
                 style={{
                   fontSize: 12,
                   fontFamily: 'MontserratAlternates-Medium',
@@ -94,9 +86,9 @@ const Hotel = props => {
                   color: 'black',
                 }}>
                 Italian, Chinese, Pizza, Fastfood
-              </Text>
+              </Text> */}
             </View>
-            <Text
+            {/* <Text
               style={{
                 fontSize: 12,
                 fontFamily: 'MontserratAlternates-Medium',
@@ -104,7 +96,7 @@ const Hotel = props => {
                 color: 'black',
               }}>
               2 Km
-            </Text>
+            </Text> */}
           </View>
         </View>
         {/* <Icon name="dots-three-horizontal" size={20} /> */}
@@ -141,7 +133,7 @@ const Hotel = props => {
             // marginTop: 5,
             color: 'black',
           }}>
-          Open Now
+          {item?.opening_hours?.open_now ? 'Open Now' : 'Closed'}
         </Text>
         {/* <View
           style={{
@@ -230,7 +222,14 @@ const Hotel = props => {
           </View>
         </View> */}
         <Image
-          source={require('../assets/Images/dish.jpg')}
+          resizeMode={'cover'}
+          source={
+            item?.photos
+              ? {
+                  uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${item?.photos[0]?.photo_reference}&key=${config}`,
+                }
+              : require('../assets/Images/imagePlaceholder.png')
+          }
           style={{height: 150, borderRadius: 10, width: '100%', marginTop: 10}}
         />
       </View>

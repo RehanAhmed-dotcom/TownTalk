@@ -7,10 +7,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  Alert,
   Text,
   ImageBackground,
   TextInput,
 } from 'react-native';
+import {useSelector, useDispatch} from 'react-redux';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -20,8 +22,13 @@ import Icon1 from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons';
 import Posts from '../../../Components/Posts';
+import {cityAdd} from '../../../redux/actions';
 const Search = ({navigation}) => {
   const [sel, setSel] = useState('');
+  const [city, setCity] = useState('');
+  const dispatch = useDispatch();
+  const {CityAdd} = useSelector(({USER}) => USER);
+  console.log('cityadd', CityAdd);
   const arr = [
     {
       name: 'Restaurant',
@@ -92,6 +99,7 @@ const Search = ({navigation}) => {
       </View>
     </TouchableOpacity>
   );
+  // console.log('selected', sel);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -161,15 +169,40 @@ const Search = ({navigation}) => {
             }}>
             <TextInput
               placeholder="Where to now..."
-              style={{width: '90%', fontFamily: 'MontserratAlternates-Regular'}}
+              placeholderTextColor="grey"
+              value={city}
+              onChangeText={text => {
+                setCity(text);
+              }}
+              style={{
+                width: '90%',
+                color: 'black',
+                fontFamily: 'MontserratAlternates-Regular',
+              }}
             />
-            <Image
-              source={require('../../../assets/Images/search.png')}
-              style={{height: 15, width: 15}}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                if (sel && city) {
+                  navigation.navigate('ResturantsNearby', {sel, city});
+                  cityAdd(city)(dispatch);
+                } else {
+                  Alert.alert('Select Category and City');
+                }
+              }}>
+              <Image
+                source={require('../../../assets/Images/search.png')}
+                style={{height: 15, width: 15}}
+              />
+            </TouchableOpacity>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate('ResturantsNearby')}
+            onPress={() => {
+              if (sel) {
+                navigation.navigate('ResturantsNearby', {sel});
+              } else {
+                Alert.alert('Select Category');
+              }
+            }}
             style={{
               borderBottomWidth: 1,
               borderBottomColor: 'grey',

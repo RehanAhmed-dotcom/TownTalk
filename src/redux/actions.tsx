@@ -28,7 +28,8 @@ const USER_AUTHORIZE = 'USER_SIGN_IN',
   SAVEPASSWORD = 'SAVEPASSWORD',
   REMEMBER = 'REMEMBER',
   NOTIFICATIONALERT = 'NOTIFICATIONALERT',
-  TOGGLE = 'TOOGLE';
+  TOGGLE = 'TOOGLE',
+  CITYADD = 'CITYADD';
 //========================================================Dispatchers
 const userAuthorize = payload => async dispatch => {
   dispatch({type: USER_AUTHORIZE, payload});
@@ -39,6 +40,10 @@ const userRefresh = payload => dispatch => {
 };
 const userLKAuthorize = payload => dispatch => {
   dispatch({type: REGISTER_FOR_LINKEDIN, payload});
+};
+const cityAdd = payload => dispatch => {
+  console.log('payload', payload);
+  dispatch({type: CITYADD, payload});
 };
 const logout = () => dispatch => {
   dispatch({type: USER_LOGOUT});
@@ -127,6 +132,7 @@ const ActionType = {
   USER_REFRESH,
   USER_LOGOUT,
   USER_AUTHORIZE,
+  CITYADD,
   REGISTER_FOR_LINKEDIN,
   CAL_SUB,
   CAL_ADD,
@@ -173,6 +179,7 @@ export {
   decrement,
   logged,
   logoutuser,
+  cityAdd,
   toggle,
   userdata,
   selecteduser,
