@@ -95,7 +95,8 @@ const Login = ({navigation}: {navigation: any}) => {
                 style={{
                   flexDirection: 'row',
                   alignItems: 'center',
-                  justifyContent: 'space-between',
+
+                  justifyContent: 'center',
                   width: '80%',
                   top: 20,
                 }}>
@@ -117,7 +118,7 @@ const Login = ({navigation}: {navigation: any}) => {
                     Email
                   </Text>
                 </TouchableOpacity>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() => setCategory('Phone No')}
                   style={{
                     borderBottomWidth: category == 'Phone No' ? 1 : 0,
@@ -134,7 +135,7 @@ const Login = ({navigation}: {navigation: any}) => {
                     }}>
                     Phone No
                   </Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
           )}
@@ -161,7 +162,7 @@ const Login = ({navigation}: {navigation: any}) => {
                       borderBottomColor: emailErr ? 'red' : 'grey',
                       borderBottomWidth: 1,
                       height: 50,
-                      color: 'grey',
+                      color: 'black',
                       fontFamily: 'MontserratAlternates-Regular',
                     }}
                   />
@@ -194,7 +195,7 @@ const Login = ({navigation}: {navigation: any}) => {
                         // backgroundColor: 'red',
                         width: '85%',
                         height: 50,
-                        color: 'grey',
+                        color: 'black',
                         // borderBottomColor: passwrodErr ? 'red' : 'grey',
                         // borderBottomWidth: 1,
                         fontFamily: 'MontserratAlternates-Regular',

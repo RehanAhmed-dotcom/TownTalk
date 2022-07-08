@@ -50,7 +50,7 @@ const Password = ({navigation, route}: {navigation: any; route: any}) => {
             </Text>
           </View>
         </View>
-        <View style={{marginTop: 100, paddingHorizontal: 15}}>
+        <View style={{marginTop: 30, paddingHorizontal: 15}}>
           <View style={{alignItems: 'center'}}>
             <Text
               style={{
@@ -80,7 +80,7 @@ const Password = ({navigation, route}: {navigation: any; route: any}) => {
               style={{
                 borderBottomColor: passwordErr ? 'red' : 'grey',
                 borderBottomWidth: 1,
-                color: 'grey',
+                color: 'black',
                 height: 50,
               }}
             />
@@ -104,7 +104,7 @@ const Password = ({navigation, route}: {navigation: any; route: any}) => {
               style={{
                 borderBottomColor: confirmPasswordErr ? 'red' : 'grey',
                 borderBottomWidth: 1,
-                color: 'grey',
+                color: 'black',
                 height: 50,
               }}
             />
@@ -146,6 +146,9 @@ const Password = ({navigation, route}: {navigation: any; route: any}) => {
               } else if (!password) {
                 setPasswordErr('asd');
               } else if (!confirmPassword) {
+                setConfirmPasswordErr('asd');
+              } else if (password != confirmPassword) {
+                setPasswordErr('asd');
                 setConfirmPasswordErr('asd');
               }
             }}

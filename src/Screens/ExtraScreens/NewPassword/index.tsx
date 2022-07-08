@@ -78,7 +78,7 @@ const NewPassword = ({navigation}) => {
             onPress={() => navigation.navigate('Login')}
           /> */}
         </View>
-        <Wrapper behavior="padding">
+        <Wrapper behavior="padding" style={{flex: 1}}>
           <ScrollView>
             <View
               style={{
@@ -124,7 +124,7 @@ const NewPassword = ({navigation}) => {
                     borderBottomColor: oldPasswordErr ? 'red' : 'grey',
                     borderBottomWidth: 1,
                     height: 50,
-                    color: 'grey',
+                    color: 'black',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -150,7 +150,7 @@ const NewPassword = ({navigation}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
-                    color: 'grey',
+                    color: 'black',
                   }}
                 />
               </View>
@@ -175,7 +175,7 @@ const NewPassword = ({navigation}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomWidth: 1,
                     height: 50,
-                    color: 'grey',
+                    color: 'black',
                   }}
                 />
               </View>

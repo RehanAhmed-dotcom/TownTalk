@@ -2,12 +2,17 @@ import React, {useEffect} from 'react';
 
 import {View, Image, ImageBackground, Text} from 'react-native';
 
-const Splash = ({navigation}) => {
+const Splash = ({navigation}: {navigation: any}) => {
   useEffect(() => {
-    setTimeout(function () {
-      navigation.navigate('Login');
-    }, 3000);
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      setTimeout(function () {
+        navigation.navigate('Login');
+      }, 3000);
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
   return (
     <View style={{flex: 1}}>
       <ImageBackground

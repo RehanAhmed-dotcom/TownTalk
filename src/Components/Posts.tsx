@@ -18,7 +18,7 @@ const Posts = props => {
   const {userData} = useSelector(({USER}) => USER);
 
   const [show, setShow] = useState(false);
-
+  // console.log('item', item);
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -86,18 +86,23 @@ const Posts = props => {
           width: '100%',
           // flexDirection: 'row',
           // alignItems: 'center',
+          flexDirection: 'row',
+
           // backgroundColor: 'red',
           overflow: 'hidden',
         }}>
-        <Text
-          style={{
-            marginRight: 5,
-            fontSize: 13,
-            fontFamily: 'MontserratAlternates-Medium',
-            color: '#5F95F0',
-          }}>
-          {item?.hashtag}
-        </Text>
+        {item?.hashtag.map(element => (
+          <Text
+            style={{
+              marginRight: 5,
+              fontSize: 13,
+              fontFamily: 'MontserratAlternates-Medium',
+              color: '#5F95F0',
+            }}>
+            #{element}
+          </Text>
+        ))}
+
         {/* <FlatList horizontal data={arr} renderItem={renderItem3} /> */}
         {/* {arr.map(item => (
         <View>

@@ -58,7 +58,11 @@ const RestaurantsDetail = ({navigation, route}) => {
         </View>
         <ScrollView>
           <TouchableOpacity
-            onPress={() => setShowModal(true)}
+            onPress={() => {
+              if (item.photos) {
+                setShowModal(true);
+              }
+            }}
             style={{height: 200, width: '100%'}}>
             <Image
               source={
@@ -183,21 +187,21 @@ const RestaurantsDetail = ({navigation, route}) => {
             <View style={{height: 10}} />
           </View>
           <View style={{marginTop: 20, paddingHorizontal: 15}}>
-            <Text
+            {/* <Text
               style={{
                 fontFamily: 'MontserratAlternates-SemiBold',
                 color: 'black',
               }}>
               Restaurants address
-            </Text>
-            <Text
+            </Text> */}
+            {/* <Text
               style={{
                 fontSize: 13,
                 color: 'black',
                 fontFamily: 'MontserratAlternates-Medium',
               }}>
               {item.vicinity}
-            </Text>
+            </Text> */}
             <View
               style={{
                 height: 200,

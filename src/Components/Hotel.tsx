@@ -64,7 +64,14 @@ const Hotel = props => {
                 }}>
                 {item.name}
               </Text>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {/* <View
+                style={{
+                  flexDirection: 'row',
+                  // backgroundColor: 'red',
+                  alignItems: 'center',
+                  width: '90%',
+                  flexWrap: 'wrap',
+                }}>
                 {item.types.map(element => (
                   <Text
                     style={{
@@ -76,7 +83,7 @@ const Hotel = props => {
                     {element},
                   </Text>
                 ))}
-              </View>
+              </View> */}
 
               {/* <Text
                 style={{

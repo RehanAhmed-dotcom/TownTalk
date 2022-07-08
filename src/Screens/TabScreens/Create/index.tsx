@@ -8,12 +8,14 @@ import {
   Platform,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
+  KeyboardAvoidingView,
   Image,
   Text,
   ImageBackground,
   PermissionsAndroid,
 } from 'react-native';
-
+import Tags from 'react-native-tags';
 import Geolocation from 'react-native-geolocation-service';
 import MapView from 'react-native-maps';
 import {addPost} from '../../../lib/api';
@@ -34,7 +36,7 @@ const Create = ({navigation}) => {
   const [zip, setZip] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState('');
-  const [hash, setHash] = useState('');
+  const [hash, setHash] = useState([]);
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
   // console.log('userdata', latitude, longitude);
@@ -53,37 +55,45 @@ const Create = ({navigation}) => {
       // setImgErr('');
     });
   };
+  // console.log('has', hash);
   const add = () => {
-    setShowModal(true);
-    const data = new FormData();
-    data.append('hashtags', hash);
-    data.append('zipcode', zip);
-    data.append('latitude', latitude);
-    data.append('longitude', longitude);
-    data.append('description', description);
-    data.append('title', name);
-    data.append('media_type', 'image');
-    img.forEach(item => {
-      data.append('media[]', {
-        uri: item.image,
-        type: 'image/jpeg',
-        name: `image${Math.random()}.jpg`,
+    if (zip && latitude && description && name && img) {
+      setShowModal(true);
+      const data = new FormData();
+      hash.forEach(item => {
+        data.append('hashtags[]', item);
       });
-    });
+      // data.append('hashtags', hash);
+      data.append('zipcode', zip);
+      data.append('latitude', latitude);
+      data.append('longitude', longitude);
+      data.append('description', description);
+      // data.append('title', name);
+      data.append('media_type', 'image');
+      img.forEach(item => {
+        data.append('media[]', {
+          uri: item.image,
+          type: 'image/jpeg',
+          name: `image${Math.random()}.jpg`,
+        });
+      });
 
-    data.append('title', name);
-    addPost({Auth: userData.token}, data)
-      .then(res => {
-        setShowModal(false);
-        console.log('res', res);
-        if (res.status == 'success') {
-          navigation.goBack();
-        }
-      })
-      .catch(err => {
-        setShowModal(false);
-        console.log('err', err);
-      });
+      data.append('title', name);
+      addPost({Auth: userData.token}, data)
+        .then(res => {
+          setShowModal(false);
+          console.log('res', res);
+          if (res.status == 'success') {
+            navigation.goBack();
+          }
+        })
+        .catch(err => {
+          setShowModal(false);
+          console.log('err', err);
+        });
+    } else {
+      Alert.alert('All Fields required');
+    }
   };
   const cuRRentlocation = () => {
     Geolocation.getCurrentPosition(
@@ -126,6 +136,7 @@ const Create = ({navigation}) => {
         })
       : requestLocationPermission();
   }, []);
+  const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -158,64 +169,65 @@ const Create = ({navigation}) => {
             </Text> */}
           </View>
         </View>
-        <ScrollView>
-          <View style={{marginTop: 20, paddingHorizontal: 15}}>
-            <View style={{flexDirection: 'row'}}>
-              {img.length > 0 && (
-                <View style={{width: 150, marginRight: 10, height: 150}}>
-                  <Swiper
-                    showsPagination={true}
-                    key={img.length}
-                    paginationStyle={{bottom: 10}}
-                    activeDotColor="#5F95F0"
-                    loop={false}
-                    style={{alignItems: 'center', justifyContent: 'center'}}
-                    showsButtons={false}>
-                    {img.map(item => (
-                      <Image
-                        source={{uri: item.image}}
-                        style={{
-                          borderRadius: 10,
-                          width: '100%',
-                          height: '100%',
-                        }}
-                      />
-                    ))}
-                  </Swiper>
-                </View>
-              )}
-              <TouchableOpacity
-                onPress={() => picker()}
-                style={{
-                  height: 150,
-                  width: '45%',
-                  borderWidth: 1,
+        <Wrapper behavior="padding" style={{flex: 1}}>
+          <ScrollView>
+            <View style={{marginTop: 20, paddingHorizontal: 15}}>
+              <View style={{flexDirection: 'row'}}>
+                {img.length > 0 && (
+                  <View style={{width: 150, marginRight: 10, height: 150}}>
+                    <Swiper
+                      showsPagination={true}
+                      key={img.length}
+                      paginationStyle={{bottom: 10}}
+                      activeDotColor="#5F95F0"
+                      loop={false}
+                      style={{alignItems: 'center', justifyContent: 'center'}}
+                      showsButtons={false}>
+                      {img.map(item => (
+                        <Image
+                          source={{uri: item.image}}
+                          style={{
+                            borderRadius: 10,
+                            width: '100%',
+                            height: '100%',
+                          }}
+                        />
+                      ))}
+                    </Swiper>
+                  </View>
+                )}
+                <TouchableOpacity
+                  onPress={() => picker()}
+                  style={{
+                    height: 150,
+                    width: '45%',
+                    borderWidth: 1,
 
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  borderRadius: 5,
-                  borderColor: '#5F95F0',
-                }}>
-                {/* {img ? (
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 5,
+                    borderColor: '#5F95F0',
+                  }}>
+                  {/* {img ? (
                   <Image
                     source={{uri: img}}
                     style={{height: 150, width: '100%', borderRadius: 5}}
                   />
                 ) : ( */}
-                <Icon2 name="images-outline" size={50} color={'#5F95F0'} />
-                {/* )} */}
-              </TouchableOpacity>
-            </View>
-            <View style={{marginTop: 30}}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                }}>
-                Name
-              </Text>
-              {/* <TextInput
+                  <Icon2 name="images-outline" size={50} color={'#5F95F0'} />
+                  {/* )} */}
+                </TouchableOpacity>
+              </View>
+              <View style={{marginTop: 30}}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Name
+                </Text>
+                {/* <TextInput
                 value={`${userData.userdata.firstname} ${userData.userdata.lastname}`}
                 placeholderTextColor={'black'}
                 editable={false}
@@ -231,84 +243,124 @@ const Create = ({navigation}) => {
                   borderBottomWidth: 1,
                 }}
               /> */}
-              <TextInput
-                value={name}
-                placeholderTextColor={'black'}
-                // editable={false}
-                onChangeText={text => {
-                  setName(text);
-                }}
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  borderBottomColor: 'grey',
-                  color: 'black',
-                  borderBottomWidth: 1,
-                }}
-              />
-            </View>
+                <TextInput
+                  value={name}
+                  placeholderTextColor={'black'}
+                  // editable={false}
+                  onChangeText={text => {
+                    setName(text);
+                  }}
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    borderBottomColor: 'grey',
+                    color: 'black',
+                    height: 50,
+                    borderBottomWidth: 1,
+                  }}
+                />
+              </View>
 
-            <View style={{marginTop: 30}}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                }}>
-                Zip code
-              </Text>
-              <TextInput
-                value={zip}
-                onChangeText={text => {
-                  setZip(text);
-                  // setEmailErr('');
-                }}
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  borderBottomColor: 'grey',
-                  borderBottomWidth: 1,
-                  color: 'grey',
-                }}
-              />
-            </View>
-            <View style={{marginTop: 30}}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                }}>
-                Post description
-              </Text>
-              <TextInput
-                textAlignVertical="top"
-                value={description}
-                multiline
-                numberOfLines={5}
-                onChangeText={text => {
-                  setDescription(text);
-                  // setEmailErr('');
-                }}
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  borderColor: 'grey',
-                  borderWidth: 1,
-                  marginTop: 10,
-                  borderRadius: 5,
-                  color: 'grey',
-                  height: 100,
-                }}
-              />
-            </View>
-            <View style={{marginTop: 30}}>
-              <Text
-                style={{
-                  fontSize: 12,
-                  color: 'black',
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                }}>
-                Hash Tag
-              </Text>
-              <TextInput
+              <View style={{marginTop: 30}}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Zip code
+                </Text>
+                <TextInput
+                  value={zip}
+                  onChangeText={text => {
+                    setZip(text);
+                    // setEmailErr('');
+                  }}
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    borderBottomColor: 'grey',
+                    borderBottomWidth: 1,
+                    color: 'black',
+                    height: 50,
+                  }}
+                />
+              </View>
+              <View style={{marginTop: 30}}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Post description
+                </Text>
+                <TextInput
+                  textAlignVertical="top"
+                  value={description}
+                  multiline
+                  numberOfLines={5}
+                  onChangeText={text => {
+                    setDescription(text);
+                    // setEmailErr('');
+                  }}
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    borderColor: 'grey',
+                    borderWidth: 1,
+                    marginTop: 10,
+                    paddingHorizontal: 5,
+                    borderRadius: 5,
+                    color: 'black',
+                    height: 100,
+                  }}
+                />
+              </View>
+              <View style={{marginTop: 30}}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Hash Tag
+                </Text>
+                <Tags
+                  initialText=""
+                  textInputProps={{
+                    placeholder: 'Any Tag',
+                    placeholderTextColor: 'grey',
+                  }}
+                  initialTags={[]}
+                  onChangeTags={tags => setHash(tags)}
+                  onTagPress={(index, tagLabel, event, deleted) =>
+                    console.log(
+                      index,
+                      tagLabel,
+                      event,
+                      deleted ? 'deleted' : 'not deleted',
+                    )
+                  }
+                  containerStyle={{justifyContent: 'center'}}
+                  inputStyle={{
+                    // borderWidth: 1,
+                    height: 50,
+                    backgroundColor: 'white',
+                    borderRadius: 5,
+                    color: 'black',
+                    // borderColor: 'black',
+                  }}
+                  renderTag={({
+                    tag,
+                    index,
+                    onPress,
+                    deleteTagOnPress,
+                    readonly,
+                  }) => (
+                    <TouchableOpacity key={`${tag}-${index}`} onPress={onPress}>
+                      <Text>#{tag} </Text>
+                    </TouchableOpacity>
+                  )}
+                />
+                {/* <TextInput
                 value={hash}
                 textAlignVertical="top"
                 multiline
@@ -328,30 +380,31 @@ const Create = ({navigation}) => {
                   borderRadius: 5,
                   height: 100,
                 }}
-              />
-            </View>
-            <TouchableOpacity
-              onPress={() => add()}
-              style={{
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: 50,
-                marginTop: 30,
-                marginBottom: 20,
-                borderRadius: 5,
-                elevation: 2,
-                backgroundColor: '#5F95F0',
-              }}>
-              <Text
+              /> */}
+              </View>
+              <TouchableOpacity
+                onPress={() => add()}
                 style={{
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: 'white',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: 50,
+                  marginTop: 30,
+                  marginBottom: 20,
+                  borderRadius: 5,
+                  elevation: 2,
+                  backgroundColor: '#5F95F0',
                 }}>
-                Add Post
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                    color: 'white',
+                  }}>
+                  Add Post
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </Wrapper>
 
         {/* <ScrollView>
           <Image

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  Dimensions,
   Alert,
   Text,
   ImageBackground,
@@ -16,7 +17,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/AntDesign';
-import Icon2 from 'react-native-vector-icons/Entypo';
+import CityList from '../../../Components/CityList';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
@@ -79,31 +80,16 @@ const Search = ({navigation}) => {
       </Text>
     </TouchableOpacity>
   );
-  const cities = [
-    {name: 'London', detail: 'England, United Kingdom'},
-    {name: 'Dubai', detail: 'Emirates of Dubai, United Arab Emirates'},
-    {name: 'Istanbul', detail: 'Turkey, Europe'},
-    {name: 'New York City', detail: 'New York, United States'},
-    {name: 'Rome', detail: 'Lazio, Italy'},
-  ];
   const renderItems = ({item}) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate('ResturantsNearby')}
-      style={{flexDirection: 'row', marginTop: 20, alignItems: 'center'}}>
-      <Icon2 name="location-pin" size={30} color={'#5F95F0'} />
-      <View style={{marginLeft: 10}}>
-        <Text style={{fontFamily: 'MontserratAlternates-SemiBold'}}>
-          {item.name}
-        </Text>
-        <Text style={{fontSize: 10}}>{item.detail}</Text>
-      </View>
-    </TouchableOpacity>
+    <CityList item={item} navigation={navigation} />
   );
-  // console.log('selected', sel);
+  const height = Dimensions.get('screen').height;
+  console.log('hei', height);
+  console.log('selected', CityAdd);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
-        style={{flex: 1}}
+        style={{height: '100%'}}
         source={require('../../../assets/Images/back.png')}>
         <View
           style={{
@@ -133,7 +119,13 @@ const Search = ({navigation}) => {
         </View>
         {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
         {/* <ScrollView> */}
-        <View style={{marginTop: 20, marginHorizontal: 15}}>
+        <View
+          style={{
+            marginTop: 20,
+            // flex: 0.9,
+            // backgroundColor: 'red',
+            marginHorizontal: 15,
+          }}>
           {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
@@ -183,8 +175,9 @@ const Search = ({navigation}) => {
             <TouchableOpacity
               onPress={() => {
                 if (sel && city) {
+                  const data = {name: city, category: sel};
                   navigation.navigate('ResturantsNearby', {sel, city});
-                  cityAdd(city)(dispatch);
+                  cityAdd(data)(dispatch);
                 } else {
                   Alert.alert('Select Category and City');
                 }
@@ -220,7 +213,17 @@ const Search = ({navigation}) => {
               Nearby me...
             </Text>
           </TouchableOpacity>
-          <FlatList data={cities} renderItem={renderItems} />
+
+          {/* <View
+            style={{
+              height: height > 850 ? '70%' : '78%',
+              backgroundColor: 'red',
+            }}>
+           
+          </View> */}
+        </View>
+        <View style={{height: height > 850 ? '70%' : '65%'}}>
+          <FlatList data={CityAdd} renderItem={renderItems} />
         </View>
       </ImageBackground>
 

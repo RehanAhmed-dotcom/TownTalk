@@ -325,7 +325,7 @@ const Profile = ({navigation}) => {
               <Icon
                 name="thumbs-up"
                 size={20}
-                color={like ? '#5F95F0' : 'grey'}
+                color={like ? '#5F95F0' : 'black'}
               />
               <Text
                 style={{
@@ -354,7 +354,7 @@ const Profile = ({navigation}) => {
               <Icon
                 name="thumbs-down"
                 size={20}
-                color={dislike ? '#5F95F0' : 'grey'}
+                color={dislike ? '#5F95F0' : 'black'}
               />
               <Text
                 style={{

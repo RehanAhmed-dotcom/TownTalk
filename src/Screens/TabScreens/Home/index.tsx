@@ -25,7 +25,7 @@ import {
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
-import {viewAllPost} from '../../../lib/api';
+import {viewAllPost, hashTag} from '../../../lib/api';
 import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
 const Home = ({navigation}) => {
@@ -35,6 +35,7 @@ const Home = ({navigation}) => {
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
   const [specific, setSpecific] = useState({});
+  const [hash, setHash] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const {userData} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
@@ -59,7 +60,18 @@ const Home = ({navigation}) => {
     } catch (error) {}
   }, []);
   const renderItem = ({item}) => (
-    <View
+    <TouchableOpacity
+      onPress={() => {
+        viewAllPost({
+          Auth: userData.token,
+          hashtag: item,
+          latitude,
+          longitude,
+        }).then(res => {
+          // console.log('res', res);
+          setData(res.posts.data);
+        });
+      }}
       style={{
         height: 30,
         backgroundColor: 'white',
@@ -75,7 +87,7 @@ const Home = ({navigation}) => {
       <Text style={{color: 'black', fontFamily: 'MontserratAlternates-Medium'}}>
         #{item}
       </Text>
-    </View>
+    </TouchableOpacity>
   );
   const alter = () => {
     console.log('alter called');
@@ -140,6 +152,10 @@ const Home = ({navigation}) => {
   }, [latitude, change]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      hashTag({Auth: userData.token}).then(res => {
+        console.log('res of hash', res);
+        setHash(res.hashtags);
+      });
       viewAllPost({Auth: userData.token, latitude, longitude}).then(res => {
         // console.log('res', res);
         setData(res.posts.data);
@@ -398,9 +414,15 @@ const Home = ({navigation}) => {
             </View>
           ))}
         </View> */}
-          <FlatList horizontal data={arr} renderItem={renderItem} />
+          <FlatList horizontal data={hash} renderItem={renderItem} />
           <ScrollView>
-            <View style={{marginTop: 10, width: '100%', height: hp(74)}}>
+            <View
+              style={{
+                marginTop: 10,
+                width: '100%',
+                paddingBottom: 50,
+                height: hp(Platform.OS == 'ios' ? 75 : 80),
+              }}>
               <FlatList data={datas} renderItem={renderItem1} />
             </View>
           </ScrollView>

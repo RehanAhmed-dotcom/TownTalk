@@ -166,6 +166,24 @@ const viewAllPost = payload => {
       console.log('in add post', e);
     });
 };
+const hashTag = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/hashtag-list`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in hash tag', e);
+    });
+};
 const likeDislike = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/like-dislike`;
@@ -284,6 +302,7 @@ export {
   verify,
   otp,
   resetPassword,
+  hashTag,
   addPost,
   viewAllPost,
   likeDislike,

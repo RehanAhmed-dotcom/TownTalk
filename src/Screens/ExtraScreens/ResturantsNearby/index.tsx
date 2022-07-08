@@ -21,6 +21,7 @@ import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Hotel from '../../../Components/Hotel';
 import {config} from '../../../../config';
+import MyModal from '../../../Components/MyModal';
 const ResturantsNearby = ({
   navigation,
   route,
@@ -31,6 +32,7 @@ const ResturantsNearby = ({
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
   const [location, setLocation] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const {sel} = route.params;
   const city = route?.params?.city;
   const [list, setList] = useState([]);
@@ -60,10 +62,14 @@ const ResturantsNearby = ({
       .then(response => response.json())
       .then(result => {
         setList(result.results);
+        setShowModal(false);
         // console.log('results', result);
       })
       // .then(result => this.setState({restaurantList: result}))
-      .catch(e => console.log('err', e));
+      .catch(e => {
+        console.log('err', e);
+        setShowModal(false);
+      });
   };
   const handleCitySearch = (city: String) => {
     Geocoder.from(city)
@@ -72,7 +78,10 @@ const ResturantsNearby = ({
         var location = json.results[0].geometry.location;
         handleRestaurantSearch(location.lat, location.lng);
       })
-      .catch(error => console.warn(error));
+      .catch(error => {
+        console.warn(error);
+        setShowModal(false);
+      });
   };
   const cuRRentlocation = () => {
     Geolocation.getCurrentPosition(
@@ -106,6 +115,7 @@ const ResturantsNearby = ({
   };
   useEffect(() => {
     // handleAddress('solo');
+    setShowModal(true);
     Geocoder.init(config);
 
     Platform.OS == 'ios'
@@ -121,7 +131,9 @@ const ResturantsNearby = ({
   // console.log('firsts', JSON.stringify(list[0]));
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ImageBackground source={require('../../../assets/Images/back.png')}>
+      <ImageBackground
+        style={{flex: 1}}
+        source={require('../../../assets/Images/back.png')}>
         <View
           style={{
             height: 80,
@@ -151,7 +163,7 @@ const ResturantsNearby = ({
         </View>
         {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
         {/* <ScrollView> */}
-        <View style={{marginTop: 0, marginHorizontal: 15}}>
+        <View style={{marginHorizontal: 15}}>
           {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
@@ -172,17 +184,19 @@ const ResturantsNearby = ({
           ))}
         </View> */}
           {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-          <ScrollView>
-            <View style={{marginTop: 20, marginBottom: 120}}>
-              <FlatList data={list} renderItem={renderItem1} />
-            </View>
-          </ScrollView>
+          {/* <ScrollView> */}
+          <View style={{marginTop: 0, height: '93%', marginBottom: 10}}>
+            <FlatList data={list} renderItem={renderItem1} />
+          </View>
+
+          {/* </ScrollView> */}
         </View>
       </ImageBackground>
 
       {/* </ScrollView> */}
 
       {/* <Text>Home</Text> */}
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

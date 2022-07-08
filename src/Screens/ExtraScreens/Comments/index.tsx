@@ -175,7 +175,7 @@ const Comments = ({navigation, route}) => {
           }}>
           <TextInput
             placeholder={'Add your comment'}
-            placeholderTextColor={'#ccc'}
+            placeholderTextColor={'grey'}
             value={comment}
             onChangeText={text => {
               setComment(text);
@@ -184,8 +184,9 @@ const Comments = ({navigation, route}) => {
               width: '80%',
               height: 50,
               borderRadius: 30,
+              color: 'black',
               paddingHorizontal: 10,
-              backgroundColor: '#717F8E',
+              backgroundColor: '#ccc',
             }}
           />
           <TouchableOpacity onPress={() => send()} style={{marginLeft: 10}}>
