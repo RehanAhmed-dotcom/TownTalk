@@ -32,6 +32,7 @@ const Home = ({navigation}) => {
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
+  const [select, setSelect] = useState('');
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
   const [specific, setSpecific] = useState({});
@@ -40,6 +41,7 @@ const Home = ({navigation}) => {
   const {userData} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [list, setList] = useState([]);
+  // console.log('datas', datas);
   const _usersList = useCallback(async () => {
     try {
       // setLoading(true);
@@ -51,7 +53,7 @@ const Home = ({navigation}) => {
           dataSnapshot.forEach(child => {
             users.push(child.val());
           });
-          console.log('users', users);
+          // console.log('users', users);
           setList(users.reverse());
           // setLoading(false);
 
@@ -62,19 +64,24 @@ const Home = ({navigation}) => {
   const renderItem = ({item}) => (
     <TouchableOpacity
       onPress={() => {
+        setSelect(item);
         viewAllPost({
           Auth: userData.token,
           hashtag: item,
           latitude,
           longitude,
-        }).then(res => {
-          // console.log('res', res);
-          setData(res.posts.data);
-        });
+        })
+          .then(res => {
+            // console.log('res', res);
+            setData(res.posts.data);
+          })
+          .catch(err => {
+            console.log('err in home', err.response.data);
+          });
       }}
       style={{
         height: 30,
-        backgroundColor: 'white',
+        backgroundColor: select == item ? '#5F95F0' : 'white',
         marginRight: 10,
         marginLeft: 3,
         marginVertical: 3,
@@ -84,8 +91,12 @@ const Home = ({navigation}) => {
         minWidth: 100,
         borderRadius: 5,
       }}>
-      <Text style={{color: 'black', fontFamily: 'MontserratAlternates-Medium'}}>
-        #{item}
+      <Text
+        style={{
+          color: select == item ? 'white' : 'black',
+          fontFamily: 'MontserratAlternates-Medium',
+        }}>
+        {`${item.substring(0, 1) != '#' ? '#' : ''}${item}`}
       </Text>
     </TouchableOpacity>
   );
@@ -139,27 +150,40 @@ const Home = ({navigation}) => {
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
           cuRRentlocation();
-          console.log('res', res);
+          // console.log('res', res);
         })
       : requestLocationPermission();
   }, []);
   useEffect(() => {
-    _usersList();
-    viewAllPost({Auth: userData.token, latitude, longitude}).then(res => {
-      // console.log('res', res);
-      setData(res.posts.data);
+    hashTag({Auth: userData.token, latitude, longitude}).then(res => {
+      // console.log('res of hash', res);
+      setHash(res.hashtags);
     });
-  }, [latitude, change]);
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      hashTag({Auth: userData.token}).then(res => {
-        console.log('res of hash', res);
-        setHash(res.hashtags);
-      });
-      viewAllPost({Auth: userData.token, latitude, longitude}).then(res => {
+    _usersList();
+    viewAllPost({Auth: userData.token, latitude, longitude})
+      .then(res => {
         // console.log('res', res);
         setData(res.posts.data);
+      })
+      .catch(err => {
+        console.log('err in home', err.response.data);
       });
+  }, [latitude, longitude, change]);
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setSelect('');
+      hashTag({Auth: userData.token, latitude, longitude}).then(res => {
+        // console.log('res of hash', res);
+        setHash(res.hashtags);
+      });
+      viewAllPost({Auth: userData.token, latitude, longitude})
+        .then(res => {
+          // console.log('res', res);
+          setData(res.posts.data);
+        })
+        .catch(err => {
+          console.log('err in home', err.response.data);
+        });
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
@@ -244,7 +268,7 @@ const Home = ({navigation}) => {
     </TouchableOpacity>
   );
   const MyModal = (show: boolean) => {
-    //   console.log('show', show);
+    console.log('show', latitude, longitude);
     return (
       <Modal animationType="slide" transparent={true} visible={show}>
         <View
@@ -371,7 +395,7 @@ const Home = ({navigation}) => {
                 fontFamily: 'MontserratAlternates-SemiBold',
                 color: '#5F95F0',
               }}>
-              {`${userData.userdata.firstname} ${userData.userdata.lastname}`}
+              {`${userData?.userdata?.firstname} ${userData?.userdata?.lastname}`}
             </Text>
             <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               {location}
@@ -419,8 +443,9 @@ const Home = ({navigation}) => {
             <View
               style={{
                 marginTop: 10,
+                // flex: 1,
                 width: '100%',
-                paddingBottom: 50,
+                paddingBottom: 0,
                 height: hp(Platform.OS == 'ios' ? 75 : 80),
               }}>
               <FlatList data={datas} renderItem={renderItem1} />

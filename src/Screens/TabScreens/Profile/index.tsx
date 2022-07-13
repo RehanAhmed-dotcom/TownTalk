@@ -272,7 +272,7 @@ const Profile = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {userData.userdata.firstname} {userData.userdata.lastname}
+              {userData?.userdata?.firstname} {userData?.userdata?.lastname}
             </Text>
             <Text
               style={{fontSize: 14, fontFamily: 'MontserratAlternates-Medium'}}>

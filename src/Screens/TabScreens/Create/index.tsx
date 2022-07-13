@@ -31,7 +31,9 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Swiper from 'react-native-swiper';
 const Create = ({navigation}) => {
   const {userData} = useSelector(({USER}) => USER);
-  const [name, setName] = useState('');
+  const [name, setName] = useState(
+    `${userData?.userdata?.firstname} ${userData?.userdata?.lastname}`,
+  );
   const [img, setImg] = useState([]);
   const [zip, setZip] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -57,40 +59,42 @@ const Create = ({navigation}) => {
   };
   // console.log('has', hash);
   const add = () => {
-    if (zip && latitude && description && name && img) {
-      setShowModal(true);
-      const data = new FormData();
-      hash.forEach(item => {
-        data.append('hashtags[]', item);
-      });
-      // data.append('hashtags', hash);
-      data.append('zipcode', zip);
-      data.append('latitude', latitude);
-      data.append('longitude', longitude);
-      data.append('description', description);
-      // data.append('title', name);
-      data.append('media_type', 'image');
-      img.forEach(item => {
-        data.append('media[]', {
-          uri: item.image,
-          type: 'image/jpeg',
-          name: `image${Math.random()}.jpg`,
+    if (zip && latitude && description && name && img.length > 0) {
+      if (hash.length > 0) {
+        setShowModal(true);
+        const data = new FormData();
+        hash.forEach(item => {
+          data.append('hashtags[]', item);
         });
-      });
+        data.append('zipcode', zip);
+        data.append('latitude', latitude);
+        data.append('longitude', longitude);
+        data.append('description', description);
+        data.append('title', name);
+        data.append('media_type', 'image');
+        img.forEach(item => {
+          data.append('media[]', {
+            uri: item.image,
+            type: 'image/jpeg',
+            name: `image${Math.random()}.jpg`,
+          });
+        });
 
-      data.append('title', name);
-      addPost({Auth: userData.token}, data)
-        .then(res => {
-          setShowModal(false);
-          console.log('res', res);
-          if (res.status == 'success') {
-            navigation.goBack();
-          }
-        })
-        .catch(err => {
-          setShowModal(false);
-          console.log('err', err);
-        });
+        addPost({Auth: userData.token}, data)
+          .then(res => {
+            setShowModal(false);
+            console.log('res', res);
+            if (res.status == 'success') {
+              navigation.goBack();
+            }
+          })
+          .catch(err => {
+            setShowModal(false);
+            console.log('err', err);
+          });
+      } else {
+        Alert.alert("Enter Hash tag then press 'space'");
+      }
     } else {
       Alert.alert('All Fields required');
     }
@@ -116,6 +120,7 @@ const Create = ({navigation}) => {
       },
     );
   };
+  console.log('lat', latitude, longitude);
   const requestLocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -129,6 +134,11 @@ const Create = ({navigation}) => {
     }
   };
   useEffect(() => {
+    setImg([]);
+    // setName('');
+    setZip('');
+    setDescription('');
+    setHash([]);
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
           cuRRentlocation();
@@ -150,7 +160,7 @@ const Create = ({navigation}) => {
             flexDirection: 'row',
             alignItems: 'center',
             paddingHorizontal: 15,
-            // justifyContent: 'space-between',
+            justifyContent: 'space-between',
           }}>
           {/* <TouchableOpacity>
             <Icon1 name="left" size={20} />
@@ -168,6 +178,27 @@ const Create = ({navigation}) => {
               Chicago, IL 60611, USA
             </Text> */}
           </View>
+          <TouchableOpacity
+            onPress={() => add()}
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 50,
+              // marginTop: 30,
+              paddingHorizontal: 20,
+
+              borderRadius: 5,
+              elevation: 2,
+              backgroundColor: '#5F95F0',
+            }}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                color: 'white',
+              }}>
+              Add Post
+            </Text>
+          </TouchableOpacity>
         </View>
         <Wrapper behavior="padding" style={{flex: 1}}>
           <ScrollView>
@@ -246,7 +277,7 @@ const Create = ({navigation}) => {
                 <TextInput
                   value={name}
                   placeholderTextColor={'black'}
-                  // editable={false}
+                  editable={false}
                   onChangeText={text => {
                     setName(text);
                   }}
@@ -314,7 +345,7 @@ const Create = ({navigation}) => {
                   }}
                 />
               </View>
-              <View style={{marginTop: 30}}>
+              <View style={{marginTop: 30, marginBottom: 20}}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -327,6 +358,7 @@ const Create = ({navigation}) => {
                   initialText=""
                   textInputProps={{
                     placeholder: 'Any Tag',
+                    autoCapitalize: 'none',
                     placeholderTextColor: 'grey',
                   }}
                   initialTags={[]}
@@ -356,7 +388,9 @@ const Create = ({navigation}) => {
                     readonly,
                   }) => (
                     <TouchableOpacity key={`${tag}-${index}`} onPress={onPress}>
-                      <Text>#{tag} </Text>
+                      <Text>
+                        {`${tag.substring(0, 1) != '#' ? '#' : ''}${tag}`}{' '}
+                      </Text>
                     </TouchableOpacity>
                   )}
                 />
@@ -382,7 +416,7 @@ const Create = ({navigation}) => {
                 }}
               /> */}
               </View>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => add()}
                 style={{
                   alignItems: 'center',
@@ -401,7 +435,7 @@ const Create = ({navigation}) => {
                   }}>
                   Add Post
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </ScrollView>
         </Wrapper>

@@ -75,9 +75,15 @@ const Signup = ({navigation}: {navigation: any}) => {
           <>
             <TouchableOpacity
               onPress={() => picker()}
-              style={{marginTop: 70, alignItems: 'center', height: 120}}>
+              style={{
+                marginTop: 70,
+                alignItems: 'center',
+                height: 100,
+                // width: 100,
+              }}>
+              {/* <View style={{height: 100, width: 100, backgroundColor: 'red'}}> */}
               <Image
-                resizeMode="contain"
+                resizeMode="cover"
                 source={
                   image
                     ? {uri: image}
@@ -85,6 +91,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                 }
                 style={{height: 100, borderRadius: 60, width: 100}}
               />
+              {/* </View> */}
             </TouchableOpacity>
             <View style={{alignItems: 'center'}}>
               {/* <Text
@@ -195,6 +202,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                 </Text>
                 <TextInput
                   value={email}
+                  autoCapitalize="none"
                   onChangeText={text => {
                     setEmail(text);
                     setEmailErr('');

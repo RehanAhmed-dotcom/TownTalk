@@ -35,8 +35,8 @@ const EditProfile = ({navigation}: {navigation: any}) => {
   const [showModal, setShowModal] = useState(false);
   const [show, setShow] = useState(false);
   const [image, setImage] = useState(userData.userdata.image);
-  const [firstName, setFirstName] = useState(userData.userdata.firstname);
-  const [lastName, setLastName] = useState(userData.userdata.lastname);
+  const [firstName, setFirstName] = useState(userData?.userdata?.firstname);
+  const [lastName, setLastName] = useState(userData?.userdata?.lastname);
   const [zip, setZip] = useState(userData.userdata.zipcode);
   const [mile, setMile] = useState('5 Miles');
   const [miles, setMiles] = useState(

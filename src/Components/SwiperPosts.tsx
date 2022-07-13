@@ -90,7 +90,7 @@ const SwiperPosts = props => {
           // backgroundColor: 'red',
           overflow: 'hidden',
         }}>
-        {item?.hashtag.map(element => (
+        {item?.hashtag?.map(element => (
           <Text
             style={{
               marginRight: 5,

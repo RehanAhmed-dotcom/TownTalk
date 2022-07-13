@@ -154,6 +154,7 @@ const Login = ({navigation}: {navigation: any}) => {
                   </Text>
                   <TextInput
                     value={email}
+                    autoCapitalize="none"
                     onChangeText={text => {
                       setEmail(text);
                       setEmailErr('');
@@ -299,7 +300,7 @@ const Login = ({navigation}: {navigation: any}) => {
                     alignItems: 'center',
                     height: 50,
                     borderRadius: 10,
-                    marginTop: 80,
+                    marginTop: 70,
                     elevation: 3,
                     justifyContent: 'center',
                   }}>

@@ -91,7 +91,7 @@ const Posts = props => {
           // backgroundColor: 'red',
           overflow: 'hidden',
         }}>
-        {item?.hashtag.map(element => (
+        {item?.hashtag?.map(element => (
           <Text
             style={{
               marginRight: 5,
@@ -143,6 +143,7 @@ const Posts = props => {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginTop: 10,
+          // backgroundColor: 'red',
         }}>
         <LikeDislike item={item} press={press} />
         {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -254,6 +255,8 @@ const Posts = props => {
               style={{
                 flexDirection: 'row',
                 marginLeft: 10,
+                // backgroundColor: 'red',
+                // height: '100%',
                 alignItems: 'center',
               }}>
               {/* <Image

@@ -117,7 +117,7 @@ const RestaurantsDetail = ({navigation, route}) => {
               </View>
             </View>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              {item.types.map(element => (
+              {/* {item.types.map(element => (
                 <Text
                   style={{
                     fontSize: 12,
@@ -127,7 +127,7 @@ const RestaurantsDetail = ({navigation, route}) => {
                   }}>
                   {element},{' '}
                 </Text>
-              ))}
+              ))} */}
             </View>
             <View style={{width: 100, marginTop: 10}}>
               <Text

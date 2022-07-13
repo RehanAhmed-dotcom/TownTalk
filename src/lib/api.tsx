@@ -149,7 +149,7 @@ const addPost = (payload, data) => {
     });
 };
 const viewAllPost = payload => {
-  // console.log('data of payload', JSON.stringify(data));
+  console.log('data of payload', payload);
   const request = `/view-post`;
   return axios
     .post(request, payload, {
@@ -164,13 +164,14 @@ const viewAllPost = payload => {
     })
     .catch(e => {
       console.log('in add post', e);
+      throw e;
     });
 };
 const hashTag = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/hashtag-list`;
   return axios
-    .get(request, {
+    .post(request, payload, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',

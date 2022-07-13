@@ -78,6 +78,7 @@ const Email = ({navigation}: {navigation: any}) => {
             </Text>
             <TextInput
               value={email}
+              autoCapitalize="none"
               onChangeText={text => {
                 setEmail(text);
                 setEmailErr('');

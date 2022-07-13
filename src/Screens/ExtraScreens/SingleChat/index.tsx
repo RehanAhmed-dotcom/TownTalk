@@ -34,13 +34,8 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     firstname: item.firstname,
     lastname: item.lastname,
     email: item.email,
-    // fcm_token: fcm_token ? fcm_token : item.fcm_token,
     fcm_token: item.fcm_token,
     image: item.image,
-    // distance: item.distance,
-    // isOn: on ? on : item.message_status,
-    // hours: time.getHours(),
-    // mins: time.getMinutes(),
   };
   const user = {
     id: userData.userdata.id,
@@ -50,10 +45,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     fcm_token: userData.userdata.fcm_token,
     image: userData.userdata.image,
   };
-  const [name, setName] = useState('Olivia Benson');
-
   console.log('item in chat', item);
-  const [zip, setZip] = useState('');
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardStatus('Keyboard Shown');

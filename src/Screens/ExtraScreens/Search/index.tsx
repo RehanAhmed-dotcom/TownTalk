@@ -156,7 +156,7 @@ const Search = ({navigation}) => {
               marginTop: 10,
               alignItems: 'center',
               borderWidth: 1,
-              paddingHorizontal: 10,
+              paddingLeft: 10,
               borderColor: 'black',
             }}>
             <TextInput
@@ -173,6 +173,13 @@ const Search = ({navigation}) => {
               }}
             />
             <TouchableOpacity
+              style={{
+                // backgroundColor: 'red',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 30,
+              }}
               onPress={() => {
                 if (sel && city) {
                   const data = {name: city, category: sel};
