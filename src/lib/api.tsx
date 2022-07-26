@@ -148,6 +148,24 @@ const addPost = (payload, data) => {
       console.log('in add post', e);
     });
 };
+const addgroup = (payload, data) => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/create-group`;
+  return axios
+    .post(request, data, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in add post', e);
+    });
+};
 const viewAllPost = payload => {
   console.log('data of payload', payload);
   const request = `/view-post`;
@@ -164,6 +182,25 @@ const viewAllPost = payload => {
     })
     .catch(e => {
       console.log('in add post', e);
+      throw e;
+    });
+};
+const creategroup = payload => {
+  // console.log('data of payload', payload);
+  const request = `/create-group`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in create group', e);
       throw e;
     });
 };
@@ -257,6 +294,24 @@ const viewComment = payload => {
       console.log('in viewComment', e);
     });
 };
+const getNotification = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/notification-list`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in viewComment', e);
+    });
+};
 const profile = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/profile/${payload.id}`;
@@ -301,6 +356,7 @@ export {
   verifyEmail,
   editProfile,
   verify,
+  getNotification,
   otp,
   resetPassword,
   hashTag,
@@ -310,6 +366,8 @@ export {
   createComment,
   viewComment,
   profile,
+  creategroup,
+  addgroup,
   postDetail,
   likeDislikeProfile,
 };

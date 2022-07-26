@@ -116,14 +116,6 @@ const Home = ({navigation}) => {
       console.warn(err);
     }
   };
-  // const handleAddress = e => {
-  //   // setSelectedAddress(e);
-  //   geocodeByAddress('Rawalpindi')
-  //     .then(results => getLatLng(results[0]))
-  //     .then(({lat, lng}) =>
-  //       console.log('Successfully got latitude and longitude', {lat, lng}),
-  //     );
-  // };
   const cuRRentlocation = () => {
     Geolocation.getCurrentPosition(
       position => {

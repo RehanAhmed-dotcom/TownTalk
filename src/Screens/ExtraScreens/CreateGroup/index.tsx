@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -7,6 +7,8 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Platform,
+  PermissionsAndroid,
   SafeAreaView,
   Text,
   ImageBackground,
@@ -16,16 +18,22 @@ import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
+import {addgroup} from '../../../lib/api';
 import Icon1 from 'react-native-vector-icons/AntDesign';
+import {useSelector} from 'react-redux';
+import Geolocation from 'react-native-geolocation-service';
 import Hotel from '../../../Components/Hotel';
 import ImagePicker from 'react-native-image-crop-picker';
 import Swiper from 'react-native-swiper';
 const CreateGroup = ({navigation}) => {
-  const [name, setName] = useState('Olivia Benson');
+  const [name, setName] = useState('');
   const [img, setImg] = useState('');
   const [zip, setZip] = useState('');
   const [show, setShow] = useState(false);
   const [status, setStatus] = useState(false);
+  const [latitude, setlatitude] = useState(0);
+  const [longitude, setlongitude] = useState(0);
+  const {userData} = useSelector(({USER}) => USER);
   const picker = () => {
     ImagePicker.openPicker({
       // multiple: true,
@@ -40,6 +48,49 @@ const CreateGroup = ({navigation}) => {
       // setImgErr('');
     });
   };
+  // console.log('show', status);
+  const cuRRentlocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        setlatitude(position.coords.latitude);
+        setlongitude(position.coords.longitude);
+        // getPlace(position.coords.latitude, position.coords.longitude);
+        // getPlace('47.751076', '-120.740135');
+        console.log('users location', position.coords.longitude);
+
+        console.log('users location', position.coords.latitude);
+      },
+      error => {
+        console.log('error in loc', error);
+      },
+      {
+        enableHighAccuracy: true,
+        // timeout: 15000,
+        // maximumAge: 10000
+      },
+    );
+  };
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        cuRRentlocation();
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  useEffect(() => {
+    // handleAddress('solo');
+    Platform.OS == 'ios'
+      ? Geolocation.requestAuthorization('always').then(res => {
+          cuRRentlocation();
+          // console.log('res', res);
+        })
+      : requestLocationPermission();
+  }, []);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -144,11 +195,10 @@ const CreateGroup = ({navigation}) => {
                 value={name}
                 placeholderTextColor={'grey'}
                 editable={false}
-                // onChangeText={text => {
-
-                //   setEmail(text);
-                //   setEmailErr('');
-                // }}
+                onChangeText={text => {
+                  setName(text);
+                  // setEmailErr('');
+                }}
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   borderBottomColor: 'grey',
@@ -253,13 +303,13 @@ const CreateGroup = ({navigation}) => {
                 Hash Tag
               </Text>
               <TextInput
-                value={zip}
+                // value={zip}
                 multiline
                 numberOfLines={5}
-                onChangeText={text => {
-                  setZip(text);
-                  // setEmailErr('');
-                }}
+                // onChangeText={text => {
+                //   setZip(text);
+                //   // setEmailErr('');
+                // }}
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   borderColor: 'grey',
@@ -271,6 +321,22 @@ const CreateGroup = ({navigation}) => {
               />
             </View>
             <TouchableOpacity
+              onPress={() => {
+                const data = new FormData();
+                data.append('title', name);
+                data.append('status', status ? 'private' : 'public');
+                data.append('description', zip);
+                data.append('latitude', latitude);
+                data.append('longitude', longitude);
+                data.append('image', {
+                  uri: img,
+                  type: 'image/jpeg',
+                  name: `image${Math.random()}.jpg`,
+                });
+                addgroup({Auth: userData.token}, data).then(res => {
+                  console.log('res', res);
+                });
+              }}
               style={{
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -291,230 +357,6 @@ const CreateGroup = ({navigation}) => {
             </TouchableOpacity>
           </View>
         </ScrollView>
-
-        {/* <ScrollView>
-          <Image
-            source={require('../../../assets/Images/restaurants.jpg')}
-            style={{height: 200, width: '100%'}}
-          />
-          <View
-            style={{
-              marginTop: 0,
-              backgroundColor: 'white',
-              elevation: 3,
-              paddingHorizontal: 10,
-              borderRadius: 5,
-              marginHorizontal: 15,
-            }}>
-            <View style={{width: '100%', marginTop: 10, alignItems: 'center'}}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: '#5F95F0',
-                }}>
-                Pearl Continental
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: '#5F95F0',
-                }}>
-                Hotel Rawalpindi
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: 20,
-              }}>
-              <View>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontFamily: 'MontserratAlternates-Medium',
-                  }}>
-                  PKR 4500
-                </Text>
-              </View>
-              <View style={{alignItems: 'center'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{opacity: 0.5, marginLeft: 1}}
-                  />
-                </View>
-              </View>
-            </View>
-            <View style={{width: '100%', marginTop: 10, alignItems: 'center'}}>
-              <TouchableOpacity
-                style={{
-                  width: 200,
-                  height: 40,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#5F95F0',
-                  marginTop: 10,
-                  borderRadius: 5,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 10,
-                    color: 'white',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  View Deal
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <Text
-              style={{
-                fontSize: 16,
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              About
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Pearl Continental Hotels & Resorts is the largest chain of
-              five-star hotels in Pakistan with properties in Karachi, Lahore,
-              Rawalpindi, Peshawar, Gawadar, Bhurban, Muzaffarabad and Malam
-              Jabba
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Amneties
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                alignItems: 'center',
-              }}>
-              <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/drink.png')}
-                style={{width: 15, height: 15}}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginLeft: 10,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Food & Drinks
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                alignItems: 'center',
-              }}>
-              <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/family.png')}
-                style={{width: 15, height: 15}}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginLeft: 10,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Family
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                alignItems: 'center',
-              }}>
-              <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/clean.png')}
-                style={{width: 15, height: 15}}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginLeft: 10,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Cleaning Services
-              </Text>
-            </View>
-            <View style={{height: 30}} />
-          </View>
-          <View style={{marginTop: 20, paddingHorizontal: 15}}>
-            <Text style={{fontFamily: 'MontserratAlternates-SemiBold'}}>
-              Restaurants address
-            </Text>
-            <Text
-              style={{
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Sadar Rawalpindi, Pakistan
-            </Text>
-            <View
-              style={{
-                height: 200,
-                marginBottom: 10,
-                marginTop: 20,
-                borderRadius: 10,
-              }}>
-              <MapView
-                style={{flex: 1, borderRadius: 10}}
-                initialRegion={{
-                  latitude: 37.78825,
-                  longitude: -122.4324,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
-                }}
-              />
-            </View>
-          </View>
-        </ScrollView> */}
       </ImageBackground>
     </SafeAreaView>
   );
