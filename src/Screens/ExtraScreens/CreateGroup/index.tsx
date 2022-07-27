@@ -6,6 +6,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Alert,
   Image,
   Platform,
   PermissionsAndroid,
@@ -13,18 +14,14 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
-import MapView from 'react-native-maps';
-import LikeDislike from '../../../Components/LikeDislike';
-import Comments from '../../../Components/Comments';
+import Tags from 'react-native-tags';
+import MyModal from '../../../Components/MyModal';
 import Icon2 from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/Entypo';
 import {addgroup} from '../../../lib/api';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import {useSelector} from 'react-redux';
 import Geolocation from 'react-native-geolocation-service';
-import Hotel from '../../../Components/Hotel';
 import ImagePicker from 'react-native-image-crop-picker';
-import Swiper from 'react-native-swiper';
 const CreateGroup = ({navigation}) => {
   const [name, setName] = useState('');
   const [img, setImg] = useState('');
@@ -32,8 +29,10 @@ const CreateGroup = ({navigation}) => {
   const [show, setShow] = useState(false);
   const [status, setStatus] = useState(false);
   const [latitude, setlatitude] = useState(0);
+  const [showModal, setShowModal] = useState(false);
   const [longitude, setlongitude] = useState(0);
   const {userData} = useSelector(({USER}) => USER);
+  const [hash, setHash] = useState([]);
   const picker = () => {
     ImagePicker.openPicker({
       // multiple: true,
@@ -194,7 +193,8 @@ const CreateGroup = ({navigation}) => {
               <TextInput
                 value={name}
                 placeholderTextColor={'grey'}
-                editable={false}
+                // placeholder={'abc'}
+                // editable={false}
                 onChangeText={text => {
                   setName(text);
                   // setEmailErr('');
@@ -203,6 +203,7 @@ const CreateGroup = ({navigation}) => {
                   fontFamily: 'MontserratAlternates-Regular',
                   borderBottomColor: 'grey',
                   // color: 'black',
+                  // backgroundColor: 'red',
                   borderBottomWidth: 1,
                 }}
               />
@@ -279,6 +280,7 @@ const CreateGroup = ({navigation}) => {
                 value={zip}
                 multiline
                 numberOfLines={5}
+                textAlignVertical="top"
                 onChangeText={text => {
                   setZip(text);
                   // setEmailErr('');
@@ -289,11 +291,12 @@ const CreateGroup = ({navigation}) => {
                   borderWidth: 1,
                   marginTop: 10,
                   borderRadius: 5,
+                  // backgroundColor: 'red',
                   height: 100,
                 }}
               />
             </View>
-            <View style={{marginTop: 30}}>
+            {/* <View style={{marginTop: 30}}>
               <Text
                 style={{
                   fontSize: 12,
@@ -302,40 +305,83 @@ const CreateGroup = ({navigation}) => {
                 }}>
                 Hash Tag
               </Text>
-              <TextInput
-                // value={zip}
-                multiline
-                numberOfLines={5}
-                // onChangeText={text => {
-                //   setZip(text);
-                //   // setEmailErr('');
-                // }}
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  borderColor: 'grey',
-                  marginTop: 10,
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  height: 100,
+              <Tags
+                initialText=""
+                textInputProps={{
+                  placeholder: 'Any Tag',
+                  autoCapitalize: 'none',
+                  placeholderTextColor: 'grey',
                 }}
+                initialTags={[]}
+                onChangeTags={tags => setHash(tags)}
+                onTagPress={(index, tagLabel, event, deleted) =>
+                  console.log(
+                    index,
+                    tagLabel,
+                    event,
+                    deleted ? 'deleted' : 'not deleted',
+                  )
+                }
+                containerStyle={{justifyContent: 'center'}}
+                inputStyle={{
+                  // borderWidth: 1,
+                  height: 50,
+                  backgroundColor: 'white',
+                  borderRadius: 5,
+                  color: 'black',
+                  // borderColor: 'black',
+                }}
+                renderTag={({
+                  tag,
+                  index,
+                  onPress,
+                  deleteTagOnPress,
+                  readonly,
+                }) => (
+                  <TouchableOpacity key={`${tag}-${index}`} onPress={onPress}>
+                    <Text>
+                      {`${tag.substring(0, 1) != '#' ? '#' : ''}${tag}`}{' '}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               />
-            </View>
+             
+            </View> */}
             <TouchableOpacity
               onPress={() => {
-                const data = new FormData();
-                data.append('title', name);
-                data.append('status', status ? 'private' : 'public');
-                data.append('description', zip);
-                data.append('latitude', latitude);
-                data.append('longitude', longitude);
-                data.append('image', {
-                  uri: img,
-                  type: 'image/jpeg',
-                  name: `image${Math.random()}.jpg`,
-                });
-                addgroup({Auth: userData.token}, data).then(res => {
-                  console.log('res', res);
-                });
+                if (name && img && zip) {
+                  // if (hash.length > 0) {
+                  setShowModal(true);
+                  const data = new FormData();
+                  data.append('title', name);
+                  data.append('status', status ? 'private' : 'public');
+                  data.append('description', zip);
+                  data.append('latitude', latitude);
+                  data.append('longitude', longitude);
+                  // hash.forEach(item => {
+                  //   data.append('hashtags[]', item);
+                  // });
+                  data.append('image', {
+                    uri: img,
+                    type: 'image/jpeg',
+                    name: `image${Math.random()}.jpg`,
+                  });
+                  addgroup({Auth: userData.token}, data)
+                    .then(res => {
+                      console.log('res', res);
+                      setShowModal(false);
+                      navigation.goBack();
+                    })
+                    .catch(err => {
+                      console.log('err', err);
+                      setShowModal(false);
+                    });
+                  // } else {
+                  //   Alert.alert("Enter Hash tag then press 'space'");
+                  // }
+                } else {
+                  Alert.alert('All fields required');
+                }
               }}
               style={{
                 alignItems: 'center',
@@ -358,6 +404,7 @@ const CreateGroup = ({navigation}) => {
           </View>
         </ScrollView>
       </ImageBackground>
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

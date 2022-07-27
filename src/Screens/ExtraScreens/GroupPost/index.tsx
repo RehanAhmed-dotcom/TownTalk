@@ -29,7 +29,8 @@ import Hotel from '../../../Components/Hotel';
 import {useSelector} from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import Swiper from 'react-native-swiper';
-const Create = ({navigation}) => {
+const GroupPost = ({navigation, route}) => {
+  const {item} = route.params;
   const {userData} = useSelector(({USER}) => USER);
   const [name, setName] = useState(
     `${userData?.userdata?.firstname} ${userData?.userdata?.lastname}`,
@@ -72,6 +73,7 @@ const Create = ({navigation}) => {
         data.append('description', description);
         data.append('title', name);
         data.append('media_type', 'image');
+        data.append('group_id');
         img.forEach(item => {
           data.append('media[]', {
             uri: item.image,
@@ -403,4 +405,4 @@ const Create = ({navigation}) => {
     </SafeAreaView>
   );
 };
-export default Create;
+export default GroupPost;

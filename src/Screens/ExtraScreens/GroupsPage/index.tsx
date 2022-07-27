@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -16,21 +16,24 @@ import {
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import MapView from 'react-native-maps';
+import {viewGroup} from '../../../lib/api';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import Icon2 from 'react-native-vector-icons/MaterialIcons';
 import Icon from 'react-native-vector-icons/Entypo';
-
+import {useSelector} from 'react-redux';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Hotel from '../../../Components/Hotel';
 const GroupPage = ({navigation}) => {
   const arr = [
-    {name: 'Food', members: '70 members'},
+    {},
     {name: 'Art', members: '70 members'},
     {name: 'Gaming', members: '70 members'},
     {name: 'Art', members: '70 members'},
     {name: 'Gaming', members: '70 members'},
   ];
+  const {userData} = useSelector(({USER}) => USER);
+  const [groups, setGroups] = useState([]);
   const render = ({item, index}) => (
     <View>
       {index == 0 ? (
@@ -70,7 +73,7 @@ const GroupPage = ({navigation}) => {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          onPress={() => navigation.navigate('GroupDetails')}
+          onPress={() => navigation.navigate('GroupDetails', {item})}
           style={{
             height: 200,
             marginTop: 20,
@@ -82,7 +85,11 @@ const GroupPage = ({navigation}) => {
             backgroundColor: '#5F95F0',
           }}>
           <Image
-            source={require('../../../assets/Images/girl.jpg')}
+            source={
+              item.image
+                ? {uri: item.image}
+                : require('../../../assets/Images/girl.jpg')
+            }
             style={{height: 80, width: 80, borderRadius: 40}}
           />
           <Text
@@ -92,19 +99,34 @@ const GroupPage = ({navigation}) => {
               fontSize: 16,
               fontFamily: 'MontserratAlternates-SemiBold',
             }}>
-            {item.name}
+            {item.title}
           </Text>
           <Text
             style={{
               color: 'white',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            {item.members}
+            {item.member_count} members
           </Text>
         </TouchableOpacity>
       )}
     </View>
   );
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      viewGroup({Auth: userData.token})
+        .then(res => {
+          // console.log('res of group', res.data.data);
+          setGroups([{}, ...res.data.data]);
+        })
+        .catch(err => {
+          console.log('err', err);
+        });
+    });
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+  console.log('group', groups);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -150,7 +172,7 @@ const GroupPage = ({navigation}) => {
           /> */}
         </View>
         <View style={{flex: 1, paddingHorizontal: 15}}>
-          <FlatList data={arr} numColumns={2} key={2} renderItem={render} />
+          <FlatList data={groups} numColumns={2} key={2} renderItem={render} />
         </View>
         {/* <Text>abc</Text> */}
       </ImageBackground>

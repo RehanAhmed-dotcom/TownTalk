@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 
 import {
   View,
@@ -24,7 +24,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Hotel from '../../../Components/Hotel';
-const GroupDetails = ({navigation}) => {
+const GroupDetails = ({navigation, route}) => {
+  const {item} = route.params;
   const arr = [
     {name: 'Food', members: '70 members'},
     {name: 'Art', members: '70 members'},
@@ -224,17 +225,20 @@ const GroupDetails = ({navigation}) => {
                 Group Detail
               </Text>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Icon2 name="locked" size={10} color={'#5F95F0'} />
+                {item.status === 'private' && (
+                  <Icon2 name="locked" size={10} color={'#5F95F0'} />
+                )}
                 <Text style={{fontSize: 12, color: 'black', marginLeft: 5}}>
-                  Private Group
+                  {item.status == 'private' ? 'Private' : 'Public'} Group
                 </Text>
               </View>
             </View>
           </View>
-          <TouchableOpacity onPress={() => setShow(!show)}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('GroupPost', {item})}>
             <Image
-              source={require('../../../assets/Images/filter.png')}
-              style={{height: 20, width: 20}}
+              source={require('../../../assets/Images/add.png')}
+              style={{height: 30, width: 30}}
             />
           </TouchableOpacity>
 
@@ -249,7 +253,12 @@ const GroupDetails = ({navigation}) => {
           <View style={{flex: 1}}>
             <View style={{height: 250, width: '100%'}}>
               <Image
-                source={require('../../../assets/Images/restaurants.jpg')}
+                resizeMode="cover"
+                source={
+                  item.image
+                    ? {uri: item.image}
+                    : require('../../../assets/Images/restaurants.jpg')
+                }
                 style={{height: 250, width: '100%'}}
               />
               <View
@@ -273,7 +282,7 @@ const GroupDetails = ({navigation}) => {
                         fontFamily: 'MontserratAlternates-SemiBold',
                         color: 'white',
                       }}>
-                      Arts
+                      {item.title}
                     </Text>
                     <View
                       style={{
@@ -373,7 +382,7 @@ const GroupDetails = ({navigation}) => {
                         fontFamily: 'MontserratAlternates-Medium',
                         color: 'white',
                       }}>
-                      80 Members
+                      {item.member_count} Members
                     </Text>
                   </View>
                   {/* <Text

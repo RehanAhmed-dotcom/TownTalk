@@ -25,6 +25,7 @@ import NewPassword from '../Screens/ExtraScreens/NewPassword';
 import CodePhone from '../Screens/Auth/CodePhone';
 import CreateGroup from '../Screens/ExtraScreens/CreateGroup';
 import Splash from '../Screens/Auth/Splash';
+import GroupPost from '../Screens/ExtraScreens/GroupPost';
 import EmailVerification from '../Screens/Auth/EmailVerification';
 // import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 const Stack = createStackNavigator();
@@ -61,6 +62,7 @@ const Root = () => {
             <Stack.Screen name="PostDetails" component={PostDetails} />
             <Stack.Screen name="GroupDetails" component={GroupDetails} />
             <Stack.Screen name="Comments" component={Comments} />
+            <Stack.Screen name="GroupPost" component={GroupPost} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen
