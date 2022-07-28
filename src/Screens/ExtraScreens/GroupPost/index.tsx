@@ -73,7 +73,7 @@ const GroupPost = ({navigation, route}) => {
         data.append('description', description);
         data.append('title', name);
         data.append('media_type', 'image');
-        data.append('group_id');
+        data.append('group_id', item.id);
         img.forEach(item => {
           data.append('media[]', {
             uri: item.image,
@@ -167,10 +167,22 @@ const GroupPost = ({navigation, route}) => {
           {/* <TouchableOpacity>
             <Icon1 name="left" size={20} />
           </TouchableOpacity> */}
-          <View style={{marginLeft: 10}}>
+          <View
+            style={{
+              marginLeft: 0,
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}>
+            <Icon1
+              name="left"
+              color="black"
+              size={20}
+              onPress={() => navigation.goBack()}
+            />
             <Text
               style={{
                 fontSize: 16,
+                marginLeft: 10,
                 fontFamily: 'MontserratAlternates-SemiBold',
                 color: 'black',
               }}>

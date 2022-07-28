@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-
+import React, {useState, useEffect, useCallback, useRef} from 'react';
+import {site_key} from '../../../../config';
 import {
   View,
   FlatList,
@@ -13,30 +13,157 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
+import database from '@react-native-firebase/database';
+import {useSelector} from 'react-redux';
 import Recaptcha from 'react-native-recaptcha-that-works';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import MapView from 'react-native-maps';
+// import MyModal from '../../../Components/MyModal';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-
+import {singleGroup} from '../../../lib/api';
 import Icon1 from 'react-native-vector-icons/AntDesign';
+import Icon3 from 'react-native-vector-icons/Entypo';
 import Hotel from '../../../Components/Hotel';
 const GroupDetails = ({navigation, route}) => {
   const {item} = route.params;
-  const arr = [
-    {name: 'Food', members: '70 members'},
-    {name: 'Art', members: '70 members'},
-    {name: 'Gaming', members: '70 members'},
-    {name: 'Art', members: '70 members'},
-    {name: 'Gaming', members: '70 members'},
-  ];
+  const {userData} = useSelector(({USER}) => USER);
+  const [groupData, setGroupData] = useState({});
   const [show, setShow] = useState(false);
   const [mile, setMile] = useState('5 Miles');
+  const [specific, setSpecific] = useState({});
+  const [showModal, setShowModal] = useState(false);
   const [select, setSelect] = useState('');
-  const render = ({item, index}) => <Posts />;
+  const [change, setChange] = useState(false);
+  const [list, setList] = useState([]);
+  const alter = () => {
+    // console.log('alter called');
+    setChange(!change);
+  };
+  const renders = ({item}) => (
+    <TouchableOpacity
+      onPress={() => {
+        setShowModal(false);
+        navigation.navigate('SingleChat', {
+          item: item.user,
+          image: specific.media[0].media,
+          items: specific,
+        });
+      }}
+      style={{
+        flexDirection: 'row',
+        marginTop: 20,
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        alignItems: 'center',
+        paddingBottom: 20,
+        borderBottomColor: '#ccc',
+      }}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <Image
+          source={
+            item.user.image
+              ? {uri: item.user.image}
+              : require('../../../assets/Images/girl.jpg')
+          }
+          style={{height: 50, width: 50, borderRadius: 30}}
+        />
+        <View style={{marginLeft: 10}}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: item.unread ? 'black' : 'black',
+            }}>
+            {`${item.user.firstname} ${item.user.lastname}`}
+          </Text>
+        </View>
+      </View>
+      <View style={{alignItems: 'center'}}></View>
+    </TouchableOpacity>
+  );
+  const _usersList = useCallback(async () => {
+    try {
+      // setLoading(true);
+      database()
+        .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .orderByChild('timestamp')
+        .on('value', dataSnapshot => {
+          let users = [];
+          dataSnapshot.forEach(child => {
+            users.push(child.val());
+          });
+          // console.log('users', users);
+          setList(users.reverse());
+          // setLoading(false);
+
+          // console.log("user list in chat list ", JSON.stringify(users))
+        });
+    } catch (error) {}
+  }, []);
+  const MyModal = (show: boolean) => {
+    return (
+      <Modal animationType="slide" transparent={true} visible={show}>
+        <View
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <View
+            style={{
+              height: '60%',
+              width: '90%',
+              borderRadius: 10,
+              backgroundColor: 'white',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginTop: 15,
+                marginRight: 15,
+              }}>
+              <Icon3
+                name="circle-with-cross"
+                size={20}
+                color="black"
+                onPress={() => setShowModal(false)}
+              />
+            </View>
+            <View style={{paddingHorizontal: 10}}>
+              <FlatList data={list} renderItem={renders} />
+            </View>
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+  const render = ({item, index}) => (
+    <Posts
+      item={item}
+      onShare={() => {
+        setSpecific(item);
+        setShowModal(true);
+      }}
+      onPress={() => {
+        navigation.navigate('PostDetails', {item});
+      }}
+      press={alter}
+      navigation={navigation}
+    />
+  );
   const recaptcha = useRef();
 
   const send = () => {
@@ -192,6 +319,24 @@ const GroupDetails = ({navigation, route}) => {
       </View>
     </Modal>
   );
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      singleGroup({Auth: userData.token, id: item.id}).then(res => {
+        // console.log('res of single group', JSON.stringify(res));
+        setGroupData(res.data);
+      });
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+  useEffect(() => {
+    _usersList();
+    singleGroup({Auth: userData.token, id: item.id}).then(res => {
+      // console.log('res of single group', JSON.stringify(res));
+      setGroupData(res.data);
+    });
+  }, [change]);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -290,91 +435,31 @@ const GroupDetails = ({navigation, route}) => {
                         marginTop: 10,
                         alignItems: 'center',
                       }}>
-                      <View
-                        style={{
-                          borderRadius: 30,
-                          borderColor: 'white',
-                          borderWidth: 1,
-                        }}>
-                        <Image
-                          source={require('../../../assets/Images/social.jpg')}
-                          style={{height: 30, borderRadius: 20, width: 30}}
-                        />
-                      </View>
-
-                      <View
-                        style={{
-                          borderRadius: 30,
-                          borderColor: 'white',
-                          right: 15,
-                          borderWidth: 1,
-                        }}>
-                        <Image
-                          source={require('../../../assets/Images/social.jpg')}
+                      {groupData?.members?.map((element, index) => (
+                        <View
+                          // onPress={() => console.log('index', element)}
                           style={{
-                            height: 30,
-                            // marginLeft: 10,
-                            // right: 15,
-                            borderRadius: 20,
-                            width: 30,
-                          }}
-                        />
-                      </View>
-
-                      <View
-                        style={{
-                          borderRadius: 30,
-                          borderColor: 'white',
-                          right: 30,
-                          borderWidth: 1,
-                        }}>
-                        <Image
-                          source={require('../../../assets/Images/social.jpg')}
-                          style={{
-                            height: 30,
-                            // marginLeft: 10,
-
-                            borderRadius: 20,
-                            width: 30,
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          borderRadius: 30,
-                          borderColor: 'white',
-                          right: 45,
-                          borderWidth: 1,
-                        }}>
-                        <Image
-                          source={require('../../../assets/Images/social.jpg')}
-                          style={{
-                            height: 30,
-                            // marginLeft: 10,
-                            // right: 15,
-                            borderRadius: 20,
-                            width: 30,
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          borderRadius: 30,
-                          borderColor: 'white',
-                          borderWidth: 1,
-                          right: 60,
-                        }}>
-                        <Image
-                          source={require('../../../assets/Images/social.jpg')}
-                          style={{
-                            height: 30,
-                            // marginLeft: 10,
-                            // right: 15,
-                            borderRadius: 20,
-                            width: 30,
-                          }}
-                        />
-                      </View>
+                            borderRadius: 30,
+                            borderColor: 'white',
+                            right: index * 15,
+                            borderWidth: 1,
+                          }}>
+                          <Image
+                            source={
+                              element?.user?.image
+                                ? {uri: element?.user?.image}
+                                : require('../../../assets/Images/social.jpg')
+                            }
+                            style={{
+                              height: 30,
+                              // marginLeft: 10,
+                              // right: 15,
+                              borderRadius: 20,
+                              width: 30,
+                            }}
+                          />
+                        </View>
+                      ))}
                     </View>
                     <Text
                       style={{
@@ -418,7 +503,7 @@ const GroupDetails = ({navigation, route}) => {
                   Join Group
                 </Text>
               </TouchableOpacity>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text
                   style={{
                     marginTop: 20,
@@ -427,19 +512,16 @@ const GroupDetails = ({navigation, route}) => {
                   }}>
                   #fun #danger #helpful #adventure #hobby
                 </Text>
-              </View>
+              </View> */}
 
               <Text
                 style={{
-                  // marginTop: 20,
+                  marginTop: 20,
                   fontFamily: 'MontserratAlternates-Regular',
                   fontSize: 14,
                   color: 'black',
                 }}>
-                At vero eos et accusamus et iusto odio dignissimos ducimus qui
-                blanditiss skdlkj ksdjfslkdfj klasjdkfldskj skldjfdlsjflsd ksj
-                kl skjflkj klsjl kjslk jl sjlkfj s lkdsj ksjdklfjlkdjflk jkj
-                ksjdkfl kjslkdj lksjfklsdjflkj
+                {groupData?.description}
               </Text>
               <Text
                 style={{
@@ -450,7 +532,7 @@ const GroupDetails = ({navigation, route}) => {
                 }}>
                 Groups Posts
               </Text>
-              <FlatList data={arr} renderItem={render} />
+              <FlatList data={groupData?.posts} renderItem={render} />
             </View>
           </View>
         </ScrollView>
@@ -459,13 +541,14 @@ const GroupDetails = ({navigation, route}) => {
       </ImageBackground>
       <Recaptcha
         ref={recaptcha}
-        siteKey="6LejsqwZAAAAAGsmSDWH5g09dOyNoGMcanBllKPF"
-        baseUrl="http://127.0.0.1"
+        siteKey={site_key}
+        baseUrl="127.0.0.1"
         onVerify={onVerify}
         onExpire={onExpire}
         // size="invisible"
       />
       {myModal3()}
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

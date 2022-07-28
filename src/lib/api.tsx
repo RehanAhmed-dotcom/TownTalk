@@ -294,6 +294,24 @@ const viewComment = payload => {
       console.log('in viewComment', e);
     });
 };
+const singleGroup = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/view-group/${payload.id}`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in singleGroup', e);
+    });
+};
 const viewGroup = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/view-group-list`;
@@ -387,6 +405,7 @@ export {
   profile,
   creategroup,
   addgroup,
+  singleGroup,
   postDetail,
   likeDislikeProfile,
 };
