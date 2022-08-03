@@ -9,11 +9,11 @@ import {
   Text,
 } from 'react-native';
 import Icon1 from 'react-native-vector-icons/Entypo';
-import {likeDislikeProfile} from '../../../lib/api';
+import {likeDislikeProfile, profile} from '../../../lib/api';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Entypo';
-import {profile} from '../../../lib/api';
+// import {} from '../../../lib/api';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import database from '@react-native-firebase/database';
@@ -36,7 +36,13 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
   const renders = ({item}) => (
     <View>
       {select == 'Groups' ? (
-        <Group />
+        <Group
+          item={item}
+          onPress={() => {
+            navigation.navigate('GroupDetails', {item});
+          }}
+          page={'profile'}
+        />
       ) : (
         <Posts
           item={item}
@@ -204,8 +210,8 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
   useEffect(() => {
     _usersList();
     profile({Auth: userData.token, id: item.user.id}).then(res => {
-      console.log('resi', JSON.stringify(res));
-      setPosts(res.data.posts);
+      console.log('resi of profile', JSON.stringify(res));
+      setPosts(res.data);
       setProfileObject(res.data);
     });
   }, [change]);
@@ -440,7 +446,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
           </View>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={posts}
+            data={select == 'Posts' ? posts.posts : posts.groups}
             renderItem={renders}
           />
         </View>

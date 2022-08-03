@@ -163,11 +163,12 @@ const addgroup = (payload, data) => {
       return status === 200 || status === 201 ? data : null;
     })
     .catch(e => {
-      console.log('in add post', e);
+      console.log('in group create', e);
+      throw e;
     });
 };
 const viewAllPost = payload => {
-  console.log('data of payload', payload);
+  // console.log('data of payload', payload);
   const request = `/view-post`;
   return axios
     .post(request, payload, {
@@ -182,6 +183,25 @@ const viewAllPost = payload => {
     })
     .catch(e => {
       console.log('in add post', e);
+      throw e;
+    });
+};
+const joingroup = payload => {
+  // console.log('data of payload', payload);
+  const request = `/join-group`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in join group', e);
       throw e;
     });
 };
@@ -205,7 +225,7 @@ const creategroup = payload => {
     });
 };
 const hashTag = payload => {
-  // console.log('data of payload', JSON.stringify(data));
+  console.log('data of payload', JSON.stringify(payload));
   const request = `/hashtag-list`;
   return axios
     .post(request, payload, {
@@ -405,6 +425,7 @@ export {
   profile,
   creategroup,
   addgroup,
+  joingroup,
   singleGroup,
   postDetail,
   likeDislikeProfile,

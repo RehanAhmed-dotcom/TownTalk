@@ -14,6 +14,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import database from '@react-native-firebase/database';
+import ConfirmGoogleCaptcha from 'react-native-google-recaptcha-v2';
 import {useSelector} from 'react-redux';
 import Recaptcha from 'react-native-recaptcha-that-works';
 import Posts from '../../../Components/Posts';
@@ -24,7 +25,7 @@ import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import Icon2 from 'react-native-vector-icons/Fontisto';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {singleGroup} from '../../../lib/api';
+import {singleGroup, joingroup} from '../../../lib/api';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon3 from 'react-native-vector-icons/Entypo';
 import Hotel from '../../../Components/Hotel';
@@ -42,6 +43,21 @@ const GroupDetails = ({navigation, route}) => {
   const alter = () => {
     // console.log('alter called');
     setChange(!change);
+  };
+
+  const onMessage = event => {
+    if (event && event.nativeEvent.data) {
+      if (['cancel', 'error', 'expired'].includes(event.nativeEvent.data)) {
+        this.captchaForm.hide();
+        return;
+      } else {
+        console.log('Verified code from Google', event.nativeEvent.data);
+        setTimeout(() => {
+          this.captchaForm.hide();
+          // do what ever you want here
+        }, 1500);
+      }
+    }
   };
   const renders = ({item}) => (
     <TouchableOpacity
@@ -170,9 +186,15 @@ const GroupDetails = ({navigation, route}) => {
     console.log('send!');
     recaptcha.current.open();
   };
-
+  // console.log('key', site_key);
   const onVerify = token => {
     console.log('success!', token);
+    joingroup({Auth: userData.token, group_id: item.id, role: 'Member'}).then(
+      res => {
+        console.log('res', res);
+        alter();
+      },
+    );
   };
 
   const onExpire = () => {
@@ -333,7 +355,7 @@ const GroupDetails = ({navigation, route}) => {
   useEffect(() => {
     _usersList();
     singleGroup({Auth: userData.token, id: item.id}).then(res => {
-      // console.log('res of single group', JSON.stringify(res));
+      console.log('res of single group', JSON.stringify(res));
       setGroupData(res.data);
     });
   }, [change]);
@@ -379,13 +401,15 @@ const GroupDetails = ({navigation, route}) => {
               </View>
             </View>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('GroupPost', {item})}>
-            <Image
-              source={require('../../../assets/Images/add.png')}
-              style={{height: 30, width: 30}}
-            />
-          </TouchableOpacity>
+          {groupData.is_member && (
+            <TouchableOpacity
+              onPress={() => navigation.navigate('GroupPost', {item})}>
+              <Image
+                source={require('../../../assets/Images/add.png')}
+                style={{height: 30, width: 30}}
+              />
+            </TouchableOpacity>
+          )}
 
           {/* <Icon
             name="log-out"
@@ -448,7 +472,7 @@ const GroupDetails = ({navigation, route}) => {
                             source={
                               element?.user?.image
                                 ? {uri: element?.user?.image}
-                                : require('../../../assets/Images/social.jpg')
+                                : require('../../../assets/Images/girl.jpg')
                             }
                             style={{
                               height: 30,
@@ -484,25 +508,28 @@ const GroupDetails = ({navigation, route}) => {
 
             {/* <FlatList data={arr} numColumns={2} key={2} renderItem={render} /> */}
             <View style={{marginTop: 20, paddingHorizontal: 15}}>
-              <TouchableOpacity
-                onPress={() => send()}
-                style={{
-                  height: 50,
-                  backgroundColor: '#5F95F0',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  elevation: 2,
-                  borderRadius: 10,
-                }}>
-                <Text
+              {!groupData.is_member && (
+                <TouchableOpacity
+                  onPress={() => send()}
                   style={{
-                    fontSize: 16,
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                    color: 'white',
+                    height: 50,
+                    backgroundColor: '#5F95F0',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    elevation: 2,
+                    borderRadius: 10,
                   }}>
-                  Join Group
-                </Text>
-              </TouchableOpacity>
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: 'MontserratAlternates-SemiBold',
+                      color: 'white',
+                    }}>
+                    Join Group
+                  </Text>
+                </TouchableOpacity>
+              )}
+
               {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text
                   style={{
@@ -532,7 +559,9 @@ const GroupDetails = ({navigation, route}) => {
                 }}>
                 Groups Posts
               </Text>
-              <FlatList data={groupData?.posts} renderItem={render} />
+              {!groupData.is_member && item.status === 'private' ? null : (
+                <FlatList data={groupData?.posts} renderItem={render} />
+              )}
             </View>
           </View>
         </ScrollView>
@@ -541,12 +570,21 @@ const GroupDetails = ({navigation, route}) => {
       </ImageBackground>
       <Recaptcha
         ref={recaptcha}
-        siteKey={site_key}
-        baseUrl="127.0.0.1"
+        // siteKey="6Lce8jwhAAAAAN8lc8HVPDk29xhcUn_bxaG1gJoO"
+        // baseUrl="https://towntalk.com"
+        siteKey={'6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
+        baseUrl="https://www.recaptcha.net/recaptcha/api.js"
         onVerify={onVerify}
         onExpire={onExpire}
         // size="invisible"
       />
+      {/* <ConfirmGoogleCaptcha
+        ref={recaptcha}
+        siteKey={site_key}
+        baseUrl={'127.0.0.1'}
+        languageCode="en"
+        onMessage={onMessage}
+      /> */}
       {myModal3()}
       {MyModal(showModal)}
     </SafeAreaView>

@@ -24,6 +24,7 @@ const Profile = ({navigation}) => {
   const [dislike, setDislike] = useState(false);
   const [select, setSelect] = useState('Posts');
   const [posts, setPosts] = useState([]);
+  const [groups, setGroups] = useState([]);
   const [change, setChange] = useState(false);
   const [data, setData] = useState({});
   const {userData} = useSelector(({USER}) => USER);
@@ -38,7 +39,12 @@ const Profile = ({navigation}) => {
   const renders = ({item}) => (
     <View>
       {select == 'Groups' ? (
-        <Group />
+        <Group
+          item={item}
+          onPress={() => {
+            navigation.navigate('GroupDetails', {item});
+          }}
+        />
       ) : (
         <Posts
           item={item}
@@ -209,7 +215,7 @@ const Profile = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       profile({Auth: userData.token, id: userData.userdata.id}).then(res => {
-        console.log('res', JSON.stringify(res));
+        console.log('res of profile', JSON.stringify(res));
         setPosts(res.data);
       });
     });
@@ -426,7 +432,7 @@ const Profile = ({navigation}) => {
           </View>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={posts.posts}
+            data={select == 'Posts' ? posts.posts : posts.groups}
             renderItem={renders}
           />
         </View>

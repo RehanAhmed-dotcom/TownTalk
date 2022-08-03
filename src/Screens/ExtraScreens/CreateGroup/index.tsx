@@ -202,7 +202,7 @@ const CreateGroup = ({navigation}) => {
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   borderBottomColor: 'grey',
-                  // color: 'black',
+                  color: 'black',
                   // backgroundColor: 'red',
                   borderBottomWidth: 1,
                 }}
@@ -250,7 +250,9 @@ const CreateGroup = ({navigation}) => {
                     paddingLeft: 5,
                     justifyContent: 'center',
                   }}>
-                  <Text>{status ? 'Public' : 'Private'}</Text>
+                  <Text style={{color: 'black'}}>
+                    {status ? 'Public' : 'Private'}
+                  </Text>
                 </TouchableOpacity>
               )}
 
@@ -290,6 +292,7 @@ const CreateGroup = ({navigation}) => {
                   borderColor: 'grey',
                   borderWidth: 1,
                   marginTop: 10,
+                  color: 'black',
                   borderRadius: 5,
                   // backgroundColor: 'red',
                   height: 100,
@@ -370,11 +373,14 @@ const CreateGroup = ({navigation}) => {
                     .then(res => {
                       console.log('res', res);
                       setShowModal(false);
-                      navigation.goBack();
+                      if (res.status == 'success') {
+                        navigation.goBack();
+                      }
                     })
                     .catch(err => {
-                      console.log('err', err);
+                      console.log('err', err.response.data);
                       setShowModal(false);
+                      Alert.alert('Something went wrong try again!');
                     });
                   // } else {
                   //   Alert.alert("Enter Hash tag then press 'space'");

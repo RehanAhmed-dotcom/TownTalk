@@ -388,7 +388,7 @@ const Create = ({navigation}) => {
                     readonly,
                   }) => (
                     <TouchableOpacity key={`${tag}-${index}`} onPress={onPress}>
-                      <Text>
+                      <Text style={{color: 'grey'}}>
                         {`${tag.substring(0, 1) != '#' ? '#' : ''}${tag}`}{' '}
                       </Text>
                     </TouchableOpacity>

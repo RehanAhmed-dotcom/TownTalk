@@ -13,6 +13,10 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import MapView from 'react-native-maps';
@@ -41,7 +45,7 @@ const GroupPage = ({navigation}) => {
           onPress={() => navigation.navigate('CreateGroup')}
           style={{
             height: 200,
-            width: 150,
+            width: wp(40),
             marginTop: 20,
             marginHorizontal: 10,
             borderRadius: 10,
@@ -81,7 +85,7 @@ const GroupPage = ({navigation}) => {
             alignItems: 'center',
             justifyContent: 'center',
             borderRadius: 10,
-            width: 150,
+            width: wp(40),
             backgroundColor: '#5F95F0',
           }}>
           <Image

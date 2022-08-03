@@ -30,8 +30,8 @@ import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
 const Home = ({navigation}) => {
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
-  const [latitude, setlatitude] = useState(0);
-  const [longitude, setlongitude] = useState(0);
+  const [latitude, setlatitude] = useState('');
+  const [longitude, setlongitude] = useState('');
   const [select, setSelect] = useState('');
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
@@ -101,7 +101,7 @@ const Home = ({navigation}) => {
     </TouchableOpacity>
   );
   const alter = () => {
-    console.log('alter called');
+    // console.log('alter called');
     setChange(!change);
   };
   const requestLocationPermission = async () => {
@@ -123,9 +123,9 @@ const Home = ({navigation}) => {
         setlongitude(position.coords.longitude);
         getPlace(position.coords.latitude, position.coords.longitude);
         // getPlace('47.751076', '-120.740135');
-        console.log('users location', position.coords.longitude);
+        // console.log('users location', position.coords.longitude);
 
-        console.log('users location', position.coords.latitude);
+        // console.log('users location', position.coords.latitude);
       },
       error => {
         console.log('error in loc', error);
@@ -145,7 +145,7 @@ const Home = ({navigation}) => {
           // console.log('res', res);
         })
       : requestLocationPermission();
-  }, []);
+  }, [change]);
   useEffect(() => {
     hashTag({Auth: userData.token, latitude, longitude}).then(res => {
       // console.log('res of hash', res);
@@ -164,6 +164,7 @@ const Home = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setSelect('');
+      setChange(!change);
       hashTag({Auth: userData.token, latitude, longitude}).then(res => {
         // console.log('res of hash', res);
         setHash(res.hashtags);
@@ -260,7 +261,7 @@ const Home = ({navigation}) => {
     </TouchableOpacity>
   );
   const MyModal = (show: boolean) => {
-    console.log('show', latitude, longitude);
+    // console.log('show', latitude, longitude);
     return (
       <Modal animationType="slide" transparent={true} visible={show}>
         <View
@@ -363,7 +364,7 @@ const Home = ({navigation}) => {
   // console.log('location', location);
   const lat = 33.5344737;
   const long = 73.0525821;
-
+  // console.log('lat', latitude);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground

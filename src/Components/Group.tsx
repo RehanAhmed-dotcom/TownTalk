@@ -13,7 +13,8 @@ import Icon1 from 'react-native-vector-icons/Fontisto';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 // import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/Entypo';
-const Group = () => {
+const Group = ({item, onPress, page}) => {
+  console.log('item', item);
   const renderItem3 = ({item}) => (
     <View
       style={{
@@ -40,9 +41,11 @@ const Group = () => {
     </View>
   );
   const [show, setShow] = useState(false);
+  // console.log('item of group', item);
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   return (
-    <View
+    <TouchableOpacity
+      onPress={onPress}
       style={{
         // height: 30,
         backgroundColor: 'white',
@@ -66,7 +69,11 @@ const Group = () => {
         }}>
         <View style={{alignItems: 'center', flexDirection: 'row'}}>
           <Image
-            source={require('../assets/Images/girl.jpg')}
+            source={
+              item.image
+                ? {uri: item.image}
+                : require('../assets/Images/girl.jpg')
+            }
             style={{width: 50, height: 50, borderRadius: 50}}
           />
           <View style={{marginLeft: 10}}>
@@ -76,7 +83,7 @@ const Group = () => {
                 fontSize: 16,
                 color: 'black',
               }}>
-              Art
+              {item.title}
             </Text>
             <View
               style={{
@@ -84,7 +91,10 @@ const Group = () => {
                 alignItems: 'center',
                 marginTop: 5,
               }}>
-              <Icon1 name="locked" color="#5F95F0" size={10} />
+              {item.status != 'public' && (
+                <Icon1 name="locked" color="#5F95F0" size={10} />
+              )}
+
               <Text
                 style={{
                   fontSize: 12,
@@ -92,17 +102,17 @@ const Group = () => {
                   marginLeft: 5,
                   color: 'black',
                 }}>
-                Private Group
+                {item.status == 'public' ? 'Public Group' : 'Private Group'}
               </Text>
             </View>
           </View>
         </View>
-        <Icon
+        {/* <Icon
           name="dots-three-horizontal"
           color="black"
           style={{bottom: 10}}
           size={20}
-        />
+        /> */}
       </View>
       <View
         style={{
@@ -113,7 +123,7 @@ const Group = () => {
           // backgroundColor: 'red',
           overflow: 'hidden',
         }}>
-        <FlatList horizontal data={arr} renderItem={renderItem3} />
+        {/* <FlatList horizontal data={arr} renderItem={renderItem3} /> */}
         {/* {arr.map(item => (
         <View>
           <Text
@@ -131,34 +141,9 @@ const Group = () => {
       <View style={{marginTop: 10}}>
         <Text
           style={{fontSize: 13, fontFamily: 'MontserratAlternates-Regular'}}>
-          Better mental health - It can lighten your mood and make you feel
-          happier
+          {item.description}
         </Text>
-        <Text
-          style={{
-            marginTop: 5,
-            fontSize: 13,
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          Lower your risk of dementla - social Interaction is good for your
-          brain health
-        </Text>
-        <Text
-          style={{
-            marginTop: 5,
-            fontSize: 13,
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          Promotes a sence of safety, belonging and security
-        </Text>
-        <Text
-          style={{
-            marginTop: 5,
-            fontSize: 13,
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          Allows you to confide in others and let them confide in you
-        </Text>
+
         <View
           style={{
             flexDirection: 'row',
@@ -166,61 +151,24 @@ const Group = () => {
             top: 5,
             alignItems: 'center',
           }}>
-          <View
-            style={{borderRadius: 30, borderColor: 'black', borderWidth: 1}}>
-            <Image
-              source={require('../assets/Images/social.jpg')}
-              style={{height: 30, borderRadius: 20, width: 30}}
-            />
-          </View>
-          <View
-            style={{
-              borderRadius: 30,
-              right: 15,
-              borderColor: 'black',
-              borderWidth: 1,
-            }}>
-            <Image
-              source={require('../assets/Images/social.jpg')}
-              style={{height: 30, borderRadius: 20, width: 30}}
-            />
-          </View>
-          <View
-            style={{
-              borderRadius: 30,
-              right: 30,
-              borderColor: 'black',
-              borderWidth: 1,
-            }}>
-            <Image
-              source={require('../assets/Images/social.jpg')}
-              style={{height: 30, borderRadius: 20, width: 30}}
-            />
-          </View>
-          <View
-            style={{
-              right: 45,
-              borderRadius: 30,
-              borderColor: 'black',
-              borderWidth: 1,
-            }}>
-            <Image
-              source={require('../assets/Images/social.jpg')}
-              style={{height: 30, borderRadius: 20, width: 30}}
-            />
-          </View>
-          <View
-            style={{
-              right: 60,
-              borderRadius: 30,
-              borderColor: 'black',
-              borderWidth: 1,
-            }}>
-            <Image
-              source={require('../assets/Images/social.jpg')}
-              style={{height: 30, borderRadius: 20, width: 30}}
-            />
-          </View>
+          {item.members.map((item, index) => (
+            <View
+              style={{
+                borderRadius: 30,
+                right: index * 15,
+                borderColor: 'black',
+                borderWidth: 1,
+              }}>
+              <Image
+                source={
+                  item.user.image
+                    ? {uri: item.user.image}
+                    : require('../assets/Images/girl.jpg')
+                }
+                style={{height: 30, borderRadius: 20, width: 30}}
+              />
+            </View>
+          ))}
         </View>
       </View>
       <View
@@ -231,27 +179,26 @@ const Group = () => {
           marginTop: 10,
         }}>
         {/* <LikeDislike /> */}
-        <TouchableOpacity
-          // onPress={() => {
-          //   setLike(!like);
-          //   setDislike(false);
-          // }}
-          style={{flexDirection: 'row', alignItems: 'center'}}>
-          {/* <Image
-            source={require('../assets/Images/share.png')}
-            style={{height: 10, width: 10}}
-          /> */}
-          <Icon2 name="check" size={15} color="#5F95F0" />
-          <Text
-            style={{
-              color: '#5F95F0',
-              fontFamily: 'MontserratAlternates-Medium',
-              marginLeft: 5,
-              fontSize: 13,
-            }}>
-            Joined
-          </Text>
-        </TouchableOpacity>
+        {/* {page == 'profile' && item.is_member ? (
+          <TouchableOpacity
+            // onPress={() => {
+            //   setLike(!like);
+            //   setDislike(false);
+            // }}
+            style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon2 name="check" size={15} color="#5F95F0" />
+            <Text
+              style={{
+                color: '#5F95F0',
+                fontFamily: 'MontserratAlternates-Medium',
+                marginLeft: 5,
+                fontSize: 13,
+              }}>
+              Joined
+            </Text>
+          </TouchableOpacity>
+        ) : null} */}
+
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {!show && (
             <TouchableOpacity
@@ -272,16 +219,9 @@ const Group = () => {
                   marginLeft: 5,
                   fontSize: 13,
                 }}>
-                12K Members
+                {item.member_count}{' '}
+                {item.member_count > 1 ? 'Members' : 'Member'}
               </Text>
-              {/* <Text
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  marginLeft: 5,
-                  fontSize: 13,
-                }}>
-                Comments
-              </Text> */}
             </TouchableOpacity>
           )}
         </View>
@@ -474,7 +414,7 @@ const Group = () => {
         </>
       )}
       {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}
-    </View>
+    </TouchableOpacity>
   );
 };
 
