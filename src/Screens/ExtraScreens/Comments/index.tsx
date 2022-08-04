@@ -19,13 +19,14 @@ import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon3 from 'react-native-vector-icons/FontAwesome';
 const Comments = ({navigation, route}) => {
   const {id} = route.params;
+  console.log('id', id);
   const [comments, setComments] = useState([]);
   const {userData} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [comment, setComment] = useState('');
   useEffect(() => {
     viewComment({Auth: userData.token, id}).then(res => {
-      console.log('res', res);
+      console.log('res of comments', res);
       setComments(res.comments);
     });
   }, [change]);

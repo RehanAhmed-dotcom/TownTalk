@@ -44,6 +44,7 @@ const Profile = ({navigation}) => {
           onPress={() => {
             navigation.navigate('GroupDetails', {item});
           }}
+          page={'s'}
         />
       ) : (
         <Posts

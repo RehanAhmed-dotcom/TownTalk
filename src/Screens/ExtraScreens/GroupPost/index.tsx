@@ -87,7 +87,7 @@ const GroupPost = ({navigation, route}) => {
             setShowModal(false);
             console.log('res', res);
             if (res.status == 'success') {
-              navigation.goBack();
+              navigation.navigate('GroupPage');
             }
           })
           .catch(err => {

@@ -151,7 +151,7 @@ const Group = ({item, onPress, page}) => {
             top: 5,
             alignItems: 'center',
           }}>
-          {item.members.map((item, index) => (
+          {item.members.slice(0, 5).map((item, index) => (
             <View
               style={{
                 borderRadius: 30,

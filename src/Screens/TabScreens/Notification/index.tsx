@@ -23,6 +23,8 @@ const Notification = ({navigation}) => {
           ? navigation.navigate('PostDetails', {item: item.post})
           : item.type == 'post_dislike'
           ? navigation.navigate('PostDetails', {item: item.post})
+          : item.type == 'post_comment'
+          ? navigation.navigate('Comments', {id: item.post_id})
           : console.log('hello');
       }}
       style={{
@@ -196,7 +198,11 @@ const Notification = ({navigation}) => {
       ) : (
         <>
           <Image
-            source={require('../../../assets/Images/girl.jpg')}
+            source={
+              item.user_data.image
+                ? {uri: item.user_data.image}
+                : require('../../../assets/Images/girl.jpg')
+            }
             style={{height: 40, width: 40, borderRadius: 30}}
           />
           <View style={{width: '70%'}}>
@@ -206,7 +212,7 @@ const Notification = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {item.name}
+              {item.user_data.firstname} {item.user_data.lastname}
             </Text>
             <Text
               style={{
@@ -218,13 +224,13 @@ const Notification = ({navigation}) => {
               Commented on your post
             </Text>
             <Text
+              numberOfLines={2}
               style={{
                 color: 'black',
                 fontFamily: 'MontserratAlternates-Regular',
                 marginTop: 5,
               }}>
-              "I am interested in taking you to see my place. Contact me at
-              +92-333-XXXXXXX"
+              {item.message}
             </Text>
           </View>
           <Text
@@ -242,7 +248,7 @@ const Notification = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getNotification({Auth: userData.token}).then(res => {
-        // console.log('res of notifications', res);
+        console.log('res of notifications', res);
         setNotification(res.data.reverse());
       });
     });

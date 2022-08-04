@@ -13,6 +13,7 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
+import MyModal from '../../../Components/MyModal';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
@@ -29,6 +30,7 @@ import {useSelector} from 'react-redux';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Hotel from '../../../Components/Hotel';
 const GroupPage = ({navigation}) => {
+  const [showModal, setShowModal] = useState(false);
   const arr = [
     {},
     {name: 'Art', members: '70 members'},
@@ -118,12 +120,15 @@ const GroupPage = ({navigation}) => {
   );
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
+      setShowModal(true);
       viewGroup({Auth: userData.token})
         .then(res => {
           // console.log('res of group', res.data.data);
+          setShowModal(false);
           setGroups([{}, ...res.data.data]);
         })
         .catch(err => {
+          setShowModal(false);
           console.log('err', err);
         });
     });
@@ -164,10 +169,10 @@ const GroupPage = ({navigation}) => {
               Groups
             </Text>
           </View>
-          <Image
+          {/* <Image
             source={require('../../../assets/Images/search.png')}
             style={{height: 20, width: 20}}
-          />
+          /> */}
           {/* <Icon
             name="log-out"
             color={'#5F95F0'}
@@ -180,6 +185,7 @@ const GroupPage = ({navigation}) => {
         </View>
         {/* <Text>abc</Text> */}
       </ImageBackground>
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

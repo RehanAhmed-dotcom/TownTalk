@@ -169,7 +169,7 @@ const addgroup = (payload, data) => {
 };
 const viewAllPost = payload => {
   // console.log('data of payload', payload);
-  const request = `/view-post`;
+  const request = `/view-post?page=${payload.page}`;
   return axios
     .post(request, payload, {
       headers: {
@@ -294,6 +294,24 @@ const createComment = payload => {
     })
     .catch(e => {
       console.log('in create comment', e);
+    });
+};
+const updateToken = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/update-fcm`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in update token', e);
     });
 };
 const viewComment = payload => {
@@ -429,4 +447,5 @@ export {
   singleGroup,
   postDetail,
   likeDislikeProfile,
+  updateToken,
 };

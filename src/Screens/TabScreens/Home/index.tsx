@@ -19,12 +19,14 @@ import Axios from 'axios';
 //   getLatLng,
 // } from 'react-google-places-autocomplete';
 import database from '@react-native-firebase/database';
+import messaging from '@react-native-firebase/messaging';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
+import {updateToken} from '../../../lib/api';
 import {viewAllPost, hashTag} from '../../../lib/api';
 import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
@@ -32,10 +34,12 @@ const Home = ({navigation}) => {
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
+  const [page, setPage] = useState(1);
   const [select, setSelect] = useState('');
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
   const [specific, setSpecific] = useState({});
+  const [testArr, setTestArr] = useState([]);
   const [hash, setHash] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const {userData} = useSelector(({USER}) => USER);
@@ -68,12 +72,14 @@ const Home = ({navigation}) => {
         viewAllPost({
           Auth: userData.token,
           hashtag: item,
+          page,
           latitude,
           longitude,
         })
           .then(res => {
             // console.log('res', res);
             setData(res.posts.data);
+            setTestArr(res.posts.data);
           })
           .catch(err => {
             console.log('err in home', err.response.data);
@@ -100,6 +106,7 @@ const Home = ({navigation}) => {
       </Text>
     </TouchableOpacity>
   );
+
   const alter = () => {
     // console.log('alter called');
     setChange(!change);
@@ -124,6 +131,7 @@ const Home = ({navigation}) => {
         // getPlace(position.coords.latitude, position.coords.longitude);
         viewAllPost({
           Auth: userData.token,
+          page,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         })
@@ -150,6 +158,16 @@ const Home = ({navigation}) => {
     );
   };
   useEffect(() => {
+    getToken();
+  }, []);
+  const getToken = async () => {
+    let fcmToken = await messaging().getToken();
+    updateToken({Auth: userData.token, fcm_token: fcmToken});
+    messaging().onTokenRefresh(token => {
+      updateToken({Auth: userData.token, fcm_token: token});
+    });
+  };
+  useEffect(() => {
     // handleAddress('solo');
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
@@ -158,16 +176,30 @@ const Home = ({navigation}) => {
         })
       : requestLocationPermission();
   }, [change]);
+  const increasePage = () => {
+    viewAllPost({
+      Auth: userData.token,
+      page: page + 1,
+      latitude,
+      longitude,
+    }).then(res => {
+      console.log('res of pagination', res);
+      // setTestArr([...testArr, ...res.posts.data]);
+      setData([...datas, ...res.posts.data]);
+      setPage(page + 1);
+    });
+  };
   useEffect(() => {
     hashTag({Auth: userData.token, latitude, longitude}).then(res => {
       // console.log('res of hash', res);
       setHash(res.hashtags);
     });
     _usersList();
-    viewAllPost({Auth: userData.token, latitude, longitude})
+    viewAllPost({Auth: userData.token, page, latitude, longitude})
       .then(res => {
         // console.log('res', res);
         setData(res.posts.data);
+        setTestArr(res.posts.data);
       })
       .catch(err => {
         console.log('err in home', err.response.data);
@@ -195,10 +227,11 @@ const Home = ({navigation}) => {
         // console.log('res of hash', res);
         setHash(res.hashtags);
       });
-      viewAllPost({Auth: userData.token, latitude, longitude})
+      viewAllPost({Auth: userData.token, page, latitude, longitude})
         .then(res => {
           // console.log('res', res);
           setData(res.posts.data);
+          setTestArr(res.posts.data);
         })
         .catch(err => {
           console.log('err in home', err.response.data);
@@ -390,7 +423,7 @@ const Home = ({navigation}) => {
   // console.log('location', location);
   const lat = 33.5344737;
   const long = 73.0525821;
-  // console.log('lat', latitude);
+  // console.log('test arr length', testArr.length);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -467,7 +500,11 @@ const Home = ({navigation}) => {
                 paddingBottom: 0,
                 height: hp(Platform.OS == 'ios' ? 75 : 80),
               }}>
-              <FlatList data={datas} renderItem={renderItem1} />
+              <FlatList
+                data={datas}
+                onEndReached={increasePage}
+                renderItem={renderItem1}
+              />
             </View>
           </ScrollView>
         </View>

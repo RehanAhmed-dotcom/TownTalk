@@ -39,6 +39,7 @@ const GroupDetails = ({navigation, route}) => {
   const [showModal, setShowModal] = useState(false);
   const [select, setSelect] = useState('');
   const [change, setChange] = useState(false);
+  const [showData, setShowData] = useState(false);
   const [list, setList] = useState([]);
   const alter = () => {
     // console.log('alter called');
@@ -345,6 +346,7 @@ const GroupDetails = ({navigation, route}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       singleGroup({Auth: userData.token, id: item.id}).then(res => {
         // console.log('res of single group', JSON.stringify(res));
+        setShowData(true);
         setGroupData(res.data);
       });
     });
@@ -355,10 +357,14 @@ const GroupDetails = ({navigation, route}) => {
   useEffect(() => {
     _usersList();
     singleGroup({Auth: userData.token, id: item.id}).then(res => {
+      setShowData(true);
       console.log('res of single group', JSON.stringify(res));
       setGroupData(res.data);
     });
   }, [change]);
+  console.log('item', item);
+  console.log('item', userData);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -459,7 +465,7 @@ const GroupDetails = ({navigation, route}) => {
                         marginTop: 10,
                         alignItems: 'center',
                       }}>
-                      {groupData?.members?.map((element, index) => (
+                      {groupData?.members?.slice(0, 5).map((element, index) => (
                         <View
                           // onPress={() => console.log('index', element)}
                           style={{
@@ -507,30 +513,33 @@ const GroupDetails = ({navigation, route}) => {
             </View>
 
             {/* <FlatList data={arr} numColumns={2} key={2} renderItem={render} /> */}
-            <View style={{marginTop: 20, paddingHorizontal: 15}}>
-              {!groupData.is_member && (
-                <TouchableOpacity
-                  onPress={() => send()}
-                  style={{
-                    height: 50,
-                    backgroundColor: '#5F95F0',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    elevation: 2,
-                    borderRadius: 10,
-                  }}>
-                  <Text
+            {showData && (
+              <View style={{marginTop: 20, paddingHorizontal: 15}}>
+                {!groupData.is_member && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      send();
+                    }}
                     style={{
-                      fontSize: 16,
-                      fontFamily: 'MontserratAlternates-SemiBold',
-                      color: 'white',
+                      height: 50,
+                      backgroundColor: '#5F95F0',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      elevation: 2,
+                      borderRadius: 10,
                     }}>
-                    Join Group
-                  </Text>
-                </TouchableOpacity>
-              )}
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontFamily: 'MontserratAlternates-SemiBold',
+                        color: 'white',
+                      }}>
+                      Join Group
+                    </Text>
+                  </TouchableOpacity>
+                )}
 
-              {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Text
                   style={{
                     marginTop: 20,
@@ -541,28 +550,29 @@ const GroupDetails = ({navigation, route}) => {
                 </Text>
               </View> */}
 
-              <Text
-                style={{
-                  marginTop: 20,
-                  fontFamily: 'MontserratAlternates-Regular',
-                  fontSize: 14,
-                  color: 'black',
-                }}>
-                {groupData?.description}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 17,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: 'black',
-                  marginTop: 30,
-                }}>
-                Groups Posts
-              </Text>
-              {!groupData.is_member && item.status === 'private' ? null : (
-                <FlatList data={groupData?.posts} renderItem={render} />
-              )}
-            </View>
+                <Text
+                  style={{
+                    marginTop: 20,
+                    fontFamily: 'MontserratAlternates-Regular',
+                    fontSize: 14,
+                    color: 'black',
+                  }}>
+                  {groupData?.description}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 17,
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                    color: 'black',
+                    marginTop: 30,
+                  }}>
+                  Groups Posts
+                </Text>
+                {!groupData.is_member && item.status === 'private' ? null : (
+                  <FlatList data={groupData?.posts} renderItem={render} />
+                )}
+              </View>
+            )}
           </View>
         </ScrollView>
 
