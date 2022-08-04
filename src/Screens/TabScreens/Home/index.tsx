@@ -30,8 +30,8 @@ import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
 const Home = ({navigation}) => {
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
-  const [latitude, setlatitude] = useState('');
-  const [longitude, setlongitude] = useState('');
+  const [latitude, setlatitude] = useState(0);
+  const [longitude, setlongitude] = useState(0);
   const [select, setSelect] = useState('');
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
@@ -121,7 +121,19 @@ const Home = ({navigation}) => {
       position => {
         setlatitude(position.coords.latitude);
         setlongitude(position.coords.longitude);
-        getPlace(position.coords.latitude, position.coords.longitude);
+        // getPlace(position.coords.latitude, position.coords.longitude);
+        viewAllPost({
+          Auth: userData.token,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        })
+          .then(res => {
+            // console.log('res', res);
+            setData(res.posts.data);
+          })
+          .catch(err => {
+            console.log('err in home', err.response.data);
+          });
         // getPlace('47.751076', '-120.740135');
         // console.log('users location', position.coords.longitude);
 
@@ -161,6 +173,20 @@ const Home = ({navigation}) => {
         console.log('err in home', err.response.data);
       });
   }, [latitude, longitude, change]);
+  useEffect(() => {
+    // handleAddress('solo');
+    const unsubscribe = navigation.addListener('focus', () => {
+      Platform.OS == 'ios'
+        ? Geolocation.requestAuthorization('always').then(res => {
+            cuRRentlocation();
+            // console.log('res', res);
+          })
+        : requestLocationPermission();
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setSelect('');

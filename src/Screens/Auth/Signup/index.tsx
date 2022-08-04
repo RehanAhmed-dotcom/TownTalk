@@ -314,7 +314,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                         // logged(res)(dispatch);
                       })
                       .catch(error => {
-                        console.log('err', error);
+                        console.log('err', error.response.data);
                         setShowModal(false);
                         // console.log('Error MEssage ', error.response.data);
                         if (error.response.data.status == 'error') {

@@ -18,7 +18,13 @@ const Notification = ({navigation}) => {
   const {userData} = useSelector(({USER}) => USER);
   const render = ({item, index}) => (
     <TouchableOpacity
-      onPress={() => console.log('item', item)}
+      onPress={() => {
+        item.type == 'post_like'
+          ? navigation.navigate('PostDetails', {item: item.post})
+          : item.type == 'post_dislike'
+          ? navigation.navigate('PostDetails', {item: item.post})
+          : console.log('hello');
+      }}
       style={{
         flexDirection: 'row',
         marginTop: index == 0 ? 30 : 10,
@@ -236,8 +242,8 @@ const Notification = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getNotification({Auth: userData.token}).then(res => {
-        // console.log('res of notification', res);
-        setNotification(res.data);
+        // console.log('res of notifications', res);
+        setNotification(res.data.reverse());
       });
     });
 
