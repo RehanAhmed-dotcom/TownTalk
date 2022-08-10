@@ -10,12 +10,18 @@ const LikeDislike = props => {
   const [dislike, setDislike] = useState(item?.is_like == false ? true : false);
   const [likecount, setLikeCount] = useState(item?.like_count);
   const [dislikecount, setDislikeCount] = useState(item?.dislike_count);
-
+  // useEffect(() => {
+  //   setLike(item.is_like == true ? true : false);
+  //   setDislike(item.is_like == false ? false : true);
+  // }, []);
+  // console.log('like of component', like);
+  // console.log('like of api', item.is_like);
   return (
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <TouchableOpacity
         onPress={() => {
           setLike(!like);
+          press();
           setDislike(false);
           setDislikeCount(
             item?.is_like == false
@@ -34,7 +40,7 @@ const LikeDislike = props => {
           })
             .then(res => {
               console.log('res', res);
-              press();
+              // press();
             })
             .catch(err => {
               console.log('err', err);
@@ -45,6 +51,7 @@ const LikeDislike = props => {
           name="thumbs-up"
           size={20}
           color={item?.is_like == true ? '#5F95F0' : 'grey'}
+          // color={like == true ? '#5F95F0' : 'grey'}
         />
         <Text
           style={{
@@ -59,6 +66,7 @@ const LikeDislike = props => {
       <TouchableOpacity
         onPress={() => {
           setDislike(!dislike);
+          press();
           setLike(false);
           setLikeCount(
             item?.is_like == true ? item?.like_count - 1 : item?.like_count,
@@ -68,7 +76,7 @@ const LikeDislike = props => {
               ? item?.dislike_count - 1
               : item?.dislike_count + 1,
           );
-          press();
+
           likeDislike({
             Auth: userData.token,
             creator_id: item?.user?.id,
@@ -87,6 +95,7 @@ const LikeDislike = props => {
           name="thumbs-down"
           size={20}
           color={item?.is_like == false ? '#5F95F0' : 'grey'}
+          // color={dislike == false ? '#5F95F0' : 'grey'}
         />
         <Text
           style={{

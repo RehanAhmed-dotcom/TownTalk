@@ -128,20 +128,20 @@ const Home = ({navigation}) => {
       position => {
         setlatitude(position.coords.latitude);
         setlongitude(position.coords.longitude);
-        // getPlace(position.coords.latitude, position.coords.longitude);
-        viewAllPost({
-          Auth: userData.token,
-          page,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        })
-          .then(res => {
-            // console.log('res', res);
-            setData(res.posts.data);
-          })
-          .catch(err => {
-            console.log('err in home', err.response.data);
-          });
+        getPlace(position.coords.latitude, position.coords.longitude);
+        // viewAllPost({
+        //   Auth: userData.token,
+        //   page,
+        //   latitude: position.coords.latitude,
+        //   longitude: position.coords.longitude,
+        // })
+        //   .then(res => {
+        //     // console.log('res', res);
+        //     setData(res.posts.data);
+        //   })
+        //   .catch(err => {
+        //     console.log('err in home', err.response.data);
+        //   });
         // getPlace('47.751076', '-120.740135');
         // console.log('users location', position.coords.longitude);
 
@@ -175,7 +175,7 @@ const Home = ({navigation}) => {
           // console.log('res', res);
         })
       : requestLocationPermission();
-  }, [change]);
+  }, []);
   const increasePage = () => {
     viewAllPost({
       Auth: userData.token,
@@ -205,24 +205,24 @@ const Home = ({navigation}) => {
         console.log('err in home', err.response.data);
       });
   }, [latitude, longitude, change]);
-  useEffect(() => {
-    // handleAddress('solo');
-    const unsubscribe = navigation.addListener('focus', () => {
-      Platform.OS == 'ios'
-        ? Geolocation.requestAuthorization('always').then(res => {
-            cuRRentlocation();
-            // console.log('res', res);
-          })
-        : requestLocationPermission();
-    });
+  // useEffect(() => {
+  //   // handleAddress('solo');
+  //   const unsubscribe = navigation.addListener('focus', () => {
+  //     Platform.OS == 'ios'
+  //       ? Geolocation.requestAuthorization('always').then(res => {
+  //           cuRRentlocation();
+  //           // console.log('res', res);
+  //         })
+  //       : requestLocationPermission();
+  //   });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, [navigation]);
+  //   // Return the function to unsubscribe from the event so it gets removed on unmount
+  //   return unsubscribe;
+  // }, [navigation]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setSelect('');
-      setChange(!change);
+      // setChange(!change);
       hashTag({Auth: userData.token, latitude, longitude}).then(res => {
         // console.log('res of hash', res);
         setHash(res.hashtags);
@@ -420,9 +420,9 @@ const Home = ({navigation}) => {
       })
       .catch(e => {});
   };
-  // console.log('location', location);
-  const lat = 33.5344737;
-  const long = 73.0525821;
+  console.log('location');
+  // const lat = 33.5344737;
+  // const long = 73.0525821;
   // console.log('test arr length', testArr.length);
   return (
     <SafeAreaView style={{flex: 1}}>

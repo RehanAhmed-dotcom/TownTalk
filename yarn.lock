@@ -1333,24 +1333,24 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-firebase/app@^15.0.0":
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-15.0.0.tgz#1d47cbc57641a27dbc7abbd0590a2ee6edcc70b7"
-  integrity sha512-H4u50FaveRmKuzmKsbFUaq+9jFJrIcn2/auw441h24A0fcxAhKzlYQ6DK9IvoqCX/PKX1DZYrDo6UC/d4YjCGw==
+"@react-native-firebase/app@^15.3.0":
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-15.3.0.tgz#589bbde3a7edf7663182fb83cf86630d871dbfcf"
+  integrity sha512-q04Y4aBCCR/4peeTWuXzt/KeI95QMNML/1o6PVN2FSsXSz42z2QbZByIj4cHgSA2LqCSokIDcch01rwx0ZUHcA==
   dependencies:
     "@expo/config-plugins" "^4.1.5"
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
-"@react-native-firebase/database@^15.0.0":
-  version "15.0.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-15.0.0.tgz#2779ad34cbea47405444a1b00ea7bb68ee57a353"
-  integrity sha512-dVxEo91zvDal9WwpSwI7U6IuU3iI4nEYFpfAf/sCTw7X+VDNgHjFGrrg79XwUNZi+jvER3wm/FbF0Z8gz5bZ8A==
+"@react-native-firebase/database@^15.3.0":
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/database/-/database-15.3.0.tgz#e219d319ad4ccd12d91b8188cb0250d0c11fd339"
+  integrity sha512-v21CZVEogkvLX3+59IryaFPkZyhv8xr4p2/UdOVF9uyV1AZCb4subFgj8ZBnmkrB1/sVkdqsfa72EfXprV8ahg==
 
-"@react-native-firebase/messaging@^15.2.0":
-  version "15.2.0"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-15.2.0.tgz#25d5224806587f77a7ef55f4b1e724c07c517176"
-  integrity sha512-z8esKSlaHE+MMYmYTDpn6sgugOCAZpnTyD9M+eK95vG46G4N+qImB9oD5nJ7w39SyvZSuDPPJ2TItc0Qy6Gkxw==
+"@react-native-firebase/messaging@^15.3.0":
+  version "15.3.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-15.3.0.tgz#fced47b1baeb5ea0e241cb3a12c50e9d45c98e79"
+  integrity sha512-Jia+24sqevom49P8y+fycZJ6P8f4anrDElD9iH3eHEGaUbwkPbwCtWWI6rwXEYD6g+3rpGosZ/DMjaGxZZAGaA==
 
 "@react-native-masked-view/masked-view@^0.2.6":
   version "0.2.6"
