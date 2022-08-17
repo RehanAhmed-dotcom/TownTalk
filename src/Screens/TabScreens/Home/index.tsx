@@ -301,7 +301,7 @@ const Home = ({navigation}) => {
               fontFamily: 'MontserratAlternates-SemiBold',
               color: item.unread ? 'black' : 'black',
             }}>
-            {`${item.user.firstname} ${item.user.lastname}`}
+            {`${item.user.firstname}`}
           </Text>
           {/* <Text
             style={{

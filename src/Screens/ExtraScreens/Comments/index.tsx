@@ -82,7 +82,7 @@ const Comments = ({navigation, route}) => {
                 fontSize: 14,
                 color: 'black',
               }}>
-              {`${item.user.firstname} ${item.user.lastname}`}
+              {`${item.user.firstname}`}
             </Text>
             {/* <Text
          style={{

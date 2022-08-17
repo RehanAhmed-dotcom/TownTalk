@@ -63,7 +63,7 @@ const SwiperPosts = props => {
                 fontSize: 16,
                 color: 'black',
               }}>
-              {`${item?.user?.firstname} ${item?.user?.lastname}`}
+              {`${item?.user?.firstname}`}
             </Text>
             <Text
               style={{

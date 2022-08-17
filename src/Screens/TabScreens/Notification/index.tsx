@@ -52,7 +52,7 @@ const Notification = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {item.user_data.firstname} {item.user_data.lastname}
+              {item.user_data.firstname}
               <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
                 {' '}
                 liked your post
@@ -92,7 +92,7 @@ const Notification = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {item.user_data.firstname} {item.user_data.lastname}
+              {item.user_data.firstname}
               <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
                 {' '}
                 disliked your post
@@ -132,7 +132,7 @@ const Notification = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {item.user_data.firstname} {item.user_data.lastname}
+              {item.user_data.firstname}
               <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
                 {' '}
                 disliked your profile
@@ -172,7 +172,7 @@ const Notification = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {item.user_data.firstname} {item.user_data.lastname}
+              {item.user_data.firstname}
               <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
                 {' '}
                 liked your profile
@@ -212,7 +212,7 @@ const Notification = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {item.user_data.firstname} {item.user_data.lastname}
+              {item.user_data.firstname}
             </Text>
             <Text
               style={{

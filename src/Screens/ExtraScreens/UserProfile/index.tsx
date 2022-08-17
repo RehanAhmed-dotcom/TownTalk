@@ -120,7 +120,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               fontFamily: 'MontserratAlternates-SemiBold',
               color: item.unread ? 'black' : 'black',
             }}>
-            {`${item.user.firstname} ${item.user.lastname}`}
+            {`${item.user.firstname}`}
           </Text>
           {/* <Text
             style={{
@@ -324,7 +324,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {item.user.firstname} {item.user.lastname}
+              {item.user.firstname}
             </Text>
             <Text
               style={{fontSize: 14, fontFamily: 'MontserratAlternates-Medium'}}>
