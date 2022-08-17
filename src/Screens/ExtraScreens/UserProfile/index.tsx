@@ -7,12 +7,15 @@ import {
   Modal,
   TouchableOpacity,
   Text,
+  Alert,
 } from 'react-native';
+
 import Icon1 from 'react-native-vector-icons/Entypo';
-import {likeDislikeProfile, profile} from '../../../lib/api';
+import {likeDislikeProfile, blockUser, profile} from '../../../lib/api';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Entypo';
+import Icon2 from 'react-native-vector-icons/AntDesign';
 // import {} from '../../../lib/api';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
@@ -254,6 +257,59 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
             flex: 1,
           }}>
           <View style={{alignItems: 'center'}}>
+            {userData.userdata.id != item.user.id && (
+              <TouchableOpacity
+                onPress={
+                  () =>
+                    Alert.alert(
+                      'Block user',
+                      `Are you sure you want to block ${item.user.firstname}?`,
+                      [
+                        {
+                          text: 'Cancel',
+                          onPress: () => console.log('Cancel Pressed'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'OK',
+                          onPress: () => {
+                            blockUser({
+                              Auth: userData.token,
+                              block_user_id: item.user.id,
+                            })
+                              .then(res => {
+                                console.log('res', res);
+                                navigation.goBack();
+                              })
+                              .catch(err => {
+                                console.log('err', err);
+                              });
+                          },
+                        },
+                      ],
+                    )
+
+                  // navigation.navigate('SingleChat', {item: item.user})
+                }
+                style={{
+                  position: 'absolute',
+                  // backgroundColor: 'blue',
+                  width: '15%',
+                  alignItems: 'center',
+                  left: 0,
+                  // alignItems: 'flex-end',
+                  height: 100,
+                }}>
+                <Text
+                  style={{
+                    color: '#5F95F0',
+                    fontFamily: 'MontserratAlternates-Regular',
+                    fontSize: 12,
+                  }}>
+                  Block
+                </Text>
+              </TouchableOpacity>
+            )}
             <Image
               source={
                 item.user.image
@@ -282,9 +338,10 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
                 style={{
                   position: 'absolute',
                   // backgroundColor: 'blue',
-                  width: '100%',
-
-                  alignItems: 'flex-end',
+                  width: '15%',
+                  alignItems: 'center',
+                  right: 0,
+                  // alignItems: 'flex-end',
                   height: 100,
                 }}>
                 <Text
@@ -331,8 +388,8 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
                 borderRightWidth: 1,
                 borderRightColor: 'grey',
               }}>
-              <Icon
-                name="thumbs-up"
+              <Icon2
+                name="arrowup"
                 size={20}
                 color={profileObject.is_like == true ? '#5F95F0' : 'grey'}
               />
@@ -371,8 +428,8 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
                 height: 50,
                 width: '50%',
               }}>
-              <Icon
-                name="thumbs-down"
+              <Icon2
+                name="arrowdown"
                 size={20}
                 color={profileObject.is_like == false ? '#5F95F0' : 'grey'}
               />

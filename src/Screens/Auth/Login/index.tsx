@@ -154,6 +154,7 @@ const Login = ({navigation}: {navigation: any}) => {
                   </Text>
                   <TextInput
                     value={email}
+                    keyboardType="email-address"
                     autoCapitalize="none"
                     onChangeText={text => {
                       setEmail(text);

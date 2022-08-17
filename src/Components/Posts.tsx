@@ -9,12 +9,13 @@ import {
   Text,
 } from 'react-native';
 import LikeDislike from './LikeDislike';
-
+import moment from 'moment';
+import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 const Posts = props => {
-  const {item, navigation, onShare, onPress, press} = props;
+  const {item, navigation, onShare, onPress, hashPress, press} = props;
   const {userData} = useSelector(({USER}) => USER);
 
   const [show, setShow] = useState(false);
@@ -61,7 +62,7 @@ const Posts = props => {
                 fontSize: 16,
                 color: 'black',
               }}>
-              {`${item?.user?.firstname} ${item?.user?.lastname}`}
+              {`${item?.user?.firstname}`}
             </Text>
             <Text
               style={{
@@ -69,7 +70,8 @@ const Posts = props => {
                 fontFamily: 'MontserratAlternates-Regular',
                 marginTop: 5,
               }}>
-              {item?.created_at}
+              {/* {item?.created_at} */}
+              {moment(item.created_at).format('DD MMMM YYYY HH:MM a')}
             </Text>
           </View>
         </View>
@@ -91,7 +93,7 @@ const Posts = props => {
           // backgroundColor: 'red',
           overflow: 'hidden',
         }}>
-        {item?.hashtag?.map(element => (
+        {/* {item?.hashtag?.map(element => (
           <Text
             style={{
               marginRight: 5,
@@ -101,7 +103,7 @@ const Posts = props => {
             }}>
             #{element}
           </Text>
-        ))}
+        ))} */}
 
         {/* <FlatList horizontal data={arr} renderItem={renderItem3} /> */}
         {/* {arr.map(item => (
@@ -119,22 +121,38 @@ const Posts = props => {
       ))} */}
       </View>
       <View style={{marginTop: 10}}>
-        <Text
+        {/* <Text
           style={{
             fontSize: 13,
             color: 'black',
             fontFamily: 'MontserratAlternates-Regular',
           }}>
           {item?.description}
-        </Text>
-
+        </Text> */}
+        <MentionHashtagTextView
+          mentionHashtagPress={hashPress}
+          mentionHashtagColor={'#5F95F0'}
+          style={{
+            fontSize: 13,
+            color: 'black',
+            fontFamily: 'MontserratAlternates-Regular',
+          }}>
+          {item.description}
+        </MentionHashtagTextView>
         <Image
           source={
             item?.media[0]?.media
               ? {uri: item?.media[0]?.media}
               : require('../assets/Images/social.jpg')
           }
-          style={{height: 150, borderRadius: 10, width: '100%', marginTop: 10}}
+          resizeMode="cover"
+          style={{
+            height: undefined,
+            aspectRatio: 1,
+            borderRadius: 10,
+            width: '100%',
+            marginTop: 10,
+          }}
         />
       </View>
       <View
@@ -229,13 +247,18 @@ const Posts = props => {
             //   setLike(!like);
             //   setDislike(false);
             // }}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
+            style={{
+              flexDirection: 'row',
+              width: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             {/* <Image
               source={require('../assets/Images/share.png')}
               style={{height: 10, width: 10}}
             /> */}
             <Icon name="share" size={16} color={'black'} />
-            <Text
+            {/* <Text
               style={{
                 fontFamily: 'MontserratAlternates-Regular',
                 marginLeft: 5,
@@ -243,7 +266,7 @@ const Posts = props => {
                 color: 'black',
               }}>
               Share
-            </Text>
+            </Text> */}
           </TouchableOpacity>
           {!show && (
             <TouchableOpacity
@@ -254,9 +277,12 @@ const Posts = props => {
               // }}
               style={{
                 flexDirection: 'row',
-                marginLeft: 10,
+                marginLeft: 0,
                 // backgroundColor: 'red',
                 // height: '100%',
+                // height: 20,
+                width: 30,
+                justifyContent: 'center',
                 alignItems: 'center',
               }}>
               {/* <Image
@@ -265,7 +291,7 @@ const Posts = props => {
               /> */}
               <Icon1 name="commenting" size={15} color="black" />
 
-              <Text
+              {/* <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   marginLeft: 5,
@@ -273,7 +299,7 @@ const Posts = props => {
                   fontSize: 13,
                 }}>
                 Comments
-              </Text>
+              </Text> */}
             </TouchableOpacity>
           )}
         </View>

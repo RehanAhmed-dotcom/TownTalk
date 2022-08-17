@@ -10,6 +10,9 @@ const InitialCalState = {
   passwoord: '',
   notificationSymbol: false,
   tog: false,
+  ToggleSwitch: false,
+  Lat: 0,
+  Long: 0,
   CityAdd: [],
 };
 
@@ -33,10 +36,28 @@ export default (state = InitialCalState, {type, payload}) => {
         verified: true,
       };
     }
+    case ActionType.LAT: {
+      return {
+        ...state,
+        Lat: payload,
+      };
+    }
+    case ActionType.LONG: {
+      return {
+        ...state,
+        Long: payload,
+      };
+    }
     case ActionType.TOGGLE: {
       return {
         ...state,
         tog: !state.tog,
+      };
+    }
+    case ActionType.TOGGLESWITCH: {
+      return {
+        ...state,
+        ToToggleSwitch: !state.ToggleSwitch,
       };
     }
     case ActionType.LOGOUT: {

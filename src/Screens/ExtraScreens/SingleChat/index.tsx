@@ -32,7 +32,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const guestData = {
     id: item.id,
     firstname: item.firstname,
-    lastname: item.lastname,
+    // lastname: item.lastname,
     email: item.email,
     fcm_token: item.fcm_token,
     image: item.image,
@@ -40,7 +40,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const user = {
     id: userData.userdata.id,
     firstname: userData.userdata.firstname,
-    lastname: userData.userdata.lastname,
+    // lastname: userData.userdata.lastname,
     email: userData.userdata.email,
     fcm_token: userData.userdata.fcm_token,
     image: userData.userdata.image,
@@ -208,7 +208,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
             }>
             <Image
               source={{uri: item.msg}}
-              style={{height: 200, width: 250, borderRadius: 5}}
+              style={{height: 300, width: 300, borderRadius: 5}}
             />
           </TouchableOpacity>
         ) : (
@@ -297,7 +297,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                     fontFamily: 'MontserratAlternates-SemiBold',
                     color: 'black',
                   }}>
-                  {`${item?.firstname} ${item?.lastname}`}
+                  {`${item?.firstname} `}
                 </Text>
                 {/* <Text
                 style={{
@@ -338,14 +338,14 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                   ? 20
                   : 0,
             }}>
-            <Icon1 name="plus" size={20} color="grey" />
+            {/* <Icon1 name="plus" size={20} color="grey" /> */}
             <TextInput
               value={message}
               onChangeText={text => setMessage(text)}
               placeholder="Write your message here..."
               style={{
                 backgroundColor: 'white',
-                width: '80%',
+                width: '85%',
                 height: 50,
                 paddingHorizontal: 10,
                 color: 'black',

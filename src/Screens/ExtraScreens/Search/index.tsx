@@ -21,7 +21,7 @@ import CityList from '../../../Components/CityList';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
-import Icon4 from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon4 from 'react-native-vector-icons/Fontisto';
 import Posts from '../../../Components/Posts';
 import {cityAdd} from '../../../redux/actions';
 const Search = ({navigation}) => {
@@ -32,20 +32,20 @@ const Search = ({navigation}) => {
   console.log('cityadd', CityAdd);
   const arr = [
     {
-      name: 'Restaurant',
-      image: <Icon3 name="restaurant" size={15} color={'#5F95F0'} />,
+      name: 'Shopping',
+      image: <Icon1 name="shopping-bag" size={15} color={'#5F95F0'} />,
     },
     {
-      name: 'Gym',
-      image: <Icon4 name="dumbbell" size={15} color={'#5F95F0'} />,
+      name: 'Entertainment',
+      image: <Icon3 name="tv" size={15} color={'#5F95F0'} />,
     },
     {
-      name: 'Bank',
-      image: <Icon1 name="bank" size={15} color={'#5F95F0'} />,
+      name: 'Gas Stations',
+      image: <Icon5 name="gas-pump" size={15} color={'#5F95F0'} />,
     },
     {
-      name: 'Hospital',
-      image: <Icon5 name="hospital" size={15} color={'#5F95F0'} />,
+      name: 'Supermarkets',
+      image: <Icon4 name="shopping-store" size={15} color={'#5F95F0'} />,
     },
   ];
   const renderItem = ({item}) => (

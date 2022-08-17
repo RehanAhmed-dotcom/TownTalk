@@ -22,6 +22,7 @@ const RestaurantsDetail = ({navigation, route}) => {
   const alter = () => {
     setShowModal(!showModal);
   };
+  console.log('item', item);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground

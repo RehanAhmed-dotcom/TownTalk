@@ -146,6 +146,7 @@ const addPost = (payload, data) => {
     })
     .catch(e => {
       console.log('in add post', e);
+      throw e;
     });
 };
 const addgroup = (payload, data) => {
@@ -168,7 +169,7 @@ const addgroup = (payload, data) => {
     });
 };
 const viewAllPost = payload => {
-  // console.log('data of payload', payload);
+  console.log('data of payload for hashtag', payload);
   const request = `/view-post?page=${payload.page}`;
   return axios
     .post(request, payload, {
@@ -260,6 +261,24 @@ const likeDislike = payload => {
       console.log('in likedislike', e);
     });
 };
+const blockUserList = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/blockUserList`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in blockUserList', e);
+    });
+};
 const likeDislikeProfile = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/like-dislike-profile`;
@@ -294,6 +313,61 @@ const createComment = payload => {
     })
     .catch(e => {
       console.log('in create comment', e);
+    });
+};
+const blockUser = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/blockUser`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in block User', e);
+    });
+};
+const unBlockUser = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/unBlockUser`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in unBlockUser', e);
+    });
+};
+const deleteAccount = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/deleteAccount`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in delete Account', e);
+      throw e;
     });
 };
 const updateToken = payload => {
@@ -433,7 +507,9 @@ export {
   getNotification,
   otp,
   resetPassword,
+  deleteAccount,
   hashTag,
+  blockUserList,
   addPost,
   viewAllPost,
   likeDislike,
@@ -443,9 +519,11 @@ export {
   profile,
   creategroup,
   addgroup,
+  blockUser,
   joingroup,
   singleGroup,
   postDetail,
   likeDislikeProfile,
   updateToken,
+  unBlockUser,
 };

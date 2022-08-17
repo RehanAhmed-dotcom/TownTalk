@@ -63,7 +63,7 @@ const ResturantsNearby = ({
       .then(result => {
         setList(result.results);
         setShowModal(false);
-        // console.log('results', result);
+        console.log('results', result.results);
       })
       // .then(result => this.setState({restaurantList: result}))
       .catch(e => {

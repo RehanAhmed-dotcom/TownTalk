@@ -36,7 +36,6 @@ const EditProfile = ({navigation}: {navigation: any}) => {
   const [show, setShow] = useState(false);
   const [image, setImage] = useState(userData.userdata.image);
   const [firstName, setFirstName] = useState(userData?.userdata?.firstname);
-  const [lastName, setLastName] = useState(userData?.userdata?.lastname);
   const [zip, setZip] = useState(userData.userdata.zipcode);
   const [mile, setMile] = useState('5 Miles');
   const [miles, setMiles] = useState(
@@ -348,7 +347,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     color: 'black',
                     fontFamily: 'MontserratAlternates-SemiBold',
                   }}>
-                  FIRST NAME
+                  USER NAME
                 </Text>
                 <TextInput
                   value={firstName}
@@ -365,7 +364,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                   }}
                 />
               </View>
-              <View style={{marginTop: 30}}>
+              {/* <View style={{marginTop: 30}}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -388,7 +387,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     color: 'black',
                   }}
                 />
-              </View>
+              </View> */}
               <View style={{marginTop: 30}}>
                 <Text
                   style={{
@@ -485,7 +484,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                   setShow(true);
                   const data = new FormData();
                   data.append('firstname', firstName);
-                  data.append('lastname', lastName);
+                  // data.append('lastname', lastName);
                   data.append('zipcode', zip);
                   data.append('email', email);
                   data.append('radius', miles);

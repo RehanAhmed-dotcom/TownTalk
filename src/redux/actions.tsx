@@ -24,8 +24,11 @@ const USER_AUTHORIZE = 'USER_SIGN_IN',
   ALARMNIGHT = 'ALARMNIGHT',
   UPDATE = 'UPDATE',
   FCM = 'FCM',
+  LAT = 'LAT',
+  LONG = 'LONG',
   VERIFY = 'VERIFY',
   SAVEPASSWORD = 'SAVEPASSWORD',
+  TOGGLESWITCH = 'TOGGLESWITCH',
   REMEMBER = 'REMEMBER',
   NOTIFICATIONALERT = 'NOTIFICATIONALERT',
   TOGGLE = 'TOOGLE',
@@ -41,9 +44,18 @@ const userRefresh = payload => dispatch => {
 const userLKAuthorize = payload => dispatch => {
   dispatch({type: REGISTER_FOR_LINKEDIN, payload});
 };
+const lat = payload => dispatch => {
+  dispatch({type: LAT, payload});
+};
+const long = payload => dispatch => {
+  dispatch({type: LONG, payload});
+};
 const cityAdd = payload => dispatch => {
   console.log('payload', payload);
   dispatch({type: CITYADD, payload});
+};
+const toggleSwitch = () => dispatch => {
+  dispatch({type: TOGGLESWITCH});
 };
 const logout = () => dispatch => {
   dispatch({type: USER_LOGOUT});
@@ -135,12 +147,15 @@ const ActionType = {
   CITYADD,
   REGISTER_FOR_LINKEDIN,
   CAL_SUB,
+  LAT,
+  LONG,
   CAL_ADD,
   CAL_APPEND,
   CAL_DIFF,
   CAL_CART,
   USERIMAGE,
   CARTITEMUPDATE,
+  TOGGLESWITCH,
   TOGGLE,
   PRODUCTINC,
   PRODUCTDEC,
@@ -168,6 +183,8 @@ export {
   userAuthorize,
   userRefresh,
   add,
+  lat,
+  long,
   images,
   sub,
   append,
@@ -176,6 +193,7 @@ export {
   verify,
   cartItemUpdate,
   increament,
+  toggleSwitch,
   decrement,
   logged,
   logoutuser,

@@ -8,6 +8,7 @@ import {
   Image,
   Text,
 } from 'react-native';
+import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import LikeDislike from './LikeDislike';
 
 import {useSelector} from 'react-redux';
@@ -81,7 +82,7 @@ const SwiperPosts = props => {
           style={{bottom: 10}}
         /> */}
       </TouchableOpacity>
-      <View
+      {/* <View
         style={{
           marginTop: 10,
           width: '100%',
@@ -101,32 +102,28 @@ const SwiperPosts = props => {
             #{element}
           </Text>
         ))}
-        {/*  */}
-        {/* <FlatList horizontal data={arr} renderItem={renderItem3} /> */}
-        {/* {arr.map(item => (
-        <View>
-          <Text
-            style={{
-              marginRight: 5,
-              fontSize: 13,
-              fontFamily: 'MontserratAlternates-Medium',
-              color: '#5F95F0',
-            }}>
-            #{item}
-          </Text>
-        </View>
-      ))} */}
-      </View>
+       
+      </View> */}
       <View style={{marginTop: 10}}>
-        <Text
+        <MentionHashtagTextView
+          mentionHashtagPress={text => console.log('text', text)}
+          mentionHashtagColor={'#5F95F0'}
+          style={{
+            fontSize: 13,
+            color: 'black',
+            fontFamily: 'MontserratAlternates-Regular',
+          }}>
+          {item.description}
+        </MentionHashtagTextView>
+        {/* <Text
           style={{
             fontSize: 13,
             color: 'black',
             fontFamily: 'MontserratAlternates-Regular',
           }}>
           {item?.description}
-        </Text>
-        <View style={{width: '100%', marginTop: 10, height: 150}}>
+        </Text> */}
+        <View style={{width: '100%', marginTop: 10, height: 350}}>
           <Swiper
             loadMinimal={true}
             showsPagination={true}
@@ -252,13 +249,18 @@ const SwiperPosts = props => {
             //   setLike(!like);
             //   setDislike(false);
             // }}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
+            style={{
+              flexDirection: 'row',
+              width: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
             {/* <Image
               source={require('../assets/Images/share.png')}
               style={{height: 10, width: 10}}
             /> */}
             <Icon name="share" size={16} color={'black'} />
-            <Text
+            {/* <Text
               style={{
                 fontFamily: 'MontserratAlternates-Regular',
                 marginLeft: 5,
@@ -266,7 +268,7 @@ const SwiperPosts = props => {
                 color: 'black',
               }}>
               Share
-            </Text>
+            </Text> */}
           </TouchableOpacity>
           {!show && (
             <TouchableOpacity
@@ -277,7 +279,9 @@ const SwiperPosts = props => {
               // }}
               style={{
                 flexDirection: 'row',
-                marginLeft: 10,
+                marginLeft: 0,
+                width: 30,
+                justifyContent: 'center',
                 alignItems: 'center',
               }}>
               {/* <Image
@@ -286,7 +290,7 @@ const SwiperPosts = props => {
               /> */}
               <Icon1 name="commenting" size={15} color="black" />
 
-              <Text
+              {/* <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   marginLeft: 5,
@@ -294,7 +298,7 @@ const SwiperPosts = props => {
                   fontSize: 13,
                 }}>
                 Comments
-              </Text>
+              </Text> */}
             </TouchableOpacity>
           )}
         </View>

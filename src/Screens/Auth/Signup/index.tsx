@@ -126,13 +126,18 @@ const Signup = ({navigation}: {navigation: any}) => {
                     fontFamily: 'MontserratAlternates-SemiBold',
                     color: 'black',
                   }}>
-                  FIRST NAME
+                  USER NAME
                 </Text>
                 <TextInput
                   value={firstName}
                   onChangeText={text => {
-                    setFirstName(text);
-                    setFirstNameErr('');
+                    if (text.includes(' ')) {
+                      setFirstName(text.trim());
+                      setFirstNameErr('');
+                    } else {
+                      setFirstName(text);
+                      setFirstNameErr('');
+                    }
                   }}
                   style={{
                     borderBottomColor: firstNameErr ? 'red' : 'grey',
@@ -143,7 +148,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                   }}
                 />
               </View>
-              <View style={{marginTop: 30}}>
+              {/* <View style={{marginTop: 30}}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -166,7 +171,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
-              </View>
+              </View> */}
               <View style={{marginTop: 30}}>
                 <Text
                   style={{
@@ -274,7 +279,6 @@ const Signup = ({navigation}: {navigation: any}) => {
                     validateEmail(email) &&
                     password.length >= 8 &&
                     firstName &&
-                    lastName &&
                     zip &&
                     phone
                   ) {
@@ -290,7 +294,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     // });
                     const data = new FormData();
                     data.append('firstname', firstName);
-                    data.append('lastname', lastName);
+
                     data.append('zipcode', zip);
                     data.append('email', email);
                     data.append('password', password);
@@ -334,6 +338,16 @@ const Signup = ({navigation}: {navigation: any}) => {
                               `${error.response.data.message.phoneno}`,
                             );
                           }
+                          if (error.response.data.message.firstname) {
+                            //   ToastAndroid.show(
+                            //     `${error.response.data.message.phoneno}`,
+                            //     ToastAndroid.SHORT,
+                            //   );
+                            Alert.alert(
+                              'The username has already been taken.',
+                              // `${error.response.data.message.firstname}`,
+                            );
+                          }
                         }
                       });
                     // navigation.navigate('TabNavigator');
@@ -341,14 +355,13 @@ const Signup = ({navigation}: {navigation: any}) => {
                     !validateEmail(email) &&
                     !password &&
                     !firstName &&
-                    !lastName &&
                     !zip &&
                     !phone
                   ) {
                     setEmailErr('asd');
                     setPasswordErr('asd');
                     setFirstNameErr('asd');
-                    setLastNameErr('asd');
+                    // setLastNameErr('asd');
                     setZipErr('asd');
                     setPhoneErr('asd');
                   } else if (!validateEmail(email)) {
@@ -361,8 +374,6 @@ const Signup = ({navigation}: {navigation: any}) => {
                     );
                   } else if (!firstName) {
                     setFirstNameErr('asd');
-                  } else if (!lastName) {
-                    setLastNameErr('asd');
                   } else if (!zip) {
                     setZipErr('asd');
                   } else if (!phone) {

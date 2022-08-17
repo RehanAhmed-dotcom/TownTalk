@@ -25,13 +25,15 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Entypo';
+import Icon1 from 'react-native-vector-icons/AntDesign';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateToken} from '../../../lib/api';
 import {viewAllPost, hashTag} from '../../../lib/api';
 import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
 import {lat, long} from '../../../redux/actions';
-const Home = ({navigation}) => {
+const Hashes = ({navigation, route}) => {
+  const {text} = route.params;
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   const [latitude, setlatitude] = useState(0);
   const dispatch = useDispatch();
@@ -41,7 +43,6 @@ const Home = ({navigation}) => {
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
   const [specific, setSpecific] = useState({});
-  const [refreshing, setRefreshing] = useState<boolean>(false);
   const [testArr, setTestArr] = useState([]);
   const [hash, setHash] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -68,47 +69,6 @@ const Home = ({navigation}) => {
         });
     } catch (error) {}
   }, []);
-  // const renderItem = ({item}) => (
-  //   <TouchableOpacity
-  //     onPress={() => {
-  //       setSelect(item);
-  //       viewAllPost({
-  //         Auth: userData.token,
-  //         hashtag: item,
-  //         page,
-  //         latitude,
-  //         longitude,
-  //       })
-  //         .then(res => {
-  //           // console.log('res', res);
-  //           setData(res.posts.data);
-  //           setTestArr(res.posts.data);
-  //         })
-  //         .catch(err => {
-  //           console.log('err in home', err.response.data);
-  //         });
-  //     }}
-  //     style={{
-  //       height: 30,
-  //       backgroundColor: select == item ? '#5F95F0' : 'white',
-  //       marginRight: 10,
-  //       marginLeft: 3,
-  //       marginVertical: 3,
-  //       elevation: 3,
-  //       alignItems: 'center',
-  //       justifyContent: 'center',
-  //       minWidth: 100,
-  //       borderRadius: 5,
-  //     }}>
-  //     <Text
-  //       style={{
-  //         color: select == item ? 'white' : 'black',
-  //         fontFamily: 'MontserratAlternates-Medium',
-  //       }}>
-  //       {`${item.substring(0, 1) != '#' ? '#' : ''}${item}`}
-  //     </Text>
-  //   </TouchableOpacity>
-  // );
 
   const alter = () => {
     // console.log('alter called');
@@ -173,35 +133,29 @@ const Home = ({navigation}) => {
       updateToken({Auth: userData.token, fcm_token: token});
     });
   };
-  useEffect(() => {
-    // handleAddress('solo');
-    Platform.OS == 'ios'
-      ? Geolocation.requestAuthorization('always').then(res => {
-          cuRRentlocation();
-          // console.log('res', res);
-        })
-      : requestLocationPermission();
-  }, []);
+  //   useEffect(() => {
+  //     // handleAddress('solo');
+  //     Platform.OS == 'ios'
+  //       ? Geolocation.requestAuthorization('always').then(res => {
+  //           cuRRentlocation();
+  //           // console.log('res', res);
+  //         })
+  //       : requestLocationPermission();
+  //   }, []);
   const increasePage = () => {
-    setRefreshing(true);
     viewAllPost({
       Auth: userData.token,
       page: page + 1,
       latitude: latitude ? latitude : Lat,
       longitude: longitude ? longitude : Long,
-    })
-      .then(res => {
-        console.log('res of pagination', res);
-        setRefreshing(false);
-        // setTestArr([...testArr, ...res.posts.data]);
-        if (res.status == 'success') {
-          setData([...datas, ...res.posts.data]);
-          setPage(page + 1);
-        }
-      })
-      .catch(err => {
-        setRefreshing(false);
-      });
+    }).then(res => {
+      console.log('res of pagination', res);
+      // setTestArr([...testArr, ...res.posts.data]);
+      if (res.status == 'success') {
+        setData([...datas, ...res.posts.data]);
+        setPage(page + 1);
+      }
+    });
   };
   useEffect(() => {
     hashTag({Auth: userData.token, latitude, longitude}).then(res => {
@@ -211,9 +165,10 @@ const Home = ({navigation}) => {
     _usersList();
     viewAllPost({
       Auth: userData.token,
-      page: 1,
-      latitude: latitude ? latitude : Lat,
-      longitude: longitude ? longitude : Long,
+      page,
+      hashtag: text.substring(1),
+      latitude: Lat,
+      longitude: Long,
     })
       .then(res => {
         // console.log('res', res);
@@ -223,7 +178,7 @@ const Home = ({navigation}) => {
       .catch(err => {
         console.log('err in home', err.response.data);
       });
-  }, [lat, change]);
+  }, [change]);
   // useEffect(() => {
   //   // handleAddress('solo');
   //   const unsubscribe = navigation.addListener('focus', () => {
@@ -238,34 +193,34 @@ const Home = ({navigation}) => {
   //   // Return the function to unsubscribe from the event so it gets removed on unmount
   //   return unsubscribe;
   // }, [navigation]);
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      setSelect('');
-      setPage(1);
-      // setChange(!change);
-      hashTag({Auth: userData.token, latitude, longitude}).then(res => {
-        // console.log('res of hash', res);
-        setHash(res.hashtags);
-      });
-      viewAllPost({
-        Auth: userData.token,
-        page: 1,
-        latitude: latitude ? latitude : Lat,
-        longitude: longitude ? longitude : Long,
-      })
-        .then(res => {
-          console.log('res of new api', res);
-          setData(res.posts.data);
-          setTestArr(res.posts.data);
-        })
-        .catch(err => {
-          console.log('err in home', err.response.data);
-        });
-    });
+  //   useEffect(() => {
+  //     const unsubscribe = navigation.addListener('focus', () => {
+  //       setSelect('');
+  //       setPage(1);
+  //       // setChange(!change);
+  //       hashTag({Auth: userData.token, latitude, longitude}).then(res => {
+  //         // console.log('res of hash', res);
+  //         setHash(res.hashtags);
+  //       });
+  //       viewAllPost({
+  //         Auth: userData.token,
+  //         page: 1,
+  //         latitude: latitude ? latitude : Lat,
+  //         longitude: longitude ? longitude : Long,
+  //       })
+  //         .then(res => {
+  //           console.log('res of new api', res);
+  //           setData(res.posts.data);
+  //           setTestArr(res.posts.data);
+  //         })
+  //         .catch(err => {
+  //           console.log('err in home', err.response.data);
+  //         });
+  //     });
 
-    // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, [navigation]);
+  //     // Return the function to unsubscribe from the event so it gets removed on unmount
+  //     return unsubscribe;
+  //   }, [navigation]);
   const render = ({item}) => (
     <TouchableOpacity
       onPress={() => {
@@ -466,43 +421,6 @@ const Home = ({navigation}) => {
   };
   console.log('location');
   // const lat = 33.5344737;
-  const onRefresh = () => {
-    setRefreshing(true);
-    viewAllPost({
-      Auth: userData.token,
-      page: 1,
-      latitude: latitude ? latitude : Lat,
-      longitude: longitude ? longitude : Long,
-    })
-      .then(res => {
-        console.log('res of new api', res);
-        setData(res.posts.data);
-        setTestArr(res.posts.data);
-        setRefreshing(false);
-      })
-      .catch(err => {
-        setRefreshing(false);
-        console.log('err in home', err.response.data);
-      });
-    // setLoadAble(true);
-    // setLoading(true);
-    // getHomeData_API(1)
-    //   .then((res) => {
-    //     if (res) {
-    //       const { homebanner, status, newsfeedlist } = res;
-    //       if (status === "success") {
-    //         Array.isArray(homebanner) && setHeading(homebanner[0]);
-    //         Array.isArray(newsfeedlist) && setList(newsfeedlist);
-    //       }
-    //     }
-    //   })
-    // .catch((e) => {})
-    // .finally(() => {
-    //   setPage(2);
-    // setRefreshing(false);
-    // setLoading(false);
-    // });
-  };
   // const long = 73.0525821;
   // console.log('test arr length', testArr.length);
   return (
@@ -521,21 +439,33 @@ const Home = ({navigation}) => {
             paddingHorizontal: 15,
             justifyContent: 'space-between',
           }}>
-          <View>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Icon1 name="left" color="black" size={20} />
             <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'MontserratAlternates-SemiBold',
+                color: 'black',
+                marginLeft: 10,
+              }}>
+              {text.substring(1)}
+            </Text>
+            {/* <Text
               style={{
                 fontSize: 16,
                 fontFamily: 'MontserratAlternates-SemiBold',
                 color: '#5F95F0',
               }}>
               {location}
-              {/* {`${userData?.userdata?.firstname}`} */}
-            </Text>
+             
+            </Text> */}
             {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               {location}
             </Text> */}
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          </TouchableOpacity>
+          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TouchableOpacity onPress={() => navigation.navigate('Search')}>
               <Image
                 source={require('../../../assets/Images/search.png')}
@@ -548,7 +478,7 @@ const Home = ({navigation}) => {
                 style={{height: 15, marginLeft: 10, width: 15}}
               />
             </TouchableOpacity>
-          </View>
+          </View> */}
         </View>
         {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
         {/* <ScrollView> */}
@@ -585,9 +515,7 @@ const Home = ({navigation}) => {
               <FlatList
                 data={datas}
                 // onEndReachedThreshold={0.5}
-                onRefresh={onRefresh}
-                refreshing={refreshing}
-                onEndReached={increasePage}
+                // onEndReached={increasePage}
                 renderItem={renderItem1}
               />
             </View>
@@ -602,4 +530,4 @@ const Home = ({navigation}) => {
     </SafeAreaView>
   );
 };
-export default Home;
+export default Hashes;

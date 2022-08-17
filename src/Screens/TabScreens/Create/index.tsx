@@ -16,6 +16,8 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import Tags from 'react-native-tags';
+import MentionHashtagTextView from 'react-native-mention-hashtag-text';
+
 import Geolocation from 'react-native-geolocation-service';
 import MapView from 'react-native-maps';
 import {addPost} from '../../../lib/api';
@@ -31,17 +33,15 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Swiper from 'react-native-swiper';
 const Create = ({navigation}) => {
   const {userData} = useSelector(({USER}) => USER);
-  const [name, setName] = useState(
-    `${userData?.userdata?.firstname} ${userData?.userdata?.lastname}`,
-  );
+  const [name, setName] = useState(`${userData?.userdata?.firstname}`);
   const [img, setImg] = useState([]);
   const [zip, setZip] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [description, setDescription] = useState('');
-  const [hash, setHash] = useState([]);
+  // const [hash, setHash] = useState([]);
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
-  // console.log('userdata', latitude, longitude);
+  // console.log('userdata', hash);
   const picker = () => {
     ImagePicker.openPicker({
       // multiple: true,
@@ -57,44 +57,50 @@ const Create = ({navigation}) => {
       // setImgErr('');
     });
   };
-  // console.log('has', hash);
+  console.log('has', description);
   const add = () => {
     if (zip && latitude && description && name && img.length > 0) {
-      if (hash.length > 0) {
-        setShowModal(true);
-        const data = new FormData();
-        hash.forEach(item => {
-          data.append('hashtags[]', item);
+      // if (hash.length > 0) {
+      setShowModal(true);
+      const data = new FormData();
+      // hash.forEach(item => {
+      //   data.append('hashtags[]', item.substring(0, 200));
+      // });
+      data.append('zipcode', zip);
+      data.append('latitude', latitude);
+      data.append('longitude', longitude);
+      data.append('description', description);
+      data.append('title', name);
+      data.append('media_type', 'image');
+      img.forEach(item => {
+        data.append('media[]', {
+          uri: item.image,
+          type: 'image/jpeg',
+          name: `image${Math.random()}.jpg`,
         });
-        data.append('zipcode', zip);
-        data.append('latitude', latitude);
-        data.append('longitude', longitude);
-        data.append('description', description);
-        data.append('title', name);
-        data.append('media_type', 'image');
-        img.forEach(item => {
-          data.append('media[]', {
-            uri: item.image,
-            type: 'image/jpeg',
-            name: `image${Math.random()}.jpg`,
-          });
-        });
+      });
 
-        addPost({Auth: userData.token}, data)
-          .then(res => {
-            setShowModal(false);
-            console.log('res', res);
-            if (res.status == 'success') {
-              navigation.goBack();
-            }
-          })
-          .catch(err => {
-            setShowModal(false);
-            console.log('err', err);
-          });
-      } else {
-        Alert.alert("Enter Hash tag then press 'space'");
-      }
+      addPost({Auth: userData.token}, data)
+        .then(res => {
+          setShowModal(false);
+          console.log('res', res);
+          if (res.status == 'success') {
+            navigation.goBack();
+            setImg([]);
+            // setName('');
+            setZip('');
+            setDescription('');
+            // setHash([]);
+          }
+        })
+        .catch(err => {
+          setShowModal(false);
+          console.log('err', err.response.data);
+          Alert.alert('Something went wrong, please try again!');
+        });
+      // } else {
+      //   Alert.alert("Enter Hash tag then press 'space'");
+      // }
     } else {
       Alert.alert('All fields required');
     }
@@ -134,11 +140,6 @@ const Create = ({navigation}) => {
     }
   };
   useEffect(() => {
-    setImg([]);
-    // setName('');
-    setZip('');
-    setDescription('');
-    setHash([]);
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
           cuRRentlocation();
@@ -203,6 +204,12 @@ const Create = ({navigation}) => {
         <Wrapper behavior="padding" style={{flex: 1}}>
           <ScrollView>
             <View style={{marginTop: 20, paddingHorizontal: 15}}>
+              {/* <MentionHashtagTextView
+                mentionHashtagPress={text => console.log('text', text)}
+                mentionHashtagColor={'#5F95F0'}>
+                This is a text with a @mention and #hashtag. You can add more
+                @mentions like @john @foe or #hashtags like #ReactNative
+              </MentionHashtagTextView> */}
               <View style={{flexDirection: 'row'}}>
                 {img.length > 0 && (
                   <View style={{width: 150, marginRight: 10, height: 150}}>
@@ -327,6 +334,7 @@ const Create = ({navigation}) => {
                 <TextInput
                   textAlignVertical="top"
                   value={description}
+                  maxLength={200}
                   multiline
                   numberOfLines={5}
                   onChangeText={text => {
@@ -345,7 +353,7 @@ const Create = ({navigation}) => {
                   }}
                 />
               </View>
-              <View style={{marginTop: 30, marginBottom: 20}}>
+              {/* <View style={{marginTop: 30, marginBottom: 20}}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -362,7 +370,10 @@ const Create = ({navigation}) => {
                     placeholderTextColor: 'grey',
                   }}
                   initialTags={[]}
-                  onChangeTags={tags => setHash(tags)}
+                  onChangeTags={tags => {
+                    console.log('length', tags.length);
+                    setHash(tags);
+                  }}
                   onTagPress={(index, tagLabel, event, deleted) =>
                     console.log(
                       index,
@@ -389,12 +400,14 @@ const Create = ({navigation}) => {
                   }) => (
                     <TouchableOpacity key={`${tag}-${index}`} onPress={onPress}>
                       <Text style={{color: 'grey'}}>
-                        {`${tag.substring(0, 1) != '#' ? '#' : ''}${tag}`}{' '}
+                        {`${
+                          tag.substring(0, 1) != '#' ? '#' : ''
+                        }${tag.substring(0, 200)}`}{' '}
                       </Text>
                     </TouchableOpacity>
                   )}
                 />
-              </View>
+              </View> */}
             </View>
           </ScrollView>
         </Wrapper>

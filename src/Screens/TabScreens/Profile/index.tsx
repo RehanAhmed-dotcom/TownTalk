@@ -16,8 +16,9 @@ import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import {logoutuser} from '../../../redux/actions';
 import database from '@react-native-firebase/database';
-import Icon from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
+import Icon2 from 'react-native-vector-icons/AntDesign';
 
 const Profile = ({navigation}) => {
   const [like, setLike] = useState(false);
@@ -251,11 +252,17 @@ const Profile = ({navigation}) => {
           </View>
 
           <Icon
+            name="settings-sharp"
+            color={'black'}
+            size={20}
+            onPress={() => navigation.navigate('Setting')}
+          />
+          {/* <Icon
             name="log-out"
             color={'black'}
             size={20}
             onPress={() => logoutuser(false)(dispatch)}
-          />
+          /> */}
         </View>
         <View
           style={{
@@ -279,7 +286,7 @@ const Profile = ({navigation}) => {
                 color: 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
-              {userData?.userdata?.firstname} {userData?.userdata?.lastname}
+              {userData?.userdata?.firstname}
             </Text>
             <Text
               style={{fontSize: 14, fontFamily: 'MontserratAlternates-Medium'}}>
@@ -329,8 +336,8 @@ const Profile = ({navigation}) => {
                 borderRightWidth: 1,
                 borderRightColor: 'grey',
               }}>
-              <Icon
-                name="thumbs-up"
+              <Icon2
+                name="arrowup"
                 size={20}
                 color={like ? '#5F95F0' : 'black'}
               />
@@ -358,8 +365,8 @@ const Profile = ({navigation}) => {
                 height: 50,
                 width: '50%',
               }}>
-              <Icon
-                name="thumbs-down"
+              <Icon2
+                name="arrowdown"
                 size={20}
                 color={dislike ? '#5F95F0' : 'black'}
               />

@@ -32,9 +32,7 @@ import Swiper from 'react-native-swiper';
 const GroupPost = ({navigation, route}) => {
   const {item} = route.params;
   const {userData} = useSelector(({USER}) => USER);
-  const [name, setName] = useState(
-    `${userData?.userdata?.firstname} ${userData?.userdata?.lastname}`,
-  );
+  const [name, setName] = useState(`${userData?.userdata?.firstname}`);
   const [img, setImg] = useState([]);
   const [zip, setZip] = useState('');
   const [showModal, setShowModal] = useState(false);

@@ -9,6 +9,7 @@ import Code from '../Screens/Auth/Code';
 import Email from '../Screens/Auth/Email';
 import Password from '../Screens/Auth/Password';
 import TabNavigator from './Tab';
+import Hashes from '../Screens/ExtraScreens/Hashes';
 import UserProfile from '../Screens/ExtraScreens/UserProfile';
 import PostDetails from '../Screens/ExtraScreens/PostDetails';
 import Search from '../Screens/ExtraScreens/Search';
@@ -16,6 +17,8 @@ import ResturantsNearby from '../Screens/ExtraScreens/ResturantsNearby';
 import RestaurantsDetail from '../Screens/ExtraScreens/RestaurantsDetail';
 import SingleChat from '../Screens/ExtraScreens/SingleChat';
 import EditProfile from '../Screens/ExtraScreens/EditProfile';
+import ContactUs from '../Screens/ExtraScreens/ContactUs';
+import Setting from '../Screens/ExtraScreens/Setting';
 // import Group from '../Components/Group';
 import Comments from '../Screens/ExtraScreens/Comments';
 import {useSelector} from 'react-redux';
@@ -23,6 +26,8 @@ import GroupPage from '../Screens/ExtraScreens/GroupsPage';
 import GroupDetails from '../Screens/ExtraScreens/GroupDetails';
 import NewPassword from '../Screens/ExtraScreens/NewPassword';
 import CodePhone from '../Screens/Auth/CodePhone';
+
+import BlockedUser from '../Screens/ExtraScreens/BlockedUser';
 import CreateGroup from '../Screens/ExtraScreens/CreateGroup';
 import Splash from '../Screens/Auth/Splash';
 import GroupPost from '../Screens/ExtraScreens/GroupPost';
@@ -56,6 +61,8 @@ const Root = () => {
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="CreateGroup" component={CreateGroup} />
             <Stack.Screen name="UserProfile" component={UserProfile} />
+            <Stack.Screen name="Hashes" component={Hashes} />
+            <Stack.Screen name="ContactUs" component={ContactUs} />
             <Stack.Screen name="GroupPage" component={GroupPage} />
             <Stack.Screen name="NewPassword" component={NewPassword} />
             <Stack.Screen name="SingleChat" component={SingleChat} />
@@ -63,6 +70,8 @@ const Root = () => {
             <Stack.Screen name="GroupDetails" component={GroupDetails} />
             <Stack.Screen name="Comments" component={Comments} />
             <Stack.Screen name="GroupPost" component={GroupPost} />
+            <Stack.Screen name="Setting" component={Setting} />
+            <Stack.Screen name="BlockedUser" component={BlockedUser} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="Search" component={Search} />
             <Stack.Screen

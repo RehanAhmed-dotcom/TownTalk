@@ -6,6 +6,9 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Platform,
+  Keyboard,
+  KeyboardAvoidingView,
   Image,
   Text,
   ImageBackground,
@@ -24,19 +27,26 @@ const Comments = ({navigation, route}) => {
   const {userData} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [comment, setComment] = useState('');
+  const [keyboardStatus, setKeyboardStatus] = useState('');
   useEffect(() => {
     viewComment({Auth: userData.token, id}).then(res => {
       console.log('res of comments', res);
       setComments(res.comments);
     });
   }, [change]);
-  const cities = [
-    {name: 'London', detail: 'England, United Kingdom'},
-    {name: 'Dubai', detail: 'Emirates of Dubai, United Arab Emirates'},
-    {name: 'Istanbul', detail: 'Turkey, Europe'},
-    {name: 'New York City', detail: 'New York, United States'},
-    {name: 'Rome', detail: 'Lazio, Italy'},
-  ];
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   const renderItems = ({item}) => (
     <View
       style={{
@@ -108,42 +118,44 @@ const Comments = ({navigation, route}) => {
       setChange(!change);
     });
   };
-  console.log('comm', comments);
+  // console.log('comm', comments);
+  const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}>
-        <View
-          style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 15,
-            // justifyContent: 'space-between',
-          }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="left" size={20} color={'black'} />
-          </TouchableOpacity>
-          <Text
+        <Wrapper behavior="padding" style={{flex: 1}}>
+          <View
             style={{
-              fontSize: 16,
-              fontFamily: 'MontserratAlternates-SemiBold',
-              color: 'black',
-              marginLeft: 20,
+              height: 80,
+              backgroundColor: 'white',
+              elevation: 3,
+              flexDirection: 'row',
+              alignItems: 'center',
+              paddingHorizontal: 15,
+              // justifyContent: 'space-between',
             }}>
-            Comments
-          </Text>
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon name="left" size={20} color={'black'} />
+            </TouchableOpacity>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'MontserratAlternates-SemiBold',
+                color: 'black',
+                marginLeft: 20,
+              }}>
+              Comments
+            </Text>
+            {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               Chicago, IL 60611, USA
             </Text> */}
-        </View>
-        {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-        {/* <ScrollView> */}
-        <View style={{flex: 1, paddingHorizontal: 15}}>
-          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          </View>
+          {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+          {/* <ScrollView> */}
+          <View style={{flex: 1, paddingHorizontal: 15}}>
+            {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
               style={{
@@ -162,38 +174,45 @@ const Comments = ({navigation, route}) => {
             </View>
           ))}
         </View> */}
-          {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+            {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
 
-          <FlatList data={comments} renderItem={renderItems} />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            backgroundColor: 'white',
-            height: 70,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <TextInput
-            placeholder={'Add your comment'}
-            placeholderTextColor={'grey'}
-            value={comment}
-            onChangeText={text => {
-              setComment(text);
-            }}
+            <FlatList data={comments} renderItem={renderItems} />
+          </View>
+          <View
             style={{
-              width: '80%',
-              height: 50,
-              borderRadius: 30,
-              color: 'black',
-              paddingHorizontal: 10,
-              backgroundColor: '#ccc',
-            }}
-          />
-          <TouchableOpacity onPress={() => send()} style={{marginLeft: 10}}>
-            <Icon3 name="send" size={25} color="#5F95F0" />
-          </TouchableOpacity>
-        </View>
+              flexDirection: 'row',
+              backgroundColor: 'white',
+              height: 70,
+              marginBottom:
+                Platform.OS == 'android'
+                  ? 0
+                  : keyboardStatus == 'Keyboard Shown'
+                  ? 20
+                  : 0,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <TextInput
+              placeholder={'Add your comment'}
+              placeholderTextColor={'grey'}
+              value={comment}
+              onChangeText={text => {
+                setComment(text);
+              }}
+              style={{
+                width: '80%',
+                height: 50,
+                borderRadius: 30,
+                color: 'black',
+                paddingHorizontal: 10,
+                backgroundColor: '#ccc',
+              }}
+            />
+            <TouchableOpacity onPress={() => send()} style={{marginLeft: 10}}>
+              <Icon3 name="send" size={25} color="#5F95F0" />
+            </TouchableOpacity>
+          </View>
+        </Wrapper>
       </ImageBackground>
 
       {/* </ScrollView> */}
