@@ -58,6 +58,10 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
           }}
           press={alter}
           navigation={navigation}
+          hashPress={text => {
+            console.log('text of hash tag', text);
+            navigation.navigate('Hashes', {text});
+          }}
         />
       )}
     </View>

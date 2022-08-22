@@ -17,6 +17,12 @@ import Icon1 from 'react-native-vector-icons/FontAwesome';
 const Posts = props => {
   const {item, navigation, onShare, onPress, hashPress, press} = props;
   const {userData} = useSelector(({USER}) => USER);
+  // const item = props?.item;
+  // const navigation = props?.navigation;
+  // const onShare = props?.onShare;
+  // const onPress = props?.onPress;
+  // const hashPress = props?.hashPress;
+  // const press = props?.press;
 
   const [show, setShow] = useState(false);
   // console.log('item', item);
@@ -71,7 +77,7 @@ const Posts = props => {
                 marginTop: 5,
               }}>
               {/* {item?.created_at} */}
-              {moment(item.created_at).format('DD MMMM YYYY HH:MM a')}
+              {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')}
             </Text>
           </View>
         </View>
@@ -137,7 +143,7 @@ const Posts = props => {
             color: 'black',
             fontFamily: 'MontserratAlternates-Regular',
           }}>
-          {item.description}
+          {item?.description}
         </MentionHashtagTextView>
         <Image
           source={

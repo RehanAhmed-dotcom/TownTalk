@@ -8,8 +8,6 @@ const LikeDislike = props => {
   const {item, press} = props;
   const [like, setLike] = useState(item?.is_like == true ? true : false);
   const [dislike, setDislike] = useState(item?.is_like == false ? true : false);
-  const [likecount, setLikeCount] = useState(item?.like_count);
-  const [dislikecount, setDislikeCount] = useState(item?.dislike_count);
   // useEffect(() => {
   //   setLike(item.is_like == true ? true : false);
   //   setDislike(item.is_like == false ? false : true);
@@ -20,20 +18,20 @@ const LikeDislike = props => {
     <View style={{flexDirection: 'row', alignItems: 'center'}}>
       <TouchableOpacity
         onPress={() => {
-          setLike(!like);
+          // setLike(!like);
           press();
-          setDislike(false);
-          setDislikeCount(
-            item?.is_like == false
-              ? item?.dislike_count - 1
-              : item?.dislike_count,
-          );
-          setLikeCount(
-            item?.is_like == true ? item?.like_count - 1 : item?.like_count + 1,
-          );
+          // setDislike(false);
+          // setDislikeCount(
+          //   item?.is_like == false
+          //     ? item?.dislike_count - 1
+          //     : item?.dislike_count,
+          // );
+          // setLikeCount(
+          //   item?.is_like == true ? item?.like_count - 1 : item?.like_count + 1,
+          // );
           // press();
           likeDislike({
-            Auth: userData.token,
+            Auth: userData?.token,
             creator_id: item?.user?.id,
             post_id: item?.id,
             is_like: 1,
@@ -65,20 +63,20 @@ const LikeDislike = props => {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          setDislike(!dislike);
+          // setDislike(!dislike);
           press();
-          setLike(false);
-          setLikeCount(
-            item?.is_like == true ? item?.like_count - 1 : item?.like_count,
-          );
-          setDislikeCount(
-            item?.is_like == false
-              ? item?.dislike_count - 1
-              : item?.dislike_count + 1,
-          );
+          // setLike(false);
+          // setLikeCount(
+          //   item?.is_like == true ? item?.like_count - 1 : item?.like_count,
+          // );
+          // setDislikeCount(
+          //   item?.is_like == false
+          //     ? item?.dislike_count - 1
+          //     : item?.dislike_count + 1,
+          // );
 
           likeDislike({
-            Auth: userData.token,
+            Auth: userData?.token,
             creator_id: item?.user?.id,
             post_id: item?.id,
             is_like: 0,

@@ -407,21 +407,6 @@ const Home = ({navigation}) => {
       hashPress={text => {
         console.log('text of hash tag', text);
         navigation.navigate('Hashes', {text});
-        // viewAllPost({
-        //   Auth: userData.token,
-        //   hashtag: text.substring(1),
-        //   page,
-        //   latitude: latitude ? latitude : Lat,
-        //   longitude: longitude ? longitude : Long,
-        // })
-        //   .then(res => {
-        //     console.log('res of api after hash tag press', res);
-        //     setData(res.posts.data);
-        //     setTestArr(res.posts.data);
-        //   })
-        //   .catch(err => {
-        //     // console.log('err in home', err.response.data);
-        //   });
       }}
     />
   );

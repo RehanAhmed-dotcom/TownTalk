@@ -179,6 +179,10 @@ const GroupDetails = ({navigation, route}) => {
       }}
       press={alter}
       navigation={navigation}
+      hashPress={text => {
+        console.log('text of hash tag', text);
+        navigation.navigate('Hashes', {text});
+      }}
     />
   );
   const recaptcha = useRef();

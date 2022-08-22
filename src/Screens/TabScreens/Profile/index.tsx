@@ -3,6 +3,7 @@ import React, {useState, useCallback, useEffect} from 'react';
 import {
   View,
   FlatList,
+  Alert,
   TouchableOpacity,
   Image,
   SafeAreaView,
@@ -10,7 +11,12 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
-import {profile} from '../../../lib/api';
+import MentionHashtagTextView from 'react-native-mention-hashtag-text';
+import moment from 'moment';
+import Icon3 from 'react-native-vector-icons/Entypo';
+import {profile, likeDislike} from '../../../lib/api';
+import LikeDislike from '../../../Components/LikeDislike';
+import Icon4 from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Entypo';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
@@ -48,18 +54,256 @@ const Profile = ({navigation}) => {
           page={'s'}
         />
       ) : (
-        <Posts
-          item={item}
-          onPress={() => {
-            navigation.navigate('PostDetails', {item});
-          }}
-          onShare={() => {
-            setSpecific(item);
-            setShowModal(true);
-          }}
-          press={alter}
-          navigation={navigation}
-        />
+        // <Text>Hello</Text>
+        // <Posts
+        //   item={item}
+        //   onPress={() => {
+        //     navigation.navigate('PostDetails', {item});
+        //   }}
+        //   onShare={() => {
+        //     setSpecific(item);
+        //     setShowModal(true);
+        //   }}
+        //   press={alter}
+        //   navigation={navigation}
+        //   hashPress={text => {
+        //     console.log('text of hash tag', text);
+        //     navigation.navigate('Hashes', {text});
+        //   }}
+        // />
+        <TouchableOpacity
+          activeOpacity={1}
+          onPress={() => navigation.navigate('PostDetails', {item})}
+          style={{
+            // height: 30,
+            backgroundColor: 'white',
+            marginRight: 3,
+            elevation: 3,
+            // alignItems: 'center',
+            // justifyContent: 'center',
+            // minWidth: 100,
+            marginLeft: 3,
+            marginVertical: 3,
+            marginTop: 10,
+            padding: 12,
+            borderRadius: 5,
+          }}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('UserProfile', {item})}
+            style={{
+              // marginTop: 5,
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Image
+                source={
+                  item?.user?.image
+                    ? {uri: item?.user?.image}
+                    : require('../../../assets/Images/girl.jpg')
+                }
+                style={{width: 50, height: 50, borderRadius: 50}}
+              />
+              <View style={{marginLeft: 10}}>
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                    fontSize: 16,
+                    color: 'black',
+                  }}>
+                  {`${item?.user?.firstname}`}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    fontFamily: 'MontserratAlternates-Regular',
+                    marginTop: 5,
+                  }}>
+                  {/* {item?.created_at} */}
+                  {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+          <View
+            style={{
+              marginTop: 10,
+              width: '100%',
+              // flexDirection: 'row',
+              // alignItems: 'center',
+              flexDirection: 'row',
+
+              // backgroundColor: 'red',
+              overflow: 'hidden',
+            }}></View>
+          <View style={{marginTop: 10}}>
+            <MentionHashtagTextView
+              mentionHashtagPress={text =>
+                navigation.navigate('Hashes', {text})
+              }
+              mentionHashtagColor={'#5F95F0'}
+              style={{
+                fontSize: 13,
+                color: 'black',
+                fontFamily: 'MontserratAlternates-Regular',
+              }}>
+              {item?.description}
+            </MentionHashtagTextView>
+            <Image
+              source={
+                item?.media[0]?.media
+                  ? {uri: item?.media[0]?.media}
+                  : require('../../../assets/Images/social.jpg')
+              }
+              resizeMode="cover"
+              style={{
+                height: undefined,
+                aspectRatio: 1,
+                borderRadius: 10,
+                width: '100%',
+                marginTop: 10,
+              }}
+            />
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginTop: 10,
+              // backgroundColor: 'red',
+            }}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  // setLike(!like);
+                  alter();
+                  // Alert.alert('like ', item.like_count.toString());
+                  // setDislike(false);
+                  // setDislikeCount(
+                  //   item?.is_like == false
+                  //     ? item?.dislike_count - 1
+                  //     : item?.dislike_count,
+                  // );
+                  // setLikeCount(
+                  //   item?.is_like == true ? item?.like_count - 1 : item?.like_count + 1,
+                  // );
+                  // press();
+                  likeDislike({
+                    Auth: userData?.token,
+                    creator_id: item?.user?.id,
+                    post_id: item?.id,
+                    is_like: 1,
+                  })
+                    .then(res => {
+                      console.log('res', res);
+                      // press();
+                    })
+                    .catch(err => {
+                      console.log('err', err);
+                    });
+                }}
+                style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Icon2
+                  name="arrowup"
+                  size={20}
+                  color={item?.is_like == true ? '#5F95F0' : 'grey'}
+                  // color={like == true ? '#5F95F0' : 'grey'}
+                />
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    fontSize: 13,
+                    marginLeft: 5,
+                    color: 'black',
+                  }}>
+                  {item?.like_count.toString()}
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  // setDislike(!dislike);
+                  alter();
+                  // Alert.alert('dislike', item?.dislike_count);
+                  // setLike(false);
+                  // setLikeCount(
+                  //   item?.is_like == true ? item?.like_count - 1 : item?.like_count,
+                  // );
+                  // setDislikeCount(
+                  //   item?.is_like == false
+                  //     ? item?.dislike_count - 1
+                  //     : item?.dislike_count + 1,
+                  // );
+
+                  likeDislike({
+                    Auth: userData?.token,
+                    creator_id: item?.user?.id,
+                    post_id: item?.id,
+                    is_like: 0,
+                  })
+                    .then(res => {
+                      console.log('res', res);
+                    })
+                    .catch(err => {
+                      console.log('err', err);
+                    });
+                }}
+                style={{
+                  flexDirection: 'row',
+                  marginLeft: 10,
+                  alignItems: 'center',
+                }}>
+                <Icon2
+                  name="arrowdown"
+                  size={20}
+                  color={item?.is_like == false ? '#5F95F0' : 'grey'}
+                  // color={dislike == false ? '#5F95F0' : 'grey'}
+                />
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    fontSize: 13,
+                    marginLeft: 5,
+                    color: 'black',
+                  }}>
+                  {item?.dislike_count.toString()}
+                </Text>
+              </TouchableOpacity>
+            </View>
+            {/* <LikeDislike item={item} press={alter} /> */}
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <TouchableOpacity
+                onPress={() => {
+                  setSpecific(item);
+                  setShowModal(true);
+                  // onShare();
+                }}
+                style={{
+                  flexDirection: 'row',
+                  width: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Icon3 name="share" size={16} color={'black'} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Comments', {id: item.id})}
+                style={{
+                  flexDirection: 'row',
+                  marginLeft: 0,
+                  // backgroundColor: 'red',
+                  // height: '100%',
+                  // height: 20,
+                  width: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Icon4 name="commenting" size={15} color="black" />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </TouchableOpacity>
       )}
     </View>
   );
@@ -88,7 +332,7 @@ const Profile = ({navigation}) => {
         setShowModal(false);
         navigation.navigate('SingleChat', {
           item: item.user,
-          image: specific.media[0].media,
+          image: specific?.media[0].media,
           items: specific,
         });
       }}
@@ -274,8 +518,8 @@ const Profile = ({navigation}) => {
           <View style={{alignItems: 'center'}}>
             <Image
               source={
-                userData.userdata.image
-                  ? {uri: userData.userdata.image}
+                userData?.userdata?.image
+                  ? {uri: userData?.userdata?.image}
                   : require('../../../assets/Images/girl.jpg')
               }
               style={{height: 100, width: 100, borderRadius: 50}}
@@ -289,9 +533,10 @@ const Profile = ({navigation}) => {
               {userData?.userdata?.firstname}
             </Text>
             <Text
-              style={{fontSize: 14, fontFamily: 'MontserratAlternates-Medium'}}>
-              {/* {userData.userdata.} */}
-            </Text>
+              style={{
+                fontSize: 14,
+                fontFamily: 'MontserratAlternates-Medium',
+              }}></Text>
             <TouchableOpacity
               onPress={() => navigation.navigate('EditProfile')}
               style={{
@@ -348,7 +593,7 @@ const Profile = ({navigation}) => {
                   color: 'black',
                   marginLeft: 5,
                 }}>
-                {posts.like_count ? posts.like_count : 0}
+                {posts?.like_count ? posts?.like_count : 0}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
@@ -377,7 +622,7 @@ const Profile = ({navigation}) => {
                   color: 'black',
                   marginLeft: 5,
                 }}>
-                {posts.dislike_count ? posts.dislike_count : 0}
+                {posts?.dislike_count ? posts?.dislike_count : 0}
               </Text>
             </TouchableOpacity>
           </View>
@@ -440,7 +685,7 @@ const Profile = ({navigation}) => {
           </View>
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={select == 'Posts' ? posts.posts : posts.groups}
+            data={select == 'Posts' ? posts?.posts : posts?.groups}
             renderItem={renders}
           />
         </View>
