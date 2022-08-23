@@ -19,9 +19,11 @@ import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/AntDesign';
 import CityList from '../../../Components/CityList';
 import Icon3 from 'react-native-vector-icons/Ionicons';
+import Icon6 from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import Icon4 from 'react-native-vector-icons/Fontisto';
+import Icon7 from 'react-native-vector-icons/MaterialIcons';
 import Posts from '../../../Components/Posts';
 import {cityAdd} from '../../../redux/actions';
 const Search = ({navigation}) => {
@@ -32,8 +34,16 @@ const Search = ({navigation}) => {
   console.log('cityadd', CityAdd);
   const arr = [
     {
-      name: 'Shopping',
-      image: <Icon1 name="shopping-bag" size={15} color={'#5F95F0'} />,
+      name: 'Banks',
+      image: <Icon1 name="bank" size={15} color={'#5F95F0'} />,
+    },
+    {
+      name: 'Bars',
+      image: <Icon7 name="sports-bar" size={15} color={'#5F95F0'} />,
+    },
+    {
+      name: 'Clubs',
+      image: <Icon6 name="sports-club" size={15} color={'#5F95F0'} />,
     },
     {
       name: 'Entertainment',
@@ -43,6 +53,23 @@ const Search = ({navigation}) => {
       name: 'Gas Stations',
       image: <Icon5 name="gas-pump" size={15} color={'#5F95F0'} />,
     },
+    {
+      name: 'Gyms',
+      image: <Icon5 name="dumbbell" size={15} color={'#5F95F0'} />,
+    },
+    {
+      name: 'Malls',
+      image: <Icon7 name="local-mall" size={15} color={'#5F95F0'} />,
+    },
+    {
+      name: 'Restaurants',
+      image: <Icon3 name="restaurant" size={15} color={'#5F95F0'} />,
+    },
+    {
+      name: 'Shopping',
+      image: <Icon1 name="shopping-bag" size={15} color={'#5F95F0'} />,
+    },
+
     {
       name: 'Supermarkets',
       image: <Icon4 name="shopping-store" size={15} color={'#5F95F0'} />,

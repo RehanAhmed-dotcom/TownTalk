@@ -198,7 +198,7 @@ const Profile = ({navigation}) => {
                   })
                     .then(res => {
                       console.log('res', res);
-                      // press();
+                      alter();
                     })
                     .catch(err => {
                       console.log('err', err);
@@ -224,7 +224,7 @@ const Profile = ({navigation}) => {
               <TouchableOpacity
                 onPress={() => {
                   // setDislike(!dislike);
-                  alter();
+
                   // Alert.alert('dislike', item?.dislike_count);
                   // setLike(false);
                   // setLikeCount(
@@ -243,7 +243,7 @@ const Profile = ({navigation}) => {
                     is_like: 0,
                   })
                     .then(res => {
-                      console.log('res', res);
+                      alter();
                     })
                     .catch(err => {
                       console.log('err', err);
