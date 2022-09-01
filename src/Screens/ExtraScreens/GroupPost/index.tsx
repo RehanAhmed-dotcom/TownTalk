@@ -15,6 +15,7 @@ import {
   ImageBackground,
   PermissionsAndroid,
 } from 'react-native';
+import moment from 'moment';
 import Tags from 'react-native-tags';
 import Geolocation from 'react-native-geolocation-service';
 import MapView from 'react-native-maps';
@@ -41,6 +42,8 @@ const GroupPost = ({navigation, route}) => {
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
   // console.log('userdata', latitude, longitude);
+  const d = new Date();
+  // console.log('date', d.toLocaleDateString());
   const picker = () => {
     ImagePicker.openPicker({
       // multiple: true,
@@ -58,17 +61,20 @@ const GroupPost = ({navigation, route}) => {
   };
   // console.log('has', hash);
   const add = () => {
-    if (zip && latitude && description && name && img.length > 0) {
-      if (hash.length > 0) {
+    if (zip && latitude) {
+      if (description || img.length > 0) {
+        // if (hash.length > 0) {
         setShowModal(true);
         const data = new FormData();
-        hash.forEach(item => {
-          data.append('hashtags[]', item);
-        });
+        // hash.forEach(item => {
+        //   data.append('hashtags[]', item);
+        // });
         data.append('zipcode', zip);
         data.append('latitude', latitude);
         data.append('longitude', longitude);
         data.append('description', description);
+        // data.append("dateTime",)
+        data.append('dateTime', moment(d).format('MM-DD-YYYY hh:mm a'));
         data.append('title', name);
         data.append('media_type', 'image');
         data.append('group_id', item.id);
@@ -93,10 +99,13 @@ const GroupPost = ({navigation, route}) => {
             console.log('err', err);
           });
       } else {
-        Alert.alert("Enter Hash tag then press 'space'");
+        Alert.alert('Enter post detail!');
       }
+      // } else {
+      //   Alert.alert("Enter Hash tag then press 'space'");
+      // }
     } else {
-      Alert.alert('All fields required');
+      Alert.alert('Zip code required');
     }
   };
   const cuRRentlocation = () => {
@@ -322,6 +331,7 @@ const GroupPost = ({navigation, route}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomColor: 'grey',
                     borderBottomWidth: 1,
+                    paddingHorizontal: 10,
                     color: 'black',
                     height: 50,
                   }}
@@ -350,14 +360,15 @@ const GroupPost = ({navigation, route}) => {
                     borderColor: 'grey',
                     borderWidth: 1,
                     marginTop: 10,
-                    paddingHorizontal: 5,
+                    paddingHorizontal: 10,
                     borderRadius: 5,
                     color: 'black',
                     height: 100,
                   }}
                 />
               </View>
-              <View style={{marginTop: 30, marginBottom: 20}}>
+              <View style={{height: 50}} />
+              {/* <View style={{marginTop: 30, marginBottom: 20}}>
                 <Text
                   style={{
                     fontSize: 12,
@@ -406,7 +417,7 @@ const GroupPost = ({navigation, route}) => {
                     </TouchableOpacity>
                   )}
                 />
-              </View>
+              </View> */}
             </View>
           </ScrollView>
         </Wrapper>

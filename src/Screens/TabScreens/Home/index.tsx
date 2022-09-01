@@ -14,6 +14,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import Axios from 'axios';
+import PushNotification from 'react-native-push-notification';
 // import GooglePlacesAutocomplete, {
 //   geocodeByAddress,
 //   getLatLng,
@@ -165,6 +166,7 @@ const Home = ({navigation}) => {
   };
   useEffect(() => {
     getToken();
+    PushNotification.cancelAllLocalNotifications();
   }, []);
   const getToken = async () => {
     let fcmToken = await messaging().getToken();
@@ -175,6 +177,7 @@ const Home = ({navigation}) => {
   };
   useEffect(() => {
     // handleAddress('solo');
+    PushNotification.cancelAllLocalNotifications();
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
           cuRRentlocation();
@@ -204,6 +207,7 @@ const Home = ({navigation}) => {
       });
   };
   useEffect(() => {
+    PushNotification.cancelAllLocalNotifications();
     hashTag({Auth: userData.token, latitude, longitude}).then(res => {
       // console.log('res of hash', res);
       setHash(res.hashtags);
@@ -242,6 +246,7 @@ const Home = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       setSelect('');
       setPage(1);
+      PushNotification.cancelAllLocalNotifications();
       // setChange(!change);
       hashTag({Auth: userData.token, latitude, longitude}).then(res => {
         // console.log('res of hash', res);

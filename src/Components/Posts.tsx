@@ -26,6 +26,9 @@ const Posts = props => {
 
   const [show, setShow] = useState(false);
   // console.log('item', item);
+  // const d = new Date();
+  // console.log('d', d.toLocaleDateString(), item.created_at);
+  // console.log('moment local', moment(item.created_at).format("").locale());
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -76,8 +79,10 @@ const Posts = props => {
                 fontFamily: 'MontserratAlternates-Regular',
                 marginTop: 5,
               }}>
-              {/* {item?.created_at} */}
-              {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')}
+              {/* {item.test} */}
+              {/* // {d.toLocaleTimeString() } */}
+              {item?.created_at}
+              {/* {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')} */}
             </Text>
           </View>
         </View>
@@ -135,31 +140,36 @@ const Posts = props => {
           }}>
           {item?.description}
         </Text> */}
-        <MentionHashtagTextView
-          mentionHashtagPress={hashPress}
-          mentionHashtagColor={'#5F95F0'}
-          style={{
-            fontSize: 13,
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          {item?.description}
-        </MentionHashtagTextView>
-        <Image
-          source={
-            item?.media[0]?.media
-              ? {uri: item?.media[0]?.media}
-              : require('../assets/Images/social.jpg')
-          }
-          resizeMode="cover"
-          style={{
-            height: undefined,
-            aspectRatio: 1,
-            borderRadius: 10,
-            width: '100%',
-            marginTop: 10,
-          }}
-        />
+        <View>
+          <MentionHashtagTextView
+            numberOfLines={5}
+            mentionHashtagPress={hashPress}
+            mentionHashtagColor={'#5F95F0'}
+            style={{
+              fontSize: 13,
+              color: 'black',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}>
+            {item?.description}
+          </MentionHashtagTextView>
+        </View>
+        {item?.media[0]?.media && (
+          <Image
+            source={
+              item?.media[0]?.media
+                ? {uri: item?.media[0]?.media}
+                : require('../assets/Images/social.jpg')
+            }
+            resizeMode="cover"
+            style={{
+              height: undefined,
+              aspectRatio: 1,
+              borderRadius: 10,
+              width: '100%',
+              marginTop: 10,
+            }}
+          />
+        )}
       </View>
       <View
         style={{

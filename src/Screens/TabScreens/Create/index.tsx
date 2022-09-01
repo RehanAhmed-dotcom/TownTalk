@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-
+import moment from 'moment';
 import {
   View,
   FlatList,
@@ -41,6 +41,8 @@ const Create = ({navigation}) => {
   // const [hash, setHash] = useState([]);
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
+  const d = new Date();
+  console.log('date', moment(d).format('MM-DD-YYYY hh:mm a'));
   // console.log('userdata', hash);
   const picker = () => {
     ImagePicker.openPicker({
@@ -59,50 +61,56 @@ const Create = ({navigation}) => {
   };
   console.log('has', description);
   const add = () => {
-    if (zip && latitude && description && name && img.length > 0) {
+    if (zip && latitude) {
       // if (hash.length > 0) {
-      setShowModal(true);
-      const data = new FormData();
-      // hash.forEach(item => {
-      //   data.append('hashtags[]', item.substring(0, 200));
-      // });
-      data.append('zipcode', zip);
-      data.append('latitude', latitude);
-      data.append('longitude', longitude);
-      data.append('description', description);
-      data.append('title', name);
-      data.append('media_type', 'image');
-      img.forEach(item => {
-        data.append('media[]', {
-          uri: item.image,
-          type: 'image/jpeg',
-          name: `image${Math.random()}.jpg`,
+      if (description || img.length > 0) {
+        setShowModal(true);
+        const data = new FormData();
+        // hash.forEach(item => {
+        //   data.append('hashtags[]', item.substring(0, 200));
+        // });
+        data.append('zipcode', zip);
+        data.append('latitude', latitude);
+        data.append('longitude', longitude);
+        data.append('description', description);
+        data.append('dateTime', moment(d).format('MM-DD-YYYY hh:mm a'));
+        data.append('title', name);
+        data.append('media_type', 'image');
+        img.forEach(item => {
+          data.append('media[]', {
+            uri: item.image,
+            type: 'image/jpeg',
+            name: `image${Math.random()}.jpg`,
+          });
         });
-      });
 
-      addPost({Auth: userData.token}, data)
-        .then(res => {
-          setShowModal(false);
-          console.log('res', res);
-          if (res.status == 'success') {
-            navigation.goBack();
-            setImg([]);
-            // setName('');
-            setZip('');
-            setDescription('');
-            // setHash([]);
-          }
-        })
-        .catch(err => {
-          setShowModal(false);
-          console.log('err', err.response.data);
-          Alert.alert('Something went wrong, please try again!');
-        });
+        addPost({Auth: userData.token}, data)
+          .then(res => {
+            setShowModal(false);
+            console.log('res', res);
+            if (res.status == 'success') {
+              navigation.goBack();
+              setImg([]);
+              // setName('');
+              setZip('');
+              setDescription('');
+              // setHash([]);
+            }
+          })
+          .catch(err => {
+            setShowModal(false);
+            console.log('err', err.response.data);
+            Alert.alert('Something went wrong, please try again!');
+          });
+      } else {
+        Alert.alert('Enter post detail!');
+      }
+
       // } else {
       //   Alert.alert("Enter Hash tag then press 'space'");
       // }
     } else {
-      Alert.alert('All fields required');
+      Alert.alert('Zip code required');
     }
   };
   const cuRRentlocation = () => {
@@ -148,6 +156,10 @@ const Create = ({navigation}) => {
       : requestLocationPermission();
   }, []);
   const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
+  // var d = new Date();
+
+  // var n = d.toLocaleDateString();
+  // console.log('local format', n);
   return (
     <SafeAreaView style={{flex: 1}}>
       <ImageBackground
@@ -316,6 +328,7 @@ const Create = ({navigation}) => {
                   style={{
                     fontFamily: 'MontserratAlternates-Regular',
                     borderBottomColor: 'grey',
+                    paddingHorizontal: 10,
                     borderBottomWidth: 1,
                     color: 'black',
                     height: 50,
@@ -327,6 +340,7 @@ const Create = ({navigation}) => {
                   style={{
                     fontSize: 12,
                     color: 'black',
+                    // marginBottom: 50,
                     fontFamily: 'MontserratAlternates-SemiBold',
                   }}>
                   Post description
@@ -346,13 +360,14 @@ const Create = ({navigation}) => {
                     borderColor: 'grey',
                     borderWidth: 1,
                     marginTop: 10,
-                    paddingHorizontal: 5,
+                    paddingHorizontal: 10,
                     borderRadius: 5,
                     color: 'black',
                     height: 100,
                   }}
                 />
               </View>
+              <View style={{height: 50}} />
               {/* <View style={{marginTop: 30, marginBottom: 20}}>
                 <Text
                   style={{

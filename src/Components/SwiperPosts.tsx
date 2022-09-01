@@ -22,67 +22,68 @@ const SwiperPosts = props => {
   const [show, setShow] = useState(false);
 
   return (
-    <View
-      //   activeOpacity={1}
-      //   onPress={onPress}
-      style={{
-        // height: 30,
-        backgroundColor: 'white',
-        marginRight: 3,
-        elevation: 3,
-        // alignItems: 'center',
-        // justifyContent: 'center',
-        // minWidth: 100,
-        marginLeft: 3,
-        marginVertical: 3,
-        marginTop: 10,
-        padding: 12,
-        borderRadius: 5,
-      }}>
-      <TouchableOpacity
-        onPress={() => navigation.navigate('UserProfile', {item})}
+    <ScrollView>
+      <View
+        //   activeOpacity={1}
+        //   onPress={onPress}
         style={{
-          // marginTop: 5,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
+          // height: 30,
+          backgroundColor: 'white',
+          marginRight: 3,
+          elevation: 3,
+          // alignItems: 'center',
+          // justifyContent: 'center',
+          // minWidth: 100,
+          marginLeft: 3,
+          marginVertical: 3,
+          marginTop: 10,
+          padding: 12,
+          borderRadius: 5,
         }}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image
-            source={
-              item?.user?.image
-                ? {uri: item?.user?.image}
-                : require('../assets/Images/girl.jpg')
-            }
-            style={{width: 50, height: 50, borderRadius: 50}}
-          />
-          <View style={{marginLeft: 10}}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                fontSize: 16,
-                color: 'black',
-              }}>
-              {`${item?.user?.firstname}`}
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                fontFamily: 'MontserratAlternates-Regular',
-                marginTop: 5,
-              }}>
-              {item?.created_at}
-            </Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('UserProfile', {item})}
+          style={{
+            // marginTop: 5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image
+              source={
+                item?.user?.image
+                  ? {uri: item?.user?.image}
+                  : require('../assets/Images/girl.jpg')
+              }
+              style={{width: 50, height: 50, borderRadius: 50}}
+            />
+            <View style={{marginLeft: 10}}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
+                  color: 'black',
+                }}>
+                {`${item?.user?.firstname}`}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontFamily: 'MontserratAlternates-Regular',
+                  marginTop: 5,
+                }}>
+                {item?.created_at}
+              </Text>
+            </View>
           </View>
-        </View>
-        {/* <Icon
+          {/* <Icon
           name="dots-three-horizontal"
           size={20}
           color={'black'}
           style={{bottom: 10}}
         /> */}
-      </TouchableOpacity>
-      {/* <View
+        </TouchableOpacity>
+        {/* <View
         style={{
           marginTop: 10,
           width: '100%',
@@ -104,18 +105,21 @@ const SwiperPosts = props => {
         ))}
        
       </View> */}
-      <View style={{marginTop: 10}}>
-        <MentionHashtagTextView
-          mentionHashtagPress={text => console.log('text', text)}
-          mentionHashtagColor={'#5F95F0'}
-          style={{
-            fontSize: 13,
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          {item.description}
-        </MentionHashtagTextView>
-        {/* <Text
+        <View style={{marginTop: 10}}>
+          <View>
+            <MentionHashtagTextView
+              mentionHashtagPress={text => console.log('text', text)}
+              mentionHashtagColor={'#5F95F0'}
+              style={{
+                fontSize: 13,
+                color: 'black',
+                fontFamily: 'MontserratAlternates-Regular',
+              }}>
+              {item.description}
+            </MentionHashtagTextView>
+          </View>
+
+          {/* <Text
           style={{
             fontSize: 13,
             color: 'black',
@@ -123,33 +127,39 @@ const SwiperPosts = props => {
           }}>
           {item?.description}
         </Text> */}
-        <View style={{width: '100%', marginTop: 10, height: 350}}>
-          <Swiper
-            loadMinimal={true}
-            showsPagination={true}
-            key={swipe.length}
-            paginationStyle={{bottom: 10}}
-            activeDotColor="#5F95F0"
-            loop={true}
-            style={{alignItems: 'center', zIndex: 40, justifyContent: 'center'}}
-            showsButtons={false}>
-            {swipe.map(item => (
-              //   <View style={{width: '100%', marginTop: 10, height: 150}}>
-              <Image
-                source={{uri: item.media}}
+          {swipe.length > 0 && (
+            <View style={{width: '100%', marginTop: 10, height: 350}}>
+              <Swiper
+                loadMinimal={true}
+                showsPagination={true}
+                key={swipe.length}
+                paginationStyle={{bottom: 10}}
+                activeDotColor="#5F95F0"
+                loop={true}
                 style={{
-                  borderRadius: 10,
-                  width: '100%',
-                  height: '100%',
-                  resizeMode: 'cover',
+                  alignItems: 'center',
+                  zIndex: 40,
+                  justifyContent: 'center',
                 }}
-              />
-              //   </View>
-            ))}
-          </Swiper>
-        </View>
+                showsButtons={false}>
+                {swipe.map(item => (
+                  //   <View style={{width: '100%', marginTop: 10, height: 150}}>
+                  <Image
+                    source={{uri: item.media}}
+                    style={{
+                      borderRadius: 10,
+                      width: '100%',
+                      height: '100%',
+                      resizeMode: 'cover',
+                    }}
+                  />
+                  //   </View>
+                ))}
+              </Swiper>
+            </View>
+          )}
 
-        {/* <Image
+          {/* <Image
           source={
             item?.media[0]?.media
               ? {uri: item?.media[0]?.media}
@@ -157,16 +167,16 @@ const SwiperPosts = props => {
           }
           style={{height: 150, borderRadius: 10, width: '100%', marginTop: 10}}
         /> */}
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginTop: 10,
-        }}>
-        <LikeDislike item={item} press={press} />
-        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 10,
+          }}>
+          <LikeDislike item={item} press={press} />
+          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
               setLike(!like);
@@ -241,26 +251,26 @@ const SwiperPosts = props => {
             </Text>
           </TouchableOpacity>
         </View> */}
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() => {
-              onShare();
-            }}
-            //   setLike(!like);
-            //   setDislike(false);
-            // }}
-            style={{
-              flexDirection: 'row',
-              width: 30,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            {/* <Image
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => {
+                onShare();
+              }}
+              //   setLike(!like);
+              //   setDislike(false);
+              // }}
+              style={{
+                flexDirection: 'row',
+                width: 30,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              {/* <Image
               source={require('../assets/Images/share.png')}
               style={{height: 10, width: 10}}
             /> */}
-            <Icon name="share" size={16} color={'black'} />
-            {/* <Text
+              <Icon name="share" size={16} color={'black'} />
+              {/* <Text
               style={{
                 fontFamily: 'MontserratAlternates-Regular',
                 marginLeft: 5,
@@ -269,28 +279,28 @@ const SwiperPosts = props => {
               }}>
               Share
             </Text> */}
-          </TouchableOpacity>
-          {!show && (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Comments', {id: item.id})}
-              // onPress={() => {
-              //   setLike(!like);
-              //   setDislike(false);
-              // }}
-              style={{
-                flexDirection: 'row',
-                marginLeft: 0,
-                width: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {/* <Image
+            </TouchableOpacity>
+            {!show && (
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Comments', {id: item.id})}
+                // onPress={() => {
+                //   setLike(!like);
+                //   setDislike(false);
+                // }}
+                style={{
+                  flexDirection: 'row',
+                  marginLeft: 0,
+                  width: 30,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                {/* <Image
                 source={require('../assets/Images/comment.png')}
                 style={{height: 10, width: 10}}
               /> */}
-              <Icon1 name="commenting" size={15} color="black" />
+                <Icon1 name="commenting" size={15} color="black" />
 
-              {/* <Text
+                {/* <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
                   marginLeft: 5,
@@ -299,13 +309,14 @@ const SwiperPosts = props => {
                 }}>
                 Comments
               </Text> */}
-            </TouchableOpacity>
-          )}
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
-      </View>
 
-      {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}
-    </View>
+        {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}
+      </View>
+    </ScrollView>
   );
 };
 

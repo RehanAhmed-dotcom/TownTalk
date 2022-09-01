@@ -230,7 +230,7 @@ const Setting = ({navigation}) => {
             onPress={
               () =>
                 Linking.openURL(
-                  'https://app.termly.io/document/terms-of-use-for-website/337641ae-e6ce-4fed-8267-c8105baa3a0f ',
+                  'https://app.termly.io/document/terms-of-use-for-website/337641ae-e6ce-4fed-8267-c8105baa3a0f',
                 )
               //
             }
@@ -254,6 +254,41 @@ const Setting = ({navigation}) => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
+            onPress={
+              () =>
+                Linking.openURL(
+                  'https://app.termly.io/document/eula/847f5351-bd4a-461e-a246-97743430a237',
+                )
+              //
+            }
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 50,
+              marginTop: 30,
+              width: '45%',
+              marginBottom: 20,
+              borderRadius: 5,
+              elevation: 2,
+              backgroundColor: '#5F95F0',
+            }}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                color: 'white',
+              }}>
+              EULA
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingHorizontal: 15,
+          }}>
+          <TouchableOpacity
             onPress={() => navigation.navigate('ContactUs')}
             style={{
               alignItems: 'center',
@@ -274,14 +309,7 @@ const Setting = ({navigation}) => {
               Contact Us
             </Text>
           </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            paddingHorizontal: 15,
-          }}>
+
           <TouchableOpacity
             onPress={
               () =>

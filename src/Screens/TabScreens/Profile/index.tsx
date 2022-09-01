@@ -120,8 +120,8 @@ const Profile = ({navigation}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     marginTop: 5,
                   }}>
-                  {/* {item?.created_at} */}
-                  {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')}
+                  {item?.created_at}
+                  {/* {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')} */}
                 </Text>
               </View>
             </View>
@@ -139,6 +139,7 @@ const Profile = ({navigation}) => {
             }}></View>
           <View style={{marginTop: 10}}>
             <MentionHashtagTextView
+              numberOfLines={5}
               mentionHashtagPress={text =>
                 navigation.navigate('Hashes', {text})
               }
@@ -150,21 +151,23 @@ const Profile = ({navigation}) => {
               }}>
               {item?.description}
             </MentionHashtagTextView>
-            <Image
-              source={
-                item?.media[0]?.media
-                  ? {uri: item?.media[0]?.media}
-                  : require('../../../assets/Images/social.jpg')
-              }
-              resizeMode="cover"
-              style={{
-                height: undefined,
-                aspectRatio: 1,
-                borderRadius: 10,
-                width: '100%',
-                marginTop: 10,
-              }}
-            />
+            {item?.media[0]?.media && (
+              <Image
+                source={
+                  item?.media[0]?.media
+                    ? {uri: item?.media[0]?.media}
+                    : require('../../../assets/Images/social.jpg')
+                }
+                resizeMode="cover"
+                style={{
+                  height: undefined,
+                  aspectRatio: 1,
+                  borderRadius: 10,
+                  width: '100%',
+                  marginTop: 10,
+                }}
+              />
+            )}
           </View>
           <View
             style={{
