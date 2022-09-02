@@ -13,14 +13,16 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import moment from 'moment';
-import {blockUserList} from '../../../lib/api';
+import {blockUserList, getfcm} from '../../../lib/api';
 import database from '@react-native-firebase/database';
+import MyModal from '../../../Components/MyModal';
 const Chat = ({navigation}) => {
   const [name, setName] = useState('Olivia Benson');
   const [zip, setZip] = useState('');
   const [list, setList] = useState([]);
   const [block, setBlock] = useState([]);
   const [fb, setFb] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [db, setDb] = useState(false);
   const {userData} = useSelector(({USER}) => USER);
   const ary = [
@@ -99,7 +101,23 @@ const Chat = ({navigation}) => {
     };
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('SingleChat', {item: item.user})}
+        onPress={() => {
+          setShowModal(true);
+          getfcm({id: item.user.id})
+            .then(res => {
+              console.log('res of fcm', res);
+              navigation.navigate('SingleChat', {
+                item: item.user,
+                fcm_token: res.token,
+              });
+              setShowModal(false);
+            })
+            .catch(err => {
+              console.log('err', err);
+              setShowModal(false);
+            });
+          //
+        }}
         style={{
           flexDirection: 'row',
           marginTop: 20,
@@ -503,6 +521,7 @@ const Chat = ({navigation}) => {
           </View>
         </ScrollView> */}
       </ImageBackground>
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

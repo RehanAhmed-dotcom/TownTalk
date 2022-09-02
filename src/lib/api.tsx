@@ -20,6 +20,18 @@ const login = (payload: object) => {
       throw e;
     });
 };
+const getfcm = (payload: object) => {
+  const request = `/get_fcm`;
+  return axios
+    .post(request, payload)
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in catch get_fcm', e);
+      throw e;
+    });
+};
 const register = (payload: object) => {
   const request = `/register`;
   return axios
@@ -522,6 +534,7 @@ export {
   blockUser,
   joingroup,
   singleGroup,
+  getfcm,
   postDetail,
   likeDislikeProfile,
   updateToken,

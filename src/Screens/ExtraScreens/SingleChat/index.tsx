@@ -21,7 +21,7 @@ import database from '@react-native-firebase/database';
 import Icon2 from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
-  const {item} = route.params;
+  const {item, fcm_token} = route.params;
   const image = route?.params?.image;
   const items = route?.params?.items;
   const [keyboardStatus, setKeyboardStatus] = useState('');
@@ -29,12 +29,13 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const [messages, setMessages] = useState([]);
   const {userData} = useSelector(({USER}) => USER);
   const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
+  console.log('fcm_token', fcm_token);
   const guestData = {
     id: item.id,
     firstname: item.firstname,
     // lastname: item.lastname,
     email: item.email,
-    fcm_token: item.fcm_token,
+    fcm_token,
     image: item.image,
   };
   const user = {
@@ -45,7 +46,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     fcm_token: userData.userdata.fcm_token,
     image: userData.userdata.image,
   };
-  console.log('item in chat', item);
+  // console.log('item in chat', item);
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardStatus('Keyboard Shown');
@@ -61,7 +62,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   }, []);
   const _chatUsers = async () => {
     try {
-      console.log('user going to db', guestData);
+      // console.log('user going to db', guestData);
       database()
         .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
         .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
@@ -91,10 +92,50 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
         });
     } catch (error) {}
   };
+  const _handlePushNotification = () => {
+    // console.log('inside push notification function', guestData.fcm_token);
+    const userData1 = {
+      name: `${userData.userdata.firstname}`,
+      email: userData.userdata.email,
+      image: userData.userdata.image,
+      fcm_token: userData.userdata.fcm_token,
+    };
+    const dataToSend = {
+      notification: {
+        id: `${userData1.email}`,
+        title: `${userData1.name}`,
+        body: message,
+      },
+      data: {
+        guestData: guestData,
+        item: user,
+        fcm_token: user.fcm_token,
+        type: 'message',
+      },
+      to: guestData.fcm_token,
+    };
+    const data = JSON.stringify(dataToSend);
+    // console.log('data to send ', dataToSend);
+    fetch('https://fcm.googleapis.com/fcm/send', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization:
+          'key=AAAAmmyx-tE:APA91bExxi8f3flfmGnLvBu7kDcgEMJQJuZmntYjZRj1lAbiKq1ZCE3j-IG0yFg_MQSmIFqaWXgL1hquhfkBWBMewhvLVYmUkZJ2n3KuHJTYp5hMlpwYJVm_CC-iaIV9M9TGE_UicXfg',
+      },
+      body: data,
+    })
+      .then(res => res.json('response of push notification', res))
+      .then(res => {
+        // console.log('response of Api send messages , , , , , , ', res);
+      })
+      .catch(err => {});
+  };
   const handleSend = () => {
     if (message) {
       setMessage('');
-
+      _handlePushNotification();
       // console.log('message is here', message);
       senderMsg(
         message,
@@ -183,7 +224,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     } catch (error) {}
   };
   const render = ({item, index}) => {
-    console.log('item in chat', item);
+    // console.log('item in chat', item);
     const check = word => {
       if (word.substring(word.length - 4) == '.jpg') {
         return true;

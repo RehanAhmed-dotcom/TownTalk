@@ -166,7 +166,7 @@ const Home = ({navigation}) => {
   };
   useEffect(() => {
     getToken();
-    PushNotification.cancelAllLocalNotifications();
+    // PushNotification.cancelAllLocalNotifications();
   }, []);
   const getToken = async () => {
     let fcmToken = await messaging().getToken();
@@ -177,7 +177,7 @@ const Home = ({navigation}) => {
   };
   useEffect(() => {
     // handleAddress('solo');
-    PushNotification.cancelAllLocalNotifications();
+    // PushNotification.cancelAllLocalNotifications();
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
           cuRRentlocation();
@@ -207,7 +207,7 @@ const Home = ({navigation}) => {
       });
   };
   useEffect(() => {
-    PushNotification.cancelAllLocalNotifications();
+    // PushNotification.cancelAllLocalNotifications();
     hashTag({Auth: userData.token, latitude, longitude}).then(res => {
       // console.log('res of hash', res);
       setHash(res.hashtags);
@@ -246,7 +246,7 @@ const Home = ({navigation}) => {
     const unsubscribe = navigation.addListener('focus', () => {
       setSelect('');
       setPage(1);
-      PushNotification.cancelAllLocalNotifications();
+      // PushNotification.cancelAllLocalNotifications();
       // setChange(!change);
       hashTag({Auth: userData.token, latitude, longitude}).then(res => {
         // console.log('res of hash', res);

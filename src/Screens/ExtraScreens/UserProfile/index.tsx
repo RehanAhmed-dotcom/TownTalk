@@ -337,7 +337,10 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
             {userData.userdata.id != item.user.id && (
               <TouchableOpacity
                 onPress={() =>
-                  navigation.navigate('SingleChat', {item: item.user})
+                  navigation.navigate('SingleChat', {
+                    item: item.user,
+                    fcm_token: item.user.fcm_token,
+                  })
                 }
                 style={{
                   position: 'absolute',
