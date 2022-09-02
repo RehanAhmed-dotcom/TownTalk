@@ -15,6 +15,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import moment from 'moment';
+import {firebase_key} from '../../../../config';
 import {recieverMsg, senderImgMsg, senderMsg} from '../../../lib/messageUtils';
 import {useSelector} from 'react-redux';
 import database from '@react-native-firebase/database';
@@ -121,8 +122,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        Authorization:
-          'key=AAAAmmyx-tE:APA91bExxi8f3flfmGnLvBu7kDcgEMJQJuZmntYjZRj1lAbiKq1ZCE3j-IG0yFg_MQSmIFqaWXgL1hquhfkBWBMewhvLVYmUkZJ2n3KuHJTYp5hMlpwYJVm_CC-iaIV9M9TGE_UicXfg',
+        Authorization: `key=${firebase_key}`,
       },
       body: data,
     })
