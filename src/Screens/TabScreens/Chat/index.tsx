@@ -25,43 +25,7 @@ const Chat = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
   const [db, setDb] = useState(false);
   const {userData} = useSelector(({USER}) => USER);
-  const ary = [
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Olivia Benson',
-      mesg: 'Shall we meet today',
-      time: '5:45 PM',
-      unread: '1',
-    },
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Olivia Benson',
-      mesg: 'Shall we meet today',
-      time: '5:45 PM',
-      unread: '1',
-    },
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Olivia Benson',
-      mesg: 'Shall we meet today',
-      time: '5:45 PM',
-      unread: '1',
-    },
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Olivia Benson',
-      mesg: 'Shall we meet today',
-      time: '5:45 PM',
-      unread: '1',
-    },
-    {
-      image: require('../../../assets/Images/girl.jpg'),
-      name: 'Olivia Benson',
-      mesg: 'Shall we meet today',
-      time: '5:45 PM',
-      unread: '1',
-    },
-  ];
+
   useEffect(() => {
     console.log('only one ready');
     if (fb && db) {
@@ -185,12 +149,12 @@ const Chat = ({navigation}) => {
                 {/* <Text>{moment(item.timestamp).format('DD/MM/YYYY HH:MM')}</Text> */}
               </View>
               <Text style={{color: 'grey'}}>
-                {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}
+                {moment(item.timestamp).format('MM/DD/YYYY hh:mm a')}
               </Text>
             </>
           ) : (
             <Text style={{fontSize: 12}}>
-              {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}
+              {moment(item.timestamp).format('MM/DD/YYYY hh:mm a')}
             </Text>
           )}
           <Text

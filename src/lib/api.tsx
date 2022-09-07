@@ -62,7 +62,7 @@ const submitEmail = (payload: object) => {
     });
 };
 const otp = (payload: object) => {
-  console.log('in api', payload);
+  // console.log('in api', payload);
   const request = `/confirm-code`;
   return axios
     .post(request, payload)
@@ -75,7 +75,7 @@ const otp = (payload: object) => {
     });
 };
 const verifyEmail = (payload: object) => {
-  console.log('in api', payload);
+  // console.log('in api', payload);
   const request = `/verify`;
   return axios
     .post(request, payload)
@@ -100,7 +100,7 @@ const resetPassword = (payload: object) => {
 };
 const editProfile = (payload, data) => {
   // console.log('res check', JSON.stringify(data1));
-  console.log('data', payload);
+  // console.log('data', payload);
   const request = `/edit`;
   return axios
     .post(request, data, {
@@ -143,7 +143,7 @@ const verify = (payload: object) => {
     });
 };
 const addPost = (payload, data) => {
-  console.log('data of payload', JSON.stringify(data));
+  // console.log('data of payload', JSON.stringify(data));
   const request = `/create-post`;
   return axios
     .post(request, data, {
@@ -181,7 +181,7 @@ const addgroup = (payload, data) => {
     });
 };
 const viewAllPost = payload => {
-  console.log('data of payload for hashtag', payload);
+  // console.log('data of payload for hashtag', payload);
   const request = `/view-post?page=${payload.page}`;
   return axios
     .post(request, payload, {
@@ -238,7 +238,7 @@ const creategroup = payload => {
     });
 };
 const hashTag = payload => {
-  console.log('data of payload', JSON.stringify(payload));
+  // console.log('data of payload', JSON.stringify(payload));
   const request = `/hashtag-list`;
   return axios
     .post(request, payload, {

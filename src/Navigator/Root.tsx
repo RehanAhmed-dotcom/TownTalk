@@ -19,6 +19,7 @@ import SingleChat from '../Screens/ExtraScreens/SingleChat';
 import EditProfile from '../Screens/ExtraScreens/EditProfile';
 import ContactUs from '../Screens/ExtraScreens/ContactUs';
 import Setting from '../Screens/ExtraScreens/Setting';
+import {navigationRef} from '../config/NavigationService';
 // import Group from '../Components/Group';
 import Comments from '../Screens/ExtraScreens/Comments';
 import {useSelector} from 'react-redux';
@@ -40,7 +41,7 @@ const Root = () => {
   const {isLoggedIn} = useSelector(({USER}) => USER);
   console.log('logged', isLoggedIn);
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {!isLoggedIn ? (
           <>

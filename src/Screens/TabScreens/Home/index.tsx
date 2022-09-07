@@ -49,7 +49,7 @@ const Home = ({navigation}) => {
   const {userData, Lat, Long} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [list, setList] = useState([]);
-  console.log('lat long in redux', Lat, Long);
+  // console.log('lat long in redux', Lat, Long);
   const _usersList = useCallback(async () => {
     try {
       // setLoading(true);
@@ -69,48 +69,6 @@ const Home = ({navigation}) => {
         });
     } catch (error) {}
   }, []);
-  // const renderItem = ({item}) => (
-  //   <TouchableOpacity
-  //     onPress={() => {
-  //       setSelect(item);
-  //       viewAllPost({
-  //         Auth: userData.token,
-  //         hashtag: item,
-  //         page,
-  //         latitude,
-  //         longitude,
-  //       })
-  //         .then(res => {
-  //           // console.log('res', res);
-  //           setData(res.posts.data);
-  //           setTestArr(res.posts.data);
-  //         })
-  //         .catch(err => {
-  //           console.log('err in home', err.response.data);
-  //         });
-  //     }}
-  //     style={{
-  //       height: 30,
-  //       backgroundColor: select == item ? '#5F95F0' : 'white',
-  //       marginRight: 10,
-  //       marginLeft: 3,
-  //       marginVertical: 3,
-  //       elevation: 3,
-  //       alignItems: 'center',
-  //       justifyContent: 'center',
-  //       minWidth: 100,
-  //       borderRadius: 5,
-  //     }}>
-  //     <Text
-  //       style={{
-  //         color: select == item ? 'white' : 'black',
-  //         fontFamily: 'MontserratAlternates-Medium',
-  //       }}>
-  //       {`${item.substring(0, 1) != '#' ? '#' : ''}${item}`}
-  //     </Text>
-  //   </TouchableOpacity>
-  // );
-
   const alter = () => {
     // console.log('alter called');
     setChange(!change);
@@ -228,20 +186,6 @@ const Home = ({navigation}) => {
         console.log('err in home', err.response.data);
       });
   }, [lat, change]);
-  // useEffect(() => {
-  //   // handleAddress('solo');
-  //   const unsubscribe = navigation.addListener('focus', () => {
-  //     Platform.OS == 'ios'
-  //       ? Geolocation.requestAuthorization('always').then(res => {
-  //           cuRRentlocation();
-  //           // console.log('res', res);
-  //         })
-  //       : requestLocationPermission();
-  //   });
-
-  //   // Return the function to unsubscribe from the event so it gets removed on unmount
-  //   return unsubscribe;
-  // }, [navigation]);
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       setSelect('');
@@ -396,7 +340,7 @@ const Home = ({navigation}) => {
       </Modal>
     );
   };
-  console.log('page', page);
+  // console.log('page', page);
   const renderItem1 = ({item}) => (
     <Posts
       item={item}
@@ -454,7 +398,7 @@ const Home = ({navigation}) => {
       })
       .catch(e => {});
   };
-  console.log('location');
+  // console.log('location', datas[0]);
   // const lat = 33.5344737;
   const onRefresh = () => {
     setRefreshing(true);
@@ -563,25 +507,26 @@ const Home = ({navigation}) => {
           ))}
         </View> */}
           {/* <FlatList horizontal data={hash} renderItem={renderItem} /> */}
-          <ScrollView>
-            <View
-              style={{
-                marginTop: 10,
-                // flex: 1,
-                width: '100%',
-                paddingBottom: 0,
-                height: hp(Platform.OS == 'ios' ? 75 : 80),
-              }}>
-              <FlatList
-                data={datas}
-                // onEndReachedThreshold={0.5}
-                onRefresh={onRefresh}
-                refreshing={refreshing}
-                onEndReached={increasePage}
-                renderItem={renderItem1}
-              />
-            </View>
-          </ScrollView>
+          {/* <ScrollView> */}
+          <View
+            style={{
+              marginTop: 10,
+              // flex: 1,
+              width: '100%',
+              paddingBottom: 0,
+              height: hp(Platform.OS == 'ios' ? 75 : 80),
+            }}>
+            <FlatList
+              data={datas}
+              // onEndReachedThreshold={0.5}
+              onRefresh={onRefresh}
+              keyExtractor={item => item.id + 'a'}
+              refreshing={refreshing}
+              onEndReached={increasePage}
+              renderItem={renderItem1}
+            />
+          </View>
+          {/* </ScrollView> */}
         </View>
       </ImageBackground>
 

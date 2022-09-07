@@ -31,6 +31,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const {userData} = useSelector(({USER}) => USER);
   const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
   console.log('fcm_token', fcm_token);
+  console.log('item in chat', item);
   const guestData = {
     id: item.id,
     firstname: item.firstname,
@@ -47,7 +48,8 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     fcm_token: userData.userdata.fcm_token,
     image: userData.userdata.image,
   };
-  // console.log('item in chat', item);
+  console.log('my name', userData.userdata.email);
+  console.log('guest name', guestData.email);
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardStatus('Keyboard Shown');
@@ -108,9 +110,9 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
         body: message,
       },
       data: {
-        guestData: guestData,
+        guestData: user,
         item: user,
-        fcm_token: user.fcm_token,
+        fcm_token: userData.userdata.fcm_token,
         type: 'message',
       },
       to: guestData.fcm_token,
@@ -289,7 +291,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                       ? 'white'
                       : 'grey',
                 }}>
-                {moment(item.date).format('DD/MM/YYYY HH:MM')}
+                {moment(item.date).format('MM/DD/YYYY hh:mm a')}
               </Text>
             </View>
           </View>

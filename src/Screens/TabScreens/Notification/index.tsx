@@ -248,7 +248,7 @@ const Notification = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       getNotification({Auth: userData.token}).then(res => {
-        console.log('res of notifications', res);
+        // console.log('res of notifications', res);
         setNotification(res.data.reverse());
       });
     });
