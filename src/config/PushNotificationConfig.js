@@ -29,6 +29,14 @@ const PushNotificationsConfigs = {
             RootNavigation.navigateWithParam('PostDetails', {
               item: JSON.parse(notification.data.post_data),
             });
+          } else if (notification.data.type === 'profile_dislike') {
+            RootNavigation.navigateWithParam('TabNavigator', {
+              screen: 'Profile',
+            });
+          } else if (notification.data.type === 'profile_like') {
+            RootNavigation.navigateWithParam('TabNavigator', {
+              screen: 'Profile',
+            });
           } else if (notification.data.type === 'post_comment') {
             const {id} = JSON.parse(notification.data.post_data);
             RootNavigation.navigateWithParam('Comments', {id});

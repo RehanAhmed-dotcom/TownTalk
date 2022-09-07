@@ -26,6 +26,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
     profileObject.is_like == true ? true : false,
   );
   const {item} = route.params;
+  // console.log('item in profile', item);
   const [dislike, setDislike] = useState(
     profileObject.is_like == false ? true : false,
   );
@@ -217,7 +218,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
   useEffect(() => {
     _usersList();
     profile({Auth: userData.token, id: item.user.id}).then(res => {
-      console.log('resi of profile', JSON.stringify(res));
+      // console.log('resi of profile', JSON.stringify(res));
       setPosts(res.data);
       setProfileObject(res.data);
     });

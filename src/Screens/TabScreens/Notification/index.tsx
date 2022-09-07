@@ -25,7 +25,9 @@ const Notification = ({navigation}) => {
           ? navigation.navigate('PostDetails', {item: item.post})
           : item.type == 'post_comment'
           ? navigation.navigate('Comments', {id: item.post_id})
-          : console.log('hello');
+          : navigation.navigate('TabNavigator', {
+              screen: 'Profile',
+            });
       }}
       style={{
         flexDirection: 'row',
