@@ -1,6 +1,6 @@
 import Axios from 'axios';
 const axios = Axios.create({
-  baseURL: 'https://intechsol-developer.co/towntalk/api',
+  baseURL: 'https://towntalkapp.com/app/api',
   headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
 });
 const authorizedHeaders = {
