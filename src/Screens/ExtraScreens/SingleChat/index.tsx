@@ -116,7 +116,8 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
       notification: {
         id: `${userData1.email}`,
         title: `${userData1.name}`,
-        body: message,
+        body:
+          message.substring(message.length - 4) == '.jpg' ? 'Image' : message,
       },
       data: {
         guestData: user,
