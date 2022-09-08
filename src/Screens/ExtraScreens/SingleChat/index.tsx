@@ -10,11 +10,13 @@ import {
   Image,
   Text,
   Keyboard,
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ImageBackground,
 } from 'react-native';
 import moment from 'moment';
+import {getfcm} from '../../../lib/api';
 import {firebase_key} from '../../../../config';
 import {recieverMsg, senderImgMsg, senderMsg} from '../../../lib/messageUtils';
 import {useSelector} from 'react-redux';
@@ -27,17 +29,18 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const items = route?.params?.items;
   const [keyboardStatus, setKeyboardStatus] = useState('');
   const [message, setMessage] = useState('');
+  const [fcm, setFcm] = useState(fcm_token);
   const [messages, setMessages] = useState([]);
   const {userData} = useSelector(({USER}) => USER);
   const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
-  console.log('fcm_token', fcm_token);
-  console.log('item in chat', item);
+  // console.log('fcm_token', fcm_token);
+  // console.log('item in chat', item);
   const guestData = {
     id: item.id,
     firstname: item.firstname,
     // lastname: item.lastname,
     email: item.email,
-    fcm_token,
+    fcm_token: fcm,
     image: item.image,
   };
   const user = {
@@ -48,6 +51,12 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     fcm_token: userData.userdata.fcm_token,
     image: userData.userdata.image,
   };
+  useEffect(() => {
+    getfcm({id: item.id}).then(res => {
+      setFcm(res.token);
+    });
+    // Alert.alert('hello');
+  }, []);
   console.log('my name', userData.userdata.email);
   console.log('guest name', guestData.email);
   useEffect(() => {
