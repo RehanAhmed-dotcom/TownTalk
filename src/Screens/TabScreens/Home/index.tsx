@@ -92,7 +92,7 @@ const Home = ({navigation}) => {
         setlongitude(position.coords.longitude);
         lat(position.coords.latitude)(dispatch);
         long(position.coords.longitude)(dispatch);
-        // getPlace('40.5759', '-74.4926');
+        // getPlace('40.6727', '-74.2152');
         getPlace(position.coords.latitude, position.coords.longitude);
         // viewAllPost({
         //   Auth: userData.token,
