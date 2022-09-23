@@ -29,9 +29,10 @@ import Icon from 'react-native-vector-icons/Entypo';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateToken} from '../../../lib/api';
 import {viewAllPost, hashTag} from '../../../lib/api';
+// import {logoutuser} from '../../../redux/actions';
 import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
-import {lat, long} from '../../../redux/actions';
+import {lat, long, logoutuser} from '../../../redux/actions';
 const Home = ({navigation}) => {
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   const [latitude, setlatitude] = useState(0);
@@ -128,9 +129,25 @@ const Home = ({navigation}) => {
   }, []);
   const getToken = async () => {
     let fcmToken = await messaging().getToken();
-    updateToken({Auth: userData.token, fcm_token: fcmToken});
+    updateToken({Auth: userData.token, fcm_token: fcmToken})
+      .then(res => {
+        if (res.status == 'success') {
+          console.log('updated');
+        }
+      })
+      .catch(err => {
+        logoutuser(false)(dispatch);
+      });
     messaging().onTokenRefresh(token => {
-      updateToken({Auth: userData.token, fcm_token: token});
+      updateToken({Auth: userData.token, fcm_token: token})
+        .then(res => {
+          if (res.status == 'success') {
+            console.log('updated');
+          }
+        })
+        .catch(err => {
+          logoutuser(false)(dispatch);
+        });
     });
   };
   useEffect(() => {
@@ -152,7 +169,7 @@ const Home = ({navigation}) => {
       longitude: longitude ? longitude : Long,
     })
       .then(res => {
-        console.log('res of pagination', res);
+        // console.log('res of pagination', res);
         setRefreshing(false);
         // setTestArr([...testArr, ...res.posts.data]);
         if (res.status == 'success') {
@@ -203,7 +220,7 @@ const Home = ({navigation}) => {
         longitude: longitude ? longitude : Long,
       })
         .then(res => {
-          console.log('res of new api', res);
+          // console.log('res of new api', res);
           setData(res.posts.data);
           setTestArr(res.posts.data);
         })
@@ -371,7 +388,7 @@ const Home = ({navigation}) => {
     // let request = `https://maps.googleapis.com/maps/api/geocode/json?address=${lot},${logo}&key=${mapKey}`;
     return Axios.get(request)
       .then(({data, status}) => {
-        console.log('data', data.results[0].address_components);
+        // console.log('data', data.results[0].address_components);
         // setLocation("Rawalpindi")
         // console.log('whole responce', JSON.stringify(data));
         // const currentCity = data.results[0].address_components.filter(
@@ -409,7 +426,7 @@ const Home = ({navigation}) => {
       longitude: longitude ? longitude : Long,
     })
       .then(res => {
-        console.log('res of new api', res);
+        // console.log('res of new api', res);
         setData(res.posts.data);
         setTestArr(res.posts.data);
         setRefreshing(false);

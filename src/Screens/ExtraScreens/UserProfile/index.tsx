@@ -371,20 +371,20 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               marginTop: 20,
             }}>
             <TouchableOpacity
-              activeOpacity={userData.userdata.id != item.user.id ? 0 : 1}
-              onPress={() => {
-                userData.userdata.id != item.user.id &&
-                  likeDislikeProfile({
-                    Auth: userData.token,
-                    profile_id: item.user.id,
-                    is_like: 1,
-                  }).then(res => {
-                    alter();
-                  });
+              activeOpacity={1}
+              // onPress={() => {
+              //   userData.userdata.id != item.user.id &&
+              //     likeDislikeProfile({
+              //       Auth: userData.token,
+              //       profile_id: item.user.id,
+              //       is_like: 1,
+              //     }).then(res => {
+              //       alter();
+              //     });
 
-                // setLike(!like);
-                // setDislike(false);
-              }}
+              //   // setLike(!like);
+              //   // setDislike(false);
+              // }}
               style={{
                 // flexDirection: 'column',
                 alignItems: 'center',
@@ -412,22 +412,22 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              activeOpacity={userData.userdata.id != item.user.id ? 0 : 1}
-              onPress={() => {
-                userData.userdata.id != item.user.id &&
-                  likeDislikeProfile({
-                    Auth: userData.token,
-                    profile_id: item.user.id,
-                    is_like: 0,
-                  })
-                    .then(res => {
-                      console.log('res', res);
-                      alter();
-                    })
-                    .catch(err => {
-                      console.log('err', err);
-                    });
-              }}
+              activeOpacity={1}
+              // onPress={() => {
+              //   userData.userdata.id != item.user.id &&
+              //     likeDislikeProfile({
+              //       Auth: userData.token,
+              //       profile_id: item.user.id,
+              //       is_like: 0,
+              //     })
+              //       .then(res => {
+              //         console.log('res', res);
+              //         alter();
+              //       })
+              //       .catch(err => {
+              //         console.log('err', err);
+              //       });
+              // }}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
