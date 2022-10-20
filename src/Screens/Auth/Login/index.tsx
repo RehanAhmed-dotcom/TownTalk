@@ -15,6 +15,7 @@ import {login} from '../../../lib/api';
 import {validateEmail} from '../../../lib/functions';
 import {useDispatch} from 'react-redux';
 import MyModal from '../../../Components/MyModal';
+import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
 import {logged} from '../../../redux/actions';
 const Login = ({navigation}: {navigation: any}) => {
   const [email, setEmail] = useState('');
@@ -27,6 +28,141 @@ const Login = ({navigation}: {navigation: any}) => {
   const [category, setCategory] = useState('Email');
   const [showModal, setShowModal] = useState(false);
   const [keyboardStatus, setKeyboardStatus] = useState(false);
+  const getInfoFromToken = token => {
+    console.log('------------------');
+    fetch(
+      'https://graph.facebook.com/v2.5/me?fields=email,name,friends,picture&access_token=' +
+        token,
+    )
+      .then(response => response.json())
+      .then(json => {
+        console.log('json', json);
+      });
+    // .then(json => {
+    //   // setloding(true);
+    //   const data = new FormData();
+    //   data.append('email', json.email);
+    //   data.append('password', json.id);
+    //   // data.append('social', 'true');
+    //   login({
+    //     typ: use == 'stu' ? 'student' : 'teacher',
+    //     data: data,
+    //   })
+    //     .then(res => {
+    //       console.log('---------', res);
+
+    //       if (res.status == 'success') {
+    //         setloding(false);
+    //         userAuthorize(res)(dispatch);
+    //         // navigation.navigate(use == 'stu' ? 'StudentTab' : 'TeacherTab');
+    //       } else {
+    //         setloding(false);
+    //         console.log('Some Thing Wrong');
+    //       }
+    //     })
+    //     .catch(error => {
+    //       // setloding(false);
+    //       // console.log('Message Error', error?.response?.data);
+    //       // seterr(error?.response?.data?.message);
+
+    //       if (error.response.data.status == 'error') {
+    //         var today = new Date();
+    //         var dd = String(today.getDate()).padStart(2, '0');
+    //         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+    //         var yyyy = today.getFullYear();
+
+    //         let vrifiddate = yyyy + '-' + mm + '-' + dd;
+
+    //         const data = new FormData();
+    //         data.append(
+    //           'first_name',
+    //           json.name
+    //             .split(' ')[0]
+    //             .replace(/^./, json.name.split(' ')[0][0].toUpperCase()),
+    //         );
+    //         data.append('email', json.email);
+    //         data.append('last_name', json.name.split(' ')[1]);
+    //         // data.append('name', json.name);
+    //         // data.append('email', json.email);
+    //         data.append('password', json.id);
+    //         data.append('password_confirmation', json.id);
+    //         data.append('email_verified_at', vrifiddate);
+    //         // data.append('type', type);
+    //         if (json.picture.data.url) {
+    //           json.picture.data.url &&
+    //             data.append('image', {
+    //               uri: json.picture.data.url,
+    //               type: 'image/jpeg',
+    //               name: 'image' + new Date() + '.jpg',
+    //             });
+    //           console.log('data,,,,,', data);
+    //         }
+    //         CompleteProfile({
+    //           typ: use == 'stu' ? 'student' : 'teacher',
+    //           data: data,
+    //         })
+    //           .then(res => {
+    //             console.log('-----', res);
+    //             if (res.status == 'success') {
+    //               setloding(false);
+    //               userAuthorize(res)(dispatch);
+    //               // navigation.navigate(use == 'stu' ? 'StudentTab' : 'Verificatiion');
+    //             } else {
+    //               setloding(false);
+    //               console.log('Some Thing Wrong');
+    //             }
+    //           })
+    //           .catch(error => {
+    //             setloding(false);
+    //             console.log('Message Error------1', error);
+    //             console.log('Message Error------2', error.response.message);
+    //             console.log('Message Error------3', error.data);
+    //             console.log('Message Error------4', error.response.data);
+    //             console.log('Message Error------5', error.message);
+
+    //             if (error?.response?.data?.message?.email) {
+    //               alert(error?.response?.data?.message?.email);
+    //             } else {
+    //               setloding(false);
+    //               console.log('Error Meaasge sign up', error.response.data);
+    //             }
+    //           });
+    //       } else {
+    //         // setloding(false);
+    //         console.log('Message Error', error);
+    //         // seterr('Some thing Wrong');
+    //       }
+    //     });
+    // })
+    // .catch(error => {
+    //   // setloding(false);
+    //   Alert.alert(error);
+    // });
+  };
+  const Faceboologin = async () => {
+    LoginManager.logOut();
+    LoginManager.setLoginBehavior('web_only');
+    LoginManager.logInWithPermissions(['email', 'public_profile']).then(
+      function (result) {
+        if (result.isCancelled) {
+          console.log('cancled');
+        } else {
+          AccessToken.getCurrentAccessToken().then(data => {
+            console.log('userdata', data.permissions);
+            // const {accessToken} = data;
+            // initUser(accessToken);
+            const accessToken = data.accessToken.toString();
+            getInfoFromToken(accessToken);
+          });
+        }
+      },
+
+      function (error) {
+        alert(error);
+        console.log('error', error);
+      },
+    );
+  };
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
@@ -44,20 +180,21 @@ const Login = ({navigation}: {navigation: any}) => {
   const dispatch = useDispatch();
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+      {/* <ImageBackground
         source={require('../../../assets/Images/SignupBackground.png')}
-        style={{flex: 1}}>
-        <View style={{paddingHorizontal: 15, flex: 1}}>
-          {/* <ScrollView> */}
-          {keyboardStatus == false && (
-            <View
-              style={{
-                flex: 1.5,
-                justifyContent: 'center',
-                //   zIndex: 3,
-                alignItems: 'center',
-              }}>
-              {/* <View
+        style={{flex: 1}}> */}
+      <View style={{paddingHorizontal: 15, flex: 1}}>
+        {/* <ScrollView> */}
+        {keyboardStatus == false && (
+          <View
+            style={{
+              flex: 0.5,
+              justifyContent: 'center',
+              // backgroundColor: 'red',
+              //   zIndex: 3,
+              alignItems: 'center',
+            }}>
+            {/* <View
               style={{
                 position: 'absolute',
                 zIndex: 3,
@@ -67,13 +204,13 @@ const Login = ({navigation}: {navigation: any}) => {
 
                 backgroundColor: 'transparent',
               }}> */}
-              <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/logoback.png')}
-                style={{height: 100, width: 100}}
-              />
-              {/* </View> */}
-              {/* <Text
+            {/* <Image
+              resizeMode="contain"
+              source={require('../../../assets/Images/logoback.png')}
+              style={{height: 100, width: 100}}
+            /> */}
+            {/* </View> */}
+            {/* <Text
               style={{
                 fontSize: 20,
                 marginTop: 20,
@@ -82,25 +219,37 @@ const Login = ({navigation}: {navigation: any}) => {
               }}>
               Hello again.
             </Text> */}
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: 'black',
-                  marginTop: 40,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                }}>
-                Welcome back.
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
+            <Text
+              style={{
+                fontSize: 16,
+                color: 'grey',
+                marginTop: 40,
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Welcome Back!
+            </Text>
+            <Text
+              onPress={() => {
+                Faceboologin();
+              }}
+              style={{
+                fontSize: 18,
+                color: 'black',
+                marginTop: 40,
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Login with your email
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
 
-                  justifyContent: 'center',
-                  width: '80%',
-                  top: 20,
-                }}>
-                <TouchableOpacity
+                justifyContent: 'center',
+                width: '80%',
+                top: 20,
+              }}>
+              {/* <TouchableOpacity
                   onPress={() => setCategory('Email')}
                   style={{
                     borderBottomWidth: category == 'Email' ? 1 : 0,
@@ -117,8 +266,8 @@ const Login = ({navigation}: {navigation: any}) => {
                     }}>
                     Email
                   </Text>
-                </TouchableOpacity>
-                {/* <TouchableOpacity
+                </TouchableOpacity> */}
+              {/* <TouchableOpacity
                   onPress={() => setCategory('Phone No')}
                   style={{
                     borderBottomWidth: category == 'Phone No' ? 1 : 0,
@@ -136,84 +285,90 @@ const Login = ({navigation}: {navigation: any}) => {
                     Phone No
                   </Text>
                 </TouchableOpacity> */}
-              </View>
             </View>
-          )}
+          </View>
+        )}
 
-          <View style={{flex: 2}}>
-            {category == 'Email' ? (
-              <>
-                <View style={{marginTop: 30}}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: 'black',
-                      fontFamily: 'MontserratAlternates-SemiBold',
-                    }}>
-                    EMAIL ADDRESS
-                  </Text>
+        <View style={{flex: 2}}>
+          {category == 'Email' ? (
+            <>
+              <View style={{marginTop: 30}}>
+                {/* <Text
+                  style={{
+                    fontSize: 12,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  EMAIL ADDRESS
+                </Text> */}
+                <TextInput
+                  value={email}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  placeholderTextColor={'grey'}
+                  placeholder={'Email'}
+                  onChangeText={text => {
+                    setEmail(text);
+                    setEmailErr('');
+                  }}
+                  style={{
+                    borderColor: emailErr ? 'red' : 'grey',
+                    borderWidth: 1,
+                    height: 50,
+                    borderRadius: 10,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-Regular',
+                  }}
+                />
+              </View>
+              <View style={{marginTop: 30}}>
+                {/* <Text
+                  style={{
+                    fontSize: 12,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  PASSWORD
+                </Text> */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    borderColor: passwrodErr ? 'red' : 'grey',
+                    justifyContent: 'space-between',
+                  }}>
                   <TextInput
-                    value={email}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
+                    value={password}
+                    placeholderTextColor={'grey'}
+                    placeholder={'Password'}
                     onChangeText={text => {
-                      setEmail(text);
-                      setEmailErr('');
+                      setPassword(text);
+                      setPasswordErr('');
                     }}
+                    secureTextEntry={show ? false : true}
                     style={{
-                      borderBottomColor: emailErr ? 'red' : 'grey',
-                      borderBottomWidth: 1,
+                      // backgroundColor: 'red',
+                      width: '85%',
                       height: 50,
                       color: 'black',
+                      // borderBottomColor: passwrodErr ? 'red' : 'grey',
+                      // borderBottomWidth: 1,
                       fontFamily: 'MontserratAlternates-Regular',
                     }}
                   />
-                </View>
-                <View style={{marginTop: 30}}>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: 'black',
-                      fontFamily: 'MontserratAlternates-SemiBold',
-                    }}>
-                    PASSWORD
-                  </Text>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      borderBottomWidth: 1,
-                      borderBottomColor: passwrodErr ? 'red' : 'grey',
-                      justifyContent: 'space-between',
-                    }}>
-                    <TextInput
-                      value={password}
-                      onChangeText={text => {
-                        setPassword(text);
-                        setPasswordErr('');
-                      }}
-                      secureTextEntry={show ? false : true}
+                  <TouchableOpacity onPress={() => setShow(!show)}>
+                    <Text
                       style={{
-                        // backgroundColor: 'red',
-                        width: '85%',
-                        height: 50,
-                        color: 'black',
-                        // borderBottomColor: passwrodErr ? 'red' : 'grey',
-                        // borderBottomWidth: 1,
                         fontFamily: 'MontserratAlternates-Regular',
-                      }}
-                    />
-                    <TouchableOpacity onPress={() => setShow(!show)}>
-                      <Text
-                        style={{
-                          fontFamily: 'MontserratAlternates-Regular',
-                          fontSize: 10,
-                        }}>
-                        {password ? (show ? 'Hide' : 'Show') : null}
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                  {/* <TextInput
+                        fontSize: 10,
+                      }}>
+                      {password ? (show ? 'Hide' : 'Show') : null}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                {/* <TextInput
                     value={password}
                     onChangeText={text => {
                       setPassword(text);
@@ -226,150 +381,187 @@ const Login = ({navigation}: {navigation: any}) => {
                       fontFamily: 'MontserratAlternates-Regular',
                     }}
                   /> */}
-                </View>
-                <View style={{marginTop: 5, alignItems: 'flex-end'}}>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('Email')}>
-                    <Text
-                      style={{
-                        fontSize: 12,
-                        color: 'black',
-                        fontFamily: 'MontserratAlternates-Medium',
-                      }}>
-                      Forgot Password?
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    if (validateEmail(email) && password) {
-                      setShowModal(true);
-                      login({email, password})
-                        .then(res => {
-                          console.log('res', res);
-                          setShowModal(false);
-                          if (res.status == 'success') {
-                            console.log('res', res);
-                            logged(res)(dispatch);
-                          }
-                        })
-                        .catch(error => {
-                          console.log('err', error.response.data);
-                          // Alert.alert("Credentials doesn't matched");
-                          setShowModal(false);
-                          if (error.response.data.status == 'error') {
-                            if (error.response.data.is_verified == false) {
-                              navigation.navigate('EmailVerification', {
-                                email,
-                              });
-                              //   ToastAndroid.show(
-                              //     `${error.response.data.message.email}`,
-                              //     ToastAndroid.SHORT,
-                              //   );
-                              // Alert.alert(
-                              //   `${error.response.data.message.email}`,
-                              // );
-                            } else if (
-                              error.response.data.message ==
-                              'Invalid Username or Password'
-                            ) {
-                              //   ToastAndroid.show(
-                              //     `${error.response.data.message.phoneno}`,
-                              //     ToastAndroid.SHORT,
-                              //   );
-                              Alert.alert(`${error.response.data.message}`);
-                            } else if (
-                              error.response.data.message == 'User not Found'
-                            ) {
-                              Alert.alert(`${error.response.data.message}`);
-                            }
-                          }
-                        });
-
-                      // navigation.navigate('TabNavigator');
-                    } else if (!validateEmail(email) && !password) {
-                      setEmailErr('asd');
-                      setPasswordErr('asd');
-                    } else if (!validateEmail(email)) {
-                      setEmailErr('asd');
-                    } else if (!password) {
-                      setPasswordErr('asd');
-                    }
-                  }}
-                  style={{
-                    backgroundColor: '#5F95F0',
-                    alignItems: 'center',
-                    height: 50,
-                    borderRadius: 10,
-                    marginTop: 70,
-                    elevation: 3,
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: 'MontserratAlternates-SemiBold',
-                      fontSize: 16,
-                      color: 'white',
-                    }}>
-                    Sign In
-                  </Text>
-                </TouchableOpacity>
-                <View
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: 'MontserratAlternates-Regular',
-                      color: 'black',
-                    }}>
-                    New to Town Talk?
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('Signup')}>
-                    <Text
-                      style={{
-                        marginLeft: 7,
-                        fontSize: 16,
-                        fontFamily: 'MontserratAlternates-SemiBold',
-                        color: '#5F95F0',
-                      }}>
-                      Sign Up
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            ) : (
-              <>
-                <View style={{marginTop: 30}}>
+              </View>
+              <View style={{marginTop: 5, alignItems: 'flex-end'}}>
+                <TouchableOpacity onPress={() => navigation.navigate('Email')}>
                   <Text
                     style={{
                       fontSize: 12,
                       color: 'black',
-                      fontFamily: 'MontserratAlternates-SemiBold',
+                      fontFamily: 'MontserratAlternates-Medium',
                     }}>
-                    PHONE NO
+                    Forgot Password?
                   </Text>
-                  <TextInput
-                    keyboardType="phone-pad"
-                    value={phone}
-                    onChangeText={text => {
-                      setPhone(text);
-                      setPhoneErr('');
-                    }}
-                    style={{
-                      borderBottomColor: phoneErr ? 'red' : 'grey',
-                      borderBottomWidth: 1,
-                      height: 50,
-                      color: 'grey',
-                      fontFamily: 'MontserratAlternates-Regular',
-                    }}
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  if (validateEmail(email) && password) {
+                    setShowModal(true);
+                    login({email, password})
+                      .then(res => {
+                        console.log('res', res);
+                        setShowModal(false);
+                        if (res.status == 'success') {
+                          console.log('res', res);
+                          logged(res)(dispatch);
+                        }
+                      })
+                      .catch(error => {
+                        console.log('err', error.response.data);
+                        // Alert.alert("Credentials doesn't matched");
+                        setShowModal(false);
+                        if (error.response.data.status == 'error') {
+                          if (error.response.data.is_verified == false) {
+                            navigation.navigate('EmailVerification', {
+                              email,
+                            });
+                            //   ToastAndroid.show(
+                            //     `${error.response.data.message.email}`,
+                            //     ToastAndroid.SHORT,
+                            //   );
+                            // Alert.alert(
+                            //   `${error.response.data.message.email}`,
+                            // );
+                          } else if (
+                            error.response.data.message ==
+                            'Invalid Username or Password'
+                          ) {
+                            //   ToastAndroid.show(
+                            //     `${error.response.data.message.phoneno}`,
+                            //     ToastAndroid.SHORT,
+                            //   );
+                            Alert.alert(`${error.response.data.message}`);
+                          } else if (
+                            error.response.data.message == 'User not Found'
+                          ) {
+                            Alert.alert(`${error.response.data.message}`);
+                          }
+                        }
+                      });
+
+                    // navigation.navigate('TabNavigator');
+                  } else if (!validateEmail(email) && !password) {
+                    setEmailErr('asd');
+                    setPasswordErr('asd');
+                  } else if (!validateEmail(email)) {
+                    setEmailErr('asd');
+                  } else if (!password) {
+                    setPasswordErr('asd');
+                  }
+                }}
+                style={{
+                  backgroundColor: '#5F95F0',
+                  alignItems: 'center',
+                  height: 50,
+                  borderRadius: 10,
+                  marginTop: 70,
+                  elevation: 3,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                    fontSize: 16,
+                    color: 'white',
+                  }}>
+                  Login
+                </Text>
+              </TouchableOpacity>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  color: 'black',
+                  alignSelf: 'center',
+                  marginTop: 10,
+                }}>
+                Login With Phone
+              </Text>
+              <View
+                style={{
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    Faceboologin();
+                  }}>
+                  <Image
+                    source={require('../../../assets/Images/facebook.png')}
+                    style={{height: 40, width: 40, marginRight: 10}}
                   />
-                </View>
-                {/* <View style={{marginTop: 30}}>
+                </TouchableOpacity>
+
+                <Image
+                  source={require('../../../assets/Images/twitter.png')}
+                  style={{height: 40, width: 40, marginRight: 10}}
+                />
+                <Image
+                  source={require('../../../assets/Images/google.png')}
+                  style={{height: 40, width: 40, marginRight: 10}}
+                />
+                <Image
+                  source={require('../../../assets/Images/apple.png')}
+                  style={{height: 40, width: 40, marginRight: 10}}
+                />
+              </View>
+              <View
+                style={{
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    color: 'black',
+                  }}>
+                  Don't have an account?
+                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+                  <Text
+                    style={{
+                      marginLeft: 7,
+                      fontSize: 16,
+                      fontFamily: 'MontserratAlternates-SemiBold',
+                      color: 'black',
+                    }}>
+                    Sign Up!
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          ) : (
+            <>
+              <View style={{marginTop: 30}}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  PHONE NO
+                </Text>
+                <TextInput
+                  keyboardType="phone-pad"
+                  value={phone}
+                  onChangeText={text => {
+                    setPhone(text);
+                    setPhoneErr('');
+                  }}
+                  style={{
+                    borderBottomColor: phoneErr ? 'red' : 'grey',
+                    borderBottomWidth: 1,
+                    height: 50,
+                    color: 'grey',
+                    fontFamily: 'MontserratAlternates-Regular',
+                  }}
+                />
+              </View>
+              {/* <View style={{marginTop: 30}}>
                   <Text style={{fontSize: 12}}>PASSWORD</Text>
                   <TextInput
                     value={password}
@@ -384,90 +576,89 @@ const Login = ({navigation}: {navigation: any}) => {
                     }}
                   />
                 </View> */}
-                {/* <View style={{marginTop: 5, alignItems: 'flex-end'}}>
+              {/* <View style={{marginTop: 5, alignItems: 'flex-end'}}>
                   <TouchableOpacity
                     onPress={() => navigation.navigate('Email')}>
                     <Text style={{fontSize: 12}}>Forgot Password</Text>
                   </TouchableOpacity>
                 </View> */}
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowModal(true);
-                    if (phone) {
-                      login({phoneno: phone})
-                        .then(res => {
-                          console.log('res', res);
-                          setShowModal(false);
-                          if (res.status == 'success') {
-                            // logged(res)(dispatch);
-                            navigation.navigate('CodePhone', {phone});
-                          }
-                        })
-                        .catch(err => {
-                          console.log('err', err);
-                          // Alert.alert("Credentials doesn't matched");
-                          setShowModal(false);
-                          console.log('Error MEssage ', err.response.data);
-                          if (err.response.data.status == 'error') {
-                            Alert.alert(`${err.response.data.message}`);
-                          }
-                        });
-                      //
-                    } else {
-                      setPhoneErr('asd');
-                    }
-                  }}
+              <TouchableOpacity
+                onPress={() => {
+                  setShowModal(true);
+                  if (phone) {
+                    login({phoneno: phone})
+                      .then(res => {
+                        console.log('res', res);
+                        setShowModal(false);
+                        if (res.status == 'success') {
+                          // logged(res)(dispatch);
+                          navigation.navigate('CodePhone', {phone});
+                        }
+                      })
+                      .catch(err => {
+                        console.log('err', err);
+                        // Alert.alert("Credentials doesn't matched");
+                        setShowModal(false);
+                        console.log('Error MEssage ', err.response.data);
+                        if (err.response.data.status == 'error') {
+                          Alert.alert(`${err.response.data.message}`);
+                        }
+                      });
+                    //
+                  } else {
+                    setPhoneErr('asd');
+                  }
+                }}
+                style={{
+                  backgroundColor: '#5F95F0',
+                  alignItems: 'center',
+                  height: 50,
+                  borderRadius: 10,
+                  marginTop: 80,
+                  elevation: 3,
+                  justifyContent: 'center',
+                }}>
+                <Text
                   style={{
-                    backgroundColor: '#5F95F0',
-                    alignItems: 'center',
-                    height: 50,
-                    borderRadius: 10,
-                    marginTop: 80,
-                    elevation: 3,
-                    justifyContent: 'center',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                    fontSize: 16,
+                    color: 'white',
                   }}>
+                  Verify
+                </Text>
+              </TouchableOpacity>
+              <View
+                style={{
+                  marginTop: 10,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    color: 'black',
+                  }}>
+                  New to Town Talk?
+                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
                   <Text
                     style={{
-                      fontFamily: 'MontserratAlternates-SemiBold',
+                      marginLeft: 7,
                       fontSize: 16,
-                      color: 'white',
+                      fontFamily: 'MontserratAlternates-SemiBold',
+                      color: '#5F95F0',
                     }}>
-                    Verify
+                    Sign Up
                   </Text>
                 </TouchableOpacity>
-                <View
-                  style={{
-                    marginTop: 10,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}>
-                  <Text
-                    style={{
-                      fontFamily: 'MontserratAlternates-Regular',
-                      color: 'black',
-                    }}>
-                    New to Town Talk?
-                  </Text>
-                  <TouchableOpacity
-                    onPress={() => navigation.navigate('Signup')}>
-                    <Text
-                      style={{
-                        marginLeft: 7,
-                        fontSize: 16,
-                        fontFamily: 'MontserratAlternates-SemiBold',
-                        color: '#5F95F0',
-                      }}>
-                      Sign Up
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-              </>
-            )}
-          </View>
-          {/* </ScrollView> */}
+              </View>
+            </>
+          )}
         </View>
-      </ImageBackground>
+        {/* </ScrollView> */}
+      </View>
+      {/* </ImageBackground> */}
       {MyModal(showModal)}
     </SafeAreaView>
   );

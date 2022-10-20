@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 $RNFirebaseAsStaticFramework = true
 platform :ios, '11.0'
 install! 'cocoapods', :deterministic_uuids => false
-
+# pod 'FBSDKCoreKit', :modular_headers => true
 target 'TownTalk' do
   use_frameworks!
   config = use_native_modules!

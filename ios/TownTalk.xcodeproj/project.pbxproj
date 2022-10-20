@@ -32,6 +32,7 @@
 		52672D2828B366DB00683F9E /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52672D1828B366DA00683F9E /* FontAwesome5_Regular.ttf */; };
 		52672D2928B366DB00683F9E /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52672D1928B366DA00683F9E /* MaterialIcons.ttf */; };
 		52672D2A28B366DB00683F9E /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 52672D1A28B366DA00683F9E /* FontAwesome.ttf */; };
+		5297C6A029016F330070ADC4 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5297C69F29016F330070ADC4 /* File.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		F740ECC6CF354451AC131DA3 /* Pods_TownTalk_TownTalkTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4292C9F4DAEA8B4A665B64F8 /* Pods_TownTalk_TownTalkTests.framework */; };
 /* End PBXBuildFile section */
@@ -79,6 +80,8 @@
 		52672D1828B366DA00683F9E /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Regular.ttf; path = ../../../../../../Downloads/Fonts/FontAwesome5_Regular.ttf; sourceTree = "<group>"; };
 		52672D1928B366DA00683F9E /* MaterialIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialIcons.ttf; path = ../../../../../../Downloads/Fonts/MaterialIcons.ttf; sourceTree = "<group>"; };
 		52672D1A28B366DA00683F9E /* FontAwesome.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome.ttf; path = ../../../../../../Downloads/Fonts/FontAwesome.ttf; sourceTree = "<group>"; };
+		5297C69A290159BF0070ADC4 /* FBSDKCoreKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FBSDKCoreKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5297C69F29016F330070ADC4 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-TownTalk.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TownTalk.release.xcconfig"; path = "Target Support Files/Pods-TownTalk/Pods-TownTalk.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-TownTalk-TownTalkTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TownTalk-TownTalkTests.debug.xcconfig"; path = "Target Support Files/Pods-TownTalk-TownTalkTests/Pods-TownTalk-TownTalkTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TownTalk/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -135,6 +138,7 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				5297C69F29016F330070ADC4 /* File.swift */,
 			);
 			name = TownTalk;
 			sourceTree = "<group>";
@@ -142,6 +146,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5297C69A290159BF0070ADC4 /* FBSDKCoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				CEA568757EACD32D5BCF35BF /* Pods_TownTalk.framework */,
 				4292C9F4DAEA8B4A665B64F8 /* Pods_TownTalk_TownTalkTests.framework */,
@@ -276,7 +281,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1330;
 					};
 				};
 			};
@@ -479,6 +484,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
+				5297C6A029016F330070ADC4 /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -498,6 +504,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5B7EB9410499542E8C5724F5 /* Pods-TownTalk-TownTalkTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -525,6 +532,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 89C6BE57DB24E9ADA2F236DE /* Pods-TownTalk-TownTalkTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = TownTalkTests/Info.plist;
@@ -552,7 +560,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TownTalk/TownTalk.entitlements;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XQQ34C95CW;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = TownTalk/Info.plist;
@@ -561,7 +569,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.2;
+				MARKETING_VERSION = 3.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -569,6 +577,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = TownTalk;
+				SWIFT_OBJC_BRIDGING_HEADER = "TownTalk-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -582,7 +591,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = TownTalk/TownTalk.entitlements;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = XQQ34C95CW;
 				INFOPLIST_FILE = TownTalk/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -590,7 +599,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.2;
+				MARKETING_VERSION = 3.3;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -598,6 +607,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = TownTalk;
+				SWIFT_OBJC_BRIDGING_HEADER = "TownTalk-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

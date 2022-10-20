@@ -14,10 +14,13 @@ const Splash = ({navigation}: {navigation: any}) => {
     return unsubscribe;
   }, [navigation]);
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: '#5F95F0'}}>
       <ImageBackground
         style={{flex: 1, justifyContent: 'flex-end'}}
-        source={require('../../../assets/Images/backSplash.png')}>
+        source={require('../../../assets/Images/updatedLogo.png')}></ImageBackground>
+      {/* <ImageBackground
+        style={{flex: 1, justifyContent: 'flex-end'}}
+        source={require('../../../assets/Images/LogoEdit.png')}>
         <View
           style={{
             height: '100%',
@@ -38,7 +41,7 @@ const Splash = ({navigation}: {navigation: any}) => {
             style={{width: '100%', height: '100%'}}
           />
         </View>
-      </ImageBackground>
+      </ImageBackground> */}
     </View>
   );
 };
