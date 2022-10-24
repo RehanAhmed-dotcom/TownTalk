@@ -78,7 +78,7 @@ const Profile = ({navigation}) => {
             // height: 30,
             backgroundColor: 'white',
             marginRight: 3,
-            elevation: 3,
+            // elevation: 3,
             // alignItems: 'center',
             // justifyContent: 'center',
             // minWidth: 100,
@@ -86,7 +86,7 @@ const Profile = ({navigation}) => {
             marginVertical: 3,
             marginTop: 10,
             padding: 12,
-            borderRadius: 5,
+            borderRadius: 20,
           }}>
           <TouchableOpacity
             onPress={() => navigation.navigate('UserProfile', {item})}
@@ -474,51 +474,80 @@ const Profile = ({navigation}) => {
   }, [navigation]);
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          // backgroundColor: 'white',
+          // elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+        }}>
+        <View style={{width: 20}} />
+        <View style={{marginLeft: 0}}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: 'black',
+            }}>
+            Profile
+          </Text>
+        </View>
+        <TouchableOpacity
           style={{
-            height: 80,
+            height: 30,
             backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
+            width: 30,
+            borderRadius: 10,
+            elevation: 2,
             alignItems: 'center',
-            paddingHorizontal: 15,
-            justifyContent: 'space-between',
+            justifyContent: 'center',
+          }}
+          onPress={() => {
+            navigation.navigate('Setting');
           }}>
-          <View style={{marginLeft: 0}}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-              }}>
-              Profile
-            </Text>
-          </View>
-
           <Icon
             name="settings-sharp"
             color={'black'}
             size={20}
-            onPress={() => navigation.navigate('Setting')}
+            // onPress={() => navigation.navigate('Setting')}
           />
-          {/* <Icon
+        </TouchableOpacity>
+        {/* <Icon
+          name="settings-sharp"
+          color={'black'}
+          size={20}
+          onPress={() => navigation.navigate('Setting')}
+        /> */}
+        {/* <Icon
             name="log-out"
             color={'black'}
             size={20}
             onPress={() => logoutuser(false)(dispatch)}
           /> */}
-        </View>
-        <View
-          style={{
-            paddingHorizontal: 15,
-            // backgroundColor: 'red',
-            marginTop: 30,
-            flex: 1,
-          }}>
-          <View style={{alignItems: 'center'}}>
+      </View>
+      <View
+        style={{
+          // paddingHorizontal: 15,
+          // backgroundColor: 'red',
+          marginTop: 30,
+          flex: 1,
+        }}>
+        <View style={{alignItems: 'center'}}>
+          <View
+            style={{
+              width: 105,
+              height: 105,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: 55,
+              backgroundColor: '#5F95F0',
+            }}>
             <Image
               source={
                 userData?.userdata?.image
@@ -527,173 +556,229 @@ const Profile = ({navigation}) => {
               }
               style={{height: 100, width: 100, borderRadius: 50}}
             />
-            <Text
-              style={{
-                fontSize: 16,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-SemiBold',
-              }}>
-              {userData?.userdata?.firstname}
-            </Text>
-            <Text
-              style={{
-                fontSize: 14,
-                fontFamily: 'MontserratAlternates-Medium',
-              }}></Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('EditProfile')}
-              style={{
-                position: 'absolute',
-                // backgroundColor: 'blue',
-                width: '100%',
-
-                alignItems: 'flex-end',
-                height: 100,
-              }}>
-              <Text
-                style={{
-                  color: '#5F95F0',
-                  fontFamily: 'MontserratAlternates-Regular',
-                  fontSize: 12,
-                }}>
-                Edit
-              </Text>
-            </TouchableOpacity>
           </View>
-          <View
+
+          <Text
             style={{
-              flexDirection: 'row',
-              // justifyContent: 'space-between',
-              alignItems: 'center',
-              marginTop: 20,
+              fontSize: 16,
+              color: 'black',
+              fontFamily: 'MontserratAlternates-SemiBold',
             }}>
-            <TouchableOpacity
-              activeOpacity={1}
-              // onPress={() => {
-              //   setLike(!like);
-              //   setDislike(false);
-              // }}
+            {userData?.userdata?.fullname}
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: 'grey',
+              fontFamily: 'MontserratAlternates-Medium',
+            }}>
+            {userData?.userdata?.firstname}
+          </Text>
+
+          {/* <TouchableOpacity
+            onPress={() => navigation.navigate('EditProfile')}
+            style={{
+              position: 'absolute',
+              // backgroundColor: 'blue',
+              width: '100%',
+
+              alignItems: 'flex-end',
+              height: 100,
+            }}>
+            <Text
               style={{
-                // flexDirection: 'column',
-                alignItems: 'center',
-                // backgroundColor: 'red',
-                height: 30,
-                justifyContent: 'center',
-                flexDirection: 'row',
-                width: '50%',
-                borderRightWidth: 1,
-                borderRightColor: 'grey',
+                color: '#5F95F0',
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 12,
               }}>
-              <Icon2
-                name="arrowup"
-                size={20}
-                color={like ? '#5F95F0' : 'black'}
-              />
+              Edit
+            </Text>
+          </TouchableOpacity> */}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            // justifyContent: 'space-between',
+            alignItems: 'center',
+            // backgroundColor: 'red',
+            marginTop: 10,
+          }}>
+          <TouchableOpacity
+            activeOpacity={1}
+            // onPress={() => {
+            //   setLike(!like);
+            //   setDislike(false);
+            // }}
+            style={{
+              // flexDirection: 'column',
+              alignItems: 'center',
+              // backgroundColor: 'red',
+              flexDirection: 'row',
+              // height: 30,
+              justifyContent: 'flex-end',
+              paddingRight: 20,
+              // flexDirection: 'row',
+              width: '50%',
+              // borderRightWidth: 1,
+              // borderRightColor: 'grey',
+            }}>
+            {/* <Icon2
+              name="arrowup"
+              size={20}
+              color={like ? '#5F95F0' : 'black'}
+            /> */}
+            <View style={{alignItems: 'center'}}>
               <Text
                 style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  fontSize: 14,
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
                   color: 'black',
-                  marginLeft: 5,
+                  // marginLeft: 5,
                 }}>
                 {posts?.like_count ? posts?.like_count : 0}
               </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={1}
-              // onPress={() => {
-              //   setDislike(!dislike);
-              //   setLike(false);
-              // }}
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                // backgroundColor: 'red',
-                height: 50,
-                width: '50%',
-              }}>
-              <Icon2
-                name="arrowdown"
-                size={20}
-                color={dislike ? '#5F95F0' : 'black'}
-              />
               <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
-                  fontSize: 14,
+                  fontSize: 12,
+                  color: 'grey',
+                  marginTop: 5,
+                }}>
+                Total likes
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={1}
+            // onPress={() => {
+            //   setDislike(!dislike);
+            //   setLike(false);
+            // }}
+            style={{
+              // flexDirection: 'column',
+              alignItems: 'center',
+              // backgroundColor: 'red',
+              flexDirection: 'row',
+              // height: 30,
+              justifyContent: 'flex-start',
+              paddingLeft: 20,
+              // flexDirection: 'row',
+              width: '50%',
+              // borderRightWidth: 1,
+              // borderRightColor: 'grey',
+            }}>
+            {/* <Icon2
+              name="arrowdown"
+              size={20}
+              color={dislike ? '#5F95F0' : 'black'}
+            /> */}
+            <View style={{alignItems: 'center'}}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
                   color: 'black',
-                  marginLeft: 5,
                 }}>
                 {posts?.dislike_count ? posts?.dislike_count : 0}
               </Text>
-            </TouchableOpacity>
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              // backgroundColor: 'blue',
-              width: '100%',
-            }}>
-            <TouchableOpacity
-              onPress={() => setSelect('Posts')}
-              style={{
-                // backgroundColor: 'red',
-                // height: 40,
-                alignItems: 'center',
-                borderBottomColor: '#5F95F0',
-                borderBottomWidth: select == 'Posts' ? 1 : 0,
-                paddingBottom: 10,
-                justifyContent: 'center',
-                width: '33%',
-              }}>
               <Text
                 style={{
-                  color: select == 'Posts' ? '#5F95F0' : 'grey',
-                  fontSize: 14,
-                  fontFamily:
-                    select == 'Posts'
-                      ? 'MontserratAlternates-SemiBold'
-                      : 'MontserratAlternates-Regular',
+                  fontFamily: 'MontserratAlternates-Regular',
+                  fontSize: 12,
+                  color: 'grey',
+                  marginTop: 5,
                 }}>
-                Posts
+                Total dislikes
               </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setSelect('Groups')}
-              style={{
-                // backgroundColor: 'green',
-                // height: 40,
-                borderBottomColor: '#5F95F0',
-                borderBottomWidth: select == 'Groups' ? 1 : 0,
-                paddingBottom: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '33%',
-              }}>
-              <Text
-                style={{
-                  color: select == 'Groups' ? '#5F95F0' : 'grey',
-                  fontSize: 14,
-                  fontFamily:
-                    select == 'Groups'
-                      ? 'MontserratAlternates-SemiBold'
-                      : 'MontserratAlternates-Regular',
-                }}>
-                Groups
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={select == 'Posts' ? posts?.posts : posts?.groups}
-            renderItem={renders}
-          />
+            </View>
+          </TouchableOpacity>
         </View>
-        {/* <Text>abc</Text> */}
-      </ImageBackground>
+        <View style={{alignItems: 'center'}}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('EditProfile')}
+            style={{
+              width: 200,
+              height: 40,
+              backgroundColor: '#200E32',
+              marginTop: 10,
+              borderRadius: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                color: 'white',
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Edit profile
+            </Text>
+          </TouchableOpacity>
+        </View>
+        {/* <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            // backgroundColor: 'blue',
+            width: '100%',
+          }}>
+          <TouchableOpacity
+            onPress={() => setSelect('Posts')}
+            style={{
+              // backgroundColor: 'red',
+              // height: 40,
+              alignItems: 'center',
+              borderBottomColor: '#5F95F0',
+              borderBottomWidth: select == 'Posts' ? 1 : 0,
+              paddingBottom: 10,
+              justifyContent: 'center',
+              width: '33%',
+            }}>
+            <Text
+              style={{
+                color: select == 'Posts' ? '#5F95F0' : 'grey',
+                fontSize: 14,
+                fontFamily:
+                  select == 'Posts'
+                    ? 'MontserratAlternates-SemiBold'
+                    : 'MontserratAlternates-Regular',
+              }}>
+              Posts
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => setSelect('Groups')}
+            style={{
+              // backgroundColor: 'green',
+              // height: 40,
+              borderBottomColor: '#5F95F0',
+              borderBottomWidth: select == 'Groups' ? 1 : 0,
+              paddingBottom: 10,
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '33%',
+            }}>
+            <Text
+              style={{
+                color: select == 'Groups' ? '#5F95F0' : 'grey',
+                fontSize: 14,
+                fontFamily:
+                  select == 'Groups'
+                    ? 'MontserratAlternates-SemiBold'
+                    : 'MontserratAlternates-Regular',
+              }}>
+              Groups
+            </Text>
+          </TouchableOpacity>
+        </View> */}
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={select == 'Posts' ? posts?.posts : posts?.groups}
+          renderItem={renders}
+        />
+      </View>
+      {/* <Text>abc</Text> */}
+      {/* </ImageBackground> */}
       {MyModal(showModal)}
     </SafeAreaView>
   );

@@ -19,6 +19,7 @@ import MyModal from '../../../Components/MyModal';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import MapView from 'react-native-maps';
+import Iconpencil from 'react-native-vector-icons/Octicons';
 import {logged} from '../../../redux/actions';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
@@ -36,6 +37,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
   const [show, setShow] = useState(false);
   const [image, setImage] = useState(userData.userdata.image);
   const [firstName, setFirstName] = useState(userData?.userdata?.firstname);
+  const [lastName, setLastName] = useState(userData?.userdata?.lastname);
   const [zip, setZip] = useState(userData.userdata.zipcode);
   const [mile, setMile] = useState('5 Miles');
   const [miles, setMiles] = useState(
@@ -230,96 +232,184 @@ const EditProfile = ({navigation}: {navigation: any}) => {
   const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          // backgroundColor: 'white',
+          // elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+        }}>
         <View
           style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
             flexDirection: 'row',
+            width: 80,
             alignItems: 'center',
-            paddingHorizontal: 15,
-            justifyContent: 'space-between',
           }}>
-          <View
+          <TouchableOpacity
             style={{
-              flexDirection: 'row',
+              width: 30,
+              height: 30,
+              backgroundColor: '#ccc',
+              borderRadius: 10,
               alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onPress={() => navigation.goBack()}>
+            <Icon1 name="left" color="black" size={20} />
+          </TouchableOpacity>
+        </View>
+        <Text
+          style={{
+            fontSize: 16,
+            fontFamily: 'MontserratAlternates-SemiBold',
+            color: 'black',
+            marginLeft: 20,
+          }}>
+          Edit Profile
+        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            setShow(true);
+            const data = new FormData();
+            data.append('firstname', firstName);
+            data.append('lastname', lastName);
+            data.append('zipcode', zip);
+            data.append('email', email);
+            data.append('radius', miles);
+            {
+              image &&
+                data.append('image', {
+                  uri: image,
+                  type: 'image/jpeg',
+                  name: `image${new Date()}.jpg`,
+                });
+            }
+            editProfile({Auth: userData.token}, data)
+              .then(res => {
+                console.log('res', res);
+                setShow(false);
+                if (res.status == 'success') {
+                  navigation.goBack();
+                  logged(res)(dispatch);
+                }
+              })
+              .catch(err => {
+                console.log('err', err.response.data);
+                setShow(false);
+              });
+          }}
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: '#5F95F0',
+            // marginTop: 30,
+            width: 80,
+            height: 40,
+            borderRadius: 10,
+          }}>
+          <Text
+            style={{
+              fontSize: 14,
+              color: 'white',
+              fontFamily: 'MontserratAlternates-SemiBold',
             }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon1 name="left" color="black" size={20} />
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-                marginLeft: 20,
-              }}>
-              Edit Profile
-            </Text>
-          </View>
+            Save
+          </Text>
+        </TouchableOpacity>
 
-          {/* <Icon
+        {/* <Icon
             name="log-out"
             color={'#5F95F0'}
             size={20}
             onPress={() => navigation.navigate('Login')}
           /> */}
-        </View>
-        <Wrapper behavior="padding" style={{flex: 1}}>
-          <ScrollView style={{flex: 1}}>
+      </View>
+      <Wrapper behavior="padding" style={{flex: 1}}>
+        <ScrollView style={{flex: 1}}>
+          <View
+            style={{
+              paddingHorizontal: 15,
+              // backgroundColor: 'red',
+              marginTop: 30,
+              flex: 1,
+            }}>
             <View
               style={{
-                paddingHorizontal: 15,
-                // backgroundColor: 'red',
-                marginTop: 30,
-                flex: 1,
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexDirection: 'row',
               }}>
-              <View style={{alignItems: 'center'}}>
-                <TouchableOpacity
-                  onPress={() => picker()}
-                  style={{
-                    borderWidth: 1,
-                    width: 100,
-                    height: 100,
-                    borderColor: 'white',
-                    borderRadius: 50,
-                  }}>
-                  <Image
-                    // resizeMode="stretch"
-                    source={
-                      image
-                        ? {uri: image}
-                        : require('../../../assets/Images/blurt.png')
-                    }
-                    style={{height: '100%', width: '100%', borderRadius: 50}}
-                  />
-                </TouchableOpacity>
-                {!image && (
-                  <View
-                    style={{
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      height: 30,
-                      width: 30,
-                      borderRadius: 20,
-                      backgroundColor: 'white',
-                      elevation: 3,
-                      bottom: 15,
-                      left: 20,
-                    }}>
-                    <Icon2
-                      name="add-photo-alternate"
-                      size={20}
-                      color="#5F95F0"
-                    />
-                  </View>
-                )}
+              <TouchableOpacity
+                onPress={() => picker()}
+                style={{
+                  // borderWidth: 1,
+                  width: 105,
+                  height: 105,
+                  backgroundColor: '#5F95F0',
 
-                {/* <Text
+                  alignItems: 'center',
+                  justifyContent: 'center',
+
+                  borderRadius: 50,
+                }}>
+                <Image
+                  // resizeMode="stretch"
+                  source={
+                    image
+                      ? {uri: image}
+                      : require('../../../assets/Images/blurt.png')
+                  }
+                  style={{height: 100, width: 100, borderRadius: 50}}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => picker()}
+                style={{
+                  height: 30,
+                  width: 30,
+                  backgroundColor: '#5F95F0',
+                  borderRadius: 20,
+                  bottom: 30,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  right: 25,
+                }}>
+                <View
+                  style={{
+                    backgroundColor: 'white',
+                    height: 28,
+                    width: 28,
+                    borderRadius: 20,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Iconpencil name="pencil" size={20} />
+                </View>
+              </TouchableOpacity>
+              {!image && (
+                <View
+                  style={{
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: 30,
+                    width: 30,
+                    borderRadius: 20,
+                    backgroundColor: 'white',
+                    elevation: 3,
+                    bottom: 15,
+                    left: 20,
+                  }}>
+                  <Icon2 name="add-photo-alternate" size={20} color="#5F95F0" />
+                </View>
+              )}
+
+              {/* <Text
               style={{
                 fontSize: 16,
                 color: 'black',
@@ -328,7 +418,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
               Olivia Benson
             </Text>
             <Text>New York</Text> */}
-                {/* <TouchableOpacity
+              {/* <TouchableOpacity
               // onPress={() => console.log('abc')}
               style={{
                 position: 'absolute',
@@ -339,201 +429,160 @@ const EditProfile = ({navigation}: {navigation: any}) => {
               }}>
               <Text>Edit</Text>
             </TouchableOpacity> */}
-              </View>
-              <View style={{marginTop: 30}}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: 'black',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  USER NAME
-                </Text>
-                <TextInput
-                  value={firstName}
-                  onChangeText={text => {
-                    setFirstName(text);
-                    // setFirstNameErr('');
-                  }}
-                  style={{
-                    borderBottomColor: 'grey',
-                    fontFamily: 'MontserratAlternates-Regular',
-                    borderBottomWidth: 1,
-                    height: 50,
-                    color: 'black',
-                  }}
-                />
-              </View>
-              {/* <View style={{marginTop: 30}}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: 'black',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  LAST NAME
-                </Text>
-                <TextInput
-                  value={lastName}
-                  onChangeText={text => {
-                    setLastName(text);
-                    // setLastNameErr('');
-                  }}
-                  style={{
-                    borderBottomColor: 'grey',
-                    fontFamily: 'MontserratAlternates-Regular',
-                    borderBottomWidth: 1,
-                    height: 50,
-                    color: 'black',
-                  }}
-                />
-              </View> */}
-              <View style={{marginTop: 30}}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: 'black',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  Zip Code
-                </Text>
-                <TextInput
-                  value={zip}
-                  onChangeText={text => {
-                    setZip(text);
-                    // setLastNameErr('');
-                  }}
-                  style={{
-                    borderBottomColor: 'grey',
-                    fontFamily: 'MontserratAlternates-Regular',
-                    borderBottomWidth: 1,
-                    height: 50,
-                    color: 'black',
-                  }}
-                />
-              </View>
-              <View style={{marginTop: 30}}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: 'black',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  EMAIL ADDRESS
-                </Text>
-                <TextInput
-                  editable={false}
-                  value={email}
-                  onChangeText={text => {
-                    setEmail(text);
-                    // setEmailErr('');
-                  }}
-                  style={{
-                    borderBottomColor: 'grey',
-                    fontFamily: 'MontserratAlternates-Regular',
-                    borderBottomWidth: 1,
-                    height: 50,
-                    color: 'black',
-                  }}
-                />
-              </View>
-              <View style={{marginTop: 30}}>
-                <Text
-                  style={{
-                    fontSize: 12,
-                    color: 'black',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  RADIUS/MILES
-                </Text>
-                <TouchableOpacity
-                  onPress={() => setShowModal(true)}
-                  style={{
-                    height: 50,
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    borderBottomWidth: 1,
-                    alignItems: 'center',
-                    paddingHorizontal: 5,
-                    borderBottomColor: 'grey',
-                  }}>
-                  <Text
-                    style={{
-                      color: 'black',
-                      fontFamily: 'MontserratAlternates-Regular',
-                    }}>
-                    {miles} Miles
-                  </Text>
-                  <Icon1 name="down" color="black" size={15} />
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('NewPassword')}
-                style={{alignItems: 'center', marginTop: 30}}>
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: '#5F95F0',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  Change Password
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  setShow(true);
-                  const data = new FormData();
-                  data.append('firstname', firstName);
-                  // data.append('lastname', lastName);
-                  data.append('zipcode', zip);
-                  data.append('email', email);
-                  data.append('radius', miles);
-                  {
-                    image &&
-                      data.append('image', {
-                        uri: image,
-                        type: 'image/jpeg',
-                        name: `image${new Date()}.jpg`,
-                      });
-                  }
-                  editProfile({Auth: userData.token}, data)
-                    .then(res => {
-                      console.log('res', res);
-                      setShow(false);
-                      if (res.status == 'success') {
-                        navigation.goBack();
-                        logged(res)(dispatch);
-                      }
-                    })
-                    .catch(err => {
-                      console.log('err', err.response.data);
-                      setShow(false);
-                    });
+            </View>
+            <View style={{marginTop: 30}}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: 'black',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Full name
+              </Text>
+              <TextInput
+                value={lastName}
+                onChangeText={text => {
+                  setLastName(text);
+                  // setLastNameErr('');
                 }}
                 style={{
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#5F95F0',
-                  marginTop: 30,
-                  height: 50,
+                  backgroundColor: '#ccc',
                   borderRadius: 10,
+                  paddingLeft: 10,
+                  marginTop: 10,
+                  fontFamily: 'MontserratAlternates-Regular',
+                  // borderBottomWidth: 1,
+                  height: 50,
+                  color: 'black',
+                }}
+              />
+            </View>
+            <View style={{marginTop: 30}}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: 'black',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Username
+              </Text>
+              <TextInput
+                value={firstName}
+                onChangeText={text => {
+                  setFirstName(text);
+                  // setFirstNameErr('');
+                }}
+                style={{
+                  // borderBottomColor: 'grey',
+                  backgroundColor: '#ccc',
+                  borderRadius: 10,
+                  paddingLeft: 10,
+                  marginTop: 10,
+                  fontFamily: 'MontserratAlternates-Regular',
+                  // borderBottomWidth: 1,
+                  height: 50,
+                  color: 'black',
+                }}
+              />
+            </View>
+            <View style={{marginTop: 30}}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: 'black',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Email
+              </Text>
+              <TextInput
+                editable={false}
+                value={email}
+                onChangeText={text => {
+                  setEmail(text);
+                  // setEmailErr('');
+                }}
+                style={{
+                  backgroundColor: '#ccc',
+                  borderRadius: 10,
+                  paddingLeft: 10,
+                  marginTop: 10,
+                  fontFamily: 'MontserratAlternates-Regular',
+                  // borderBottomWidth: 1,
+                  height: 50,
+                  color: 'black',
+                }}
+              />
+            </View>
+            <View style={{marginTop: 30}}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: 'black',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Zipcode
+              </Text>
+              <TextInput
+                value={zip}
+                onChangeText={text => {
+                  setZip(text);
+                  // setLastNameErr('');
+                }}
+                style={{
+                  backgroundColor: '#ccc',
+                  borderRadius: 10,
+                  paddingLeft: 10,
+                  marginTop: 10,
+                  fontFamily: 'MontserratAlternates-Regular',
+                  // borderBottomWidth: 1,
+                  height: 50,
+                  color: 'black',
+                }}
+              />
+            </View>
+
+            <View style={{marginTop: 30}}>
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: 'black',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Select radius
+              </Text>
+              <TouchableOpacity
+                onPress={() => setShowModal(true)}
+                style={{
+                  height: 50,
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  // borderBottomWidth: 1,
+                  alignItems: 'center',
+                  // paddingHorizontal: 5,
+                  backgroundColor: '#ccc',
+                  paddingHorizontal: 10,
+                  borderRadius: 10,
+                  marginTop: 10,
+                  // borderBottomColor: 'grey',
                 }}>
                 <Text
                   style={{
-                    fontSize: 16,
-                    color: 'white',
-                    fontFamily: 'MontserratAlternates-SemiBold',
+                    color: 'black',
+                    fontFamily: 'MontserratAlternates-Regular',
                   }}>
-                  Done
+                  {miles} Miles
                 </Text>
+                <Icon1 name="down" color="black" size={15} />
               </TouchableOpacity>
-              <View style={{height: 50}} />
             </View>
-          </ScrollView>
-        </Wrapper>
 
-        {/* <Text>abc</Text> */}
-      </ImageBackground>
+            <View style={{height: 50}} />
+          </View>
+        </ScrollView>
+      </Wrapper>
+
+      {/* <Text>abc</Text> */}
+      {/* </ImageBackground> */}
       {myModal3()}
       {MyModal(show)}
     </SafeAreaView>

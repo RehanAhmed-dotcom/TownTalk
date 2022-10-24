@@ -6,6 +6,7 @@ import {
   ImageBackground,
   TextInput,
   SafeAreaView,
+  Platform,
   TouchableOpacity,
   Keyboard,
   Alert,
@@ -13,6 +14,15 @@ import {
 } from 'react-native';
 import {login} from '../../../lib/api';
 import {validateEmail} from '../../../lib/functions';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
+import {
+  AppleButton,
+  appleAuth,
+} from '@invertase/react-native-apple-authentication';
 import {useDispatch} from 'react-redux';
 import MyModal from '../../../Components/MyModal';
 import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
@@ -139,6 +149,99 @@ const Login = ({navigation}: {navigation: any}) => {
     //   Alert.alert(error);
     // });
   };
+  async function onAppleButtonPress() {
+    // performs login request
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    });
+    console.log('res', appleAuthRequestResponse);
+    console.log('email', appleAuthRequestResponse.email);
+    console.log(
+      'name',
+      appleAuthRequestResponse.fullName.familyName +
+        appleAuthRequestResponse.fullName.givenName,
+    );
+    // appleAuthRequestResponse.email &&
+    // iphoneEmail(appleAuthRequestResponse.email)(dispatch);
+    // get current authentication state for user
+    // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+    const credentialState = await appleAuth.getCredentialStateForUser(
+      appleAuthRequestResponse.user,
+    );
+    console.log('Credentials', credentialState);
+    // use credentialState response to ensure the user is authenticated
+    if (credentialState === appleAuth.State.AUTHORIZED) {
+      // user is authenticated
+      // if (!appleAuthRequestResponse.email && iEmail) {
+      //   // Alert.alert('hello', appleAuthRequestResponse.email);
+      //   setloading(true);
+      //   const data = new FormData();
+      //   data.append('email', iEmail);
+      //   data.append('password', '12345678');
+      //   setloading(true);
+      //   fetch('https://bicicita.com/app/api/login', {
+      //     method: 'POST',
+      //     body: data,
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   })
+      //     .then((response) => response.json())
+      //     .then((res) => {
+      //       console.log('res', res);
+      //       if (res.status == 'success') {
+      //         ToggleLoginSignup(res)(dispatch);
+      //         setloading(false);
+      //         seterrortextwhole('');
+      //       } else if (res.status == 'error') {
+      //         setIsVerified(!res.is_verified);
+      //         seterrortextwhole(res.message);
+      //         setloading(false);
+      //       }
+      //     })
+      //     .catch((error) => {
+      //       setloading(false);
+      //     })
+      //     .finally(() => {
+      //       setloading(false);
+      //     });
+      // } else {
+      //   navigation.navigate('ProfileConfirmation', {
+      //     userData: {
+      //       email: iEmail ? iEmail : appleAuthRequestResponse.email,
+      //       pass: '12345678',
+      //       name: appleAuthRequestResponse.fullName.familyName,
+      //     },
+      //     social: true,
+      //   });
+      //   // if (!emailIsValid(email.replace(/\s/g, '')) && !pass) {
+      //   //   setEmailErrortext('Email is required');
+      //   //   setpasserrortext('password is required');
+      //   //   return;
+      //   // }
+      //   // setloading(true);
+      //   // if (!emailIsValid(email.replace(/\s/g, ''))) {
+      //   //   setEmailErrortext('Enter Valid Email');
+      //   //   setloading(false);
+      //   //   return;
+      //   // }
+      //   // if (!pass) {
+      //   //   setpasserrortext('Enter your password');
+      //   //   setloading(false);
+      //   //   return;
+      //   // }
+      // }
+      // navigation.navigate('ProfileConfirmation', {
+      //   userData: {
+      //     email: iEmail ? iEmail : appleAuthRequestResponse.email,
+      //     pass: '12345678',
+      //     name: appleAuthRequestResponse.fullName.familyName,
+      //   },
+      //   social: true,
+      // });
+    }
+  }
   const Faceboologin = async () => {
     LoginManager.logOut();
     LoginManager.setLoginBehavior('web_only');
@@ -163,7 +266,24 @@ const Login = ({navigation}: {navigation: any}) => {
       },
     );
   };
-
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      console.log('userInfo', userInfo);
+      // this.setState({userInfo});
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+  };
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardStatus(true);
@@ -176,6 +296,13 @@ const Login = ({navigation}: {navigation: any}) => {
       showSubscription.remove();
       hideSubscription.remove();
     };
+  }, []);
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        '663248566993-u3shjkc82qcp2h3jie63k1per56tbv4n.apps.googleusercontent.com',
+      offlineAccess: false,
+    });
   }, []);
   const dispatch = useDispatch();
   return (
@@ -229,9 +356,6 @@ const Login = ({navigation}: {navigation: any}) => {
               Welcome Back!
             </Text>
             <Text
-              onPress={() => {
-                Faceboologin();
-              }}
               style={{
                 fontSize: 18,
                 color: 'black',
@@ -315,6 +439,7 @@ const Login = ({navigation}: {navigation: any}) => {
                     borderColor: emailErr ? 'red' : 'grey',
                     borderWidth: 1,
                     height: 50,
+                    paddingHorizontal: 10,
                     borderRadius: 10,
                     color: 'black',
                     fontFamily: 'MontserratAlternates-Regular',
@@ -352,6 +477,7 @@ const Login = ({navigation}: {navigation: any}) => {
                       // backgroundColor: 'red',
                       width: '85%',
                       height: 50,
+                      paddingHorizontal: 10,
                       color: 'black',
                       // borderBottomColor: passwrodErr ? 'red' : 'grey',
                       // borderBottomWidth: 1,
@@ -468,15 +594,18 @@ const Login = ({navigation}: {navigation: any}) => {
                   Login
                 </Text>
               </TouchableOpacity>
-              <Text
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  color: 'black',
-                  alignSelf: 'center',
-                  marginTop: 10,
-                }}>
-                Login With Phone
-              </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('phoneNo')}>
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    color: 'black',
+                    alignSelf: 'center',
+                    marginTop: 10,
+                  }}>
+                  Login With Phone
+                </Text>
+              </TouchableOpacity>
+
               <View
                 style={{
                   marginTop: 10,
@@ -498,14 +627,19 @@ const Login = ({navigation}: {navigation: any}) => {
                   source={require('../../../assets/Images/twitter.png')}
                   style={{height: 40, width: 40, marginRight: 10}}
                 />
-                <Image
-                  source={require('../../../assets/Images/google.png')}
-                  style={{height: 40, width: 40, marginRight: 10}}
-                />
-                <Image
-                  source={require('../../../assets/Images/apple.png')}
-                  style={{height: 40, width: 40, marginRight: 10}}
-                />
+                <TouchableOpacity onPress={() => signIn()}>
+                  <Image
+                    source={require('../../../assets/Images/google.png')}
+                    style={{height: 40, width: 40, marginRight: 10}}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => Platform.OS == 'ios' && onAppleButtonPress()}>
+                  <Image
+                    source={require('../../../assets/Images/apple.png')}
+                    style={{height: 40, width: 40, marginRight: 10}}
+                  />
+                </TouchableOpacity>
               </View>
               <View
                 style={{

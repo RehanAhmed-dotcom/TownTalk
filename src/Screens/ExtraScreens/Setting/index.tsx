@@ -8,6 +8,7 @@ import {
   Alert,
   Text,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import {logoutuser} from '../../../redux/actions';
@@ -23,327 +24,208 @@ const Setting = ({navigation}) => {
   const {userData} = useSelector(({USER}) => USER);
   const moon = require('../../../assets/Images/moon.png');
   const sun = require('../../../assets/Images/sunFull.png');
+  const settings = [
+    {
+      id: 1,
+      name: 'Blocked Users',
+      description: 'Manage people blocked',
+      click: () => navigation.navigate('BlockedUser'),
+      image: require('../../../assets/Images/blocked.png'),
+    },
+    {
+      id: 2,
+      name: 'Push Notifications',
+      description: 'Manage notifications preference',
+      click: () => navigation.navigate('Notification'),
+      image: require('../../../assets/Images/notification.png'),
+    },
+    {
+      id: 3,
+      name: 'Change password',
+      description: 'Manage your account password',
+      click: () => navigation.navigate('NewPassword'),
+      image: require('../../../assets/Images/password.png'),
+    },
+    {
+      id: 4,
+      name: 'Privacy Policy',
+      description: 'Read our privacy policy',
+      click: () =>
+        Linking.openURL(
+          'https://app.termly.io/document/privacy-policy/72c48b63-dcc9-42ea-9088-7663a09410d7',
+        ),
+      image: require('../../../assets/Images/document.png'),
+    },
+    {
+      id: 5,
+      name: 'Terms of Service',
+      description: 'Read our terms and conditions',
+      click: () =>
+        Linking.openURL(
+          'https://app.termly.io/document/terms-of-use-for-website/337641ae-e6ce-4fed-8267-c8105baa3a0f',
+        ),
+      image: require('../../../assets/Images/document.png'),
+    },
+    {
+      id: 6,
+      name: 'EULA',
+      description: 'Read End-User License Agreement',
+      click: () =>
+        Linking.openURL(
+          'https://app.termly.io/document/eula/847f5351-bd4a-461e-a246-97743430a237',
+        ),
+      image: require('../../../assets/Images/document.png'),
+    },
+    {
+      id: 7,
+      name: 'Contact us',
+      description: 'We will love to hear from you',
+      click: () => navigation.navigate('ContactUs'),
+      image: require('../../../assets/Images/contact.png'),
+    },
+    {
+      id: 8,
+      name: 'Delete account',
+      description: 'You wont be able to recovered the account',
+      click: () => {
+        Alert.alert(
+          'Delete account',
+          'Are you sure you want to delete your account?',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log('Cancel Pressed'),
+              style: 'cancel',
+            },
+            {
+              text: 'OK',
+              onPress: () => {
+                deleteAccount({Auth: userData.token})
+                  .then(res => {
+                    console.log('res of delte', res);
+                  })
+                  .catch(err => {
+                    console.log('err', err.response.data);
+                  });
+                logoutuser(false)(dispatch);
+              },
+            },
+          ],
+        );
+      },
+      image: require('../../../assets/Images/delete.png'),
+    },
+    {
+      id: 9,
+      name: 'Logout',
+      description: 'You will be missed',
+      click: () =>
+        Alert.alert('Logout', 'Are you sure you want to Logout?', [
+          {
+            text: 'Cancel',
+            onPress: () => console.log('Cancel Pressed'),
+            style: 'cancel',
+          },
+          {text: 'OK', onPress: () => logoutuser(false)(dispatch)},
+        ]),
+      image: require('../../../assets/Images/logout.png'),
+    },
+  ];
+  const renderItem = ({item}: {item: any}) => (
+    <TouchableOpacity
+      onPress={() => item.click()}
+      style={{
+        flexDirection: 'row',
+        borderBottomWidth: 1,
+        paddingLeft: 15,
+        paddingBottom: 20,
+        alignItems: 'center',
+        paddingTop: 20,
+        borderBottomColor: '#ccc',
+      }}>
+      <Image
+        source={item.image}
+        style={{height: 20, width: 20}}
+        resizeMode={'contain'}
+      />
+      <View style={{marginLeft: 10}}>
+        <Text
+          style={{
+            fontSize: 16,
+            color: 'black',
+            fontFamily: 'MontserratAlternates-SemiBold',
+          }}>
+          {item.name}
+        </Text>
+        <Text
+          style={{
+            marginTop: 10,
+            color: 'grey',
+            fontFamily: 'MontserratAlternates-Medium',
+          }}>
+          {item.description}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
-        style={{height: '100%'}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
-          style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 15,
+      <View
+        style={{
+          height: 80,
+          // backgroundColor: 'white',
+          // elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
 
-            justifyContent: 'space-between',
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icons name="left" size={20} color={'black'} />
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-                marginLeft: 20,
-              }}>
-              Settings
-            </Text>
-          </View>
-          <SwitchWithIcons
-            value={check}
-            // noIcon={true}
-            icon={{
-              true:
-                // <Icon name="moon" />
-                moon,
-              false:
-                // <Icon name="moon" />
-                sun,
+          justifyContent: 'space-between',
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#ccc',
+              height: 30,
+              width: 30,
+              alignItems: 'center',
+              borderRadius: 5,
+              justifyContent: 'center',
             }}
-            onValueChange={
-              value => setCheck(!check)
-              // console.log(`Value has been updated to ${value}`)
-            }
-          />
-          {/* <ToggleSwitch
-            isOn={check}
-            onColor="black"
-            offColor="#ccc"
-            // label="Example label"
-            labelStyle={{color: 'black', fontWeight: '900'}}
-            size="small"
-            onToggle={isOn => setCheck(!check)}
-          /> */}
-          {/* <CheckBox
-            style={{flex: 1, padding: 10}}
-            onClick={() => {
-              setCheck(!check);
-            }}
-            isChecked={check}
-            leftText={'CheckBox'}
-          /> */}
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
-              Chicago, IL 60611, USA
-            </Text> */}
+            onPress={() => navigation.goBack()}>
+            <Icons name="arrowleft" size={20} color={'black'} />
+          </TouchableOpacity>
         </View>
-        <View
+        <Text
           style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 15,
+            fontSize: 16,
+            fontFamily: 'MontserratAlternates-SemiBold',
+            color: 'black',
+            marginLeft: 20,
           }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('NewPassword')}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              Change Password
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              Alert.alert(
-                'Delete account',
-                'Are you sure you want to delete your account?',
-                [
-                  {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'OK',
-                    onPress: () => {
-                      deleteAccount({Auth: userData.token})
-                        .then(res => {
-                          console.log('res of delte', res);
-                        })
-                        .catch(err => {
-                          console.log('err', err.response.data);
-                        });
-                      logoutuser(false)(dispatch);
-                    },
-                  },
-                ],
-              );
-            }}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              Delete account
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 15,
-          }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('BlockedUser')}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              People blocked
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() =>
-              Linking.openURL(
-                'https://app.termly.io/document/privacy-policy/72c48b63-dcc9-42ea-9088-7663a09410d7',
-              )
-            }
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              Privacy policy
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 15,
-          }}>
-          <TouchableOpacity
-            onPress={
-              () =>
-                Linking.openURL(
-                  'https://app.termly.io/document/terms-of-use-for-website/337641ae-e6ce-4fed-8267-c8105baa3a0f',
-                )
-              //
-            }
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              Terms of Use
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={
-              () =>
-                Linking.openURL(
-                  'https://app.termly.io/document/eula/847f5351-bd4a-461e-a246-97743430a237',
-                )
-              //
-            }
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              EULA
-            </Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            paddingHorizontal: 15,
-          }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ContactUs')}
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              Contact Us
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            onPress={
-              () =>
-                Alert.alert('Logout', 'Are you sure you want to Logout?', [
-                  {
-                    text: 'Cancel',
-                    onPress: () => console.log('Cancel Pressed'),
-                    style: 'cancel',
-                  },
-                  {text: 'OK', onPress: () => logoutuser(false)(dispatch)},
-                ])
-              //
-            }
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 50,
-              marginTop: 30,
-              width: '45%',
-              marginBottom: 20,
-              borderRadius: 5,
-              elevation: 2,
-              backgroundColor: '#5F95F0',
-            }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'white',
-              }}>
-              Logout
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </ImageBackground>
+          Settings
+        </Text>
+        <SwitchWithIcons
+          value={check}
+          // noIcon={true}
+          icon={{
+            true:
+              // <Icon name="moon" />
+              moon,
+            false:
+              // <Icon name="moon" />
+              sun,
+          }}
+          onValueChange={
+            value => setCheck(!check)
+            // console.log(`Value has been updated to ${value}`)
+          }
+        />
+      </View>
+      <FlatList
+        data={settings}
+        renderItem={renderItem}
+        keyExtractor={item => item.id + 'a'}
+      />
     </SafeAreaView>
   );
 };

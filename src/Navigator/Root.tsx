@@ -19,6 +19,7 @@ import SingleChat from '../Screens/ExtraScreens/SingleChat';
 import EditProfile from '../Screens/ExtraScreens/EditProfile';
 import ContactUs from '../Screens/ExtraScreens/ContactUs';
 import Setting from '../Screens/ExtraScreens/Setting';
+import phoneNo from '../Screens/Auth/phoneNo';
 import {navigationRef} from '../config/NavigationService';
 // import Group from '../Components/Group';
 import Comments from '../Screens/ExtraScreens/Comments';
@@ -49,6 +50,7 @@ const Root = () => {
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Signup" component={Signup} />
             <Stack.Screen name="Email" component={Email} />
+            <Stack.Screen name="phoneNo" component={phoneNo} />
             <Stack.Screen
               name="EmailVerification"
               component={EmailVerification}

@@ -20,8 +20,31 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb511751804132956</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.663248566993-f673s8ogo0i0q084f16kt3405v5sv8ga</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FacebookAppID</key>
+	<string>511751804132956</string>
+	<key>FacebookClientToken</key>
+	<string>0d7d4bccbee9de9474b3c7b2c448dc68</string>
+	<key>FacebookDisplayName</key>
+	<string>Town Talk</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -35,21 +58,6 @@
 			</dict>
 		</dict>
 	</dict>
-<key>CFBundleURLTypes</key>
-<array>
-  <dict>
-  <key>CFBundleURLSchemes</key>
-  <array>
-    <string>fb511751804132956</string>
-  </array>
-  </dict>
-</array>
-<key>FacebookAppID</key>
-<string>511751804132956</string>
-<key>FacebookClientToken</key>
-<string>0d7d4bccbee9de9474b3c7b2c448dc68</string>
-<key>FacebookDisplayName</key>
-<string>Town Talk</string>
 	<key>NSCameraUsageDescription</key>
 	<string>App need to access your camera to set image as profile avatar</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
