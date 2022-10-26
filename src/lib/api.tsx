@@ -10,6 +10,7 @@ const authorizedHeaders = {
 };
 const login = (payload: object) => {
   const request = `/login`;
+  console.log('payload', payload);
   return axios
     .post(request, payload)
     .then(({data, status}) => {
@@ -33,6 +34,7 @@ const getfcm = (payload: object) => {
     });
 };
 const register = (payload: object) => {
+  console.log('payload', payload);
   const request = `/register`;
   return axios
     .post(request, payload, {

@@ -18,6 +18,7 @@ const USER_AUTHORIZE = 'USER_SIGN_IN',
   USERDATA = 'USERDATA',
   LOGOUT = 'LOGOUT',
   ADDHORSE = 'ADDHORSE',
+  IEMAIL = 'IEMAIL',
   ALARMMORNING = 'ALARMMORNING',
   ALARMAFTERNOON = 'ALARMAFTERNOON',
   ALARMEVENING = 'ALARMEVENING',
@@ -49,6 +50,9 @@ const lat = payload => dispatch => {
 };
 const long = payload => dispatch => {
   dispatch({type: LONG, payload});
+};
+const iphoneEmail = payload => dispatch => {
+  dispatch({type: IEMAIL, payload});
 };
 const cityAdd = payload => dispatch => {
   console.log('payload', payload);
@@ -151,6 +155,7 @@ const ActionType = {
   LONG,
   CAL_ADD,
   CAL_APPEND,
+  IEMAIL,
   CAL_DIFF,
   CAL_CART,
   USERIMAGE,
@@ -189,6 +194,7 @@ export {
   sub,
   append,
   diff,
+  iphoneEmail,
   cart,
   verify,
   cartItemUpdate,

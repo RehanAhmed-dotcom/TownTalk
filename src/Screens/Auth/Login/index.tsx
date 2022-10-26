@@ -23,12 +23,13 @@ import {
   AppleButton,
   appleAuth,
 } from '@invertase/react-native-apple-authentication';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import MyModal from '../../../Components/MyModal';
 import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
 import {logged} from '../../../redux/actions';
 const Login = ({navigation}: {navigation: any}) => {
   const [email, setEmail] = useState('');
+  const {iEmail} = useSelector(({USER}) => USER);
   const [emailErr, setEmailErr] = useState('');
   const [password, setPassword] = useState('');
   const [phone, setPhone] = useState('');
@@ -39,14 +40,52 @@ const Login = ({navigation}: {navigation: any}) => {
   const [showModal, setShowModal] = useState(false);
   const [keyboardStatus, setKeyboardStatus] = useState(false);
   const getInfoFromToken = token => {
-    console.log('------------------');
+    // console.log('------------------');
     fetch(
       'https://graph.facebook.com/v2.5/me?fields=email,name,friends,picture&access_token=' +
         token,
     )
       .then(response => response.json())
       .then(json => {
-        console.log('json', json);
+        setShowModal(true);
+        login({email: json.email, password: json.id})
+          .then(res => {
+            console.log('res', res);
+            setShowModal(false);
+            if (res.status == 'success') {
+              console.log('res', res);
+              logged(res)(dispatch);
+            }
+          })
+          .catch(error => {
+            console.log('err', error.response.data);
+            // Alert.alert("Credentials doesn't matched");
+            setShowModal(false);
+            if (error.response.data.status == 'error') {
+              if (error.response.data.is_verified == false) {
+                navigation.navigate('EmailVerification', {
+                  email,
+                });
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.email}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                // Alert.alert(
+                //   `${error.response.data.message.email}`,
+                // );
+              } else if (
+                error.response.data.message == 'Invalid Username or Password'
+              ) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.phoneno}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(`${error.response.data.message}`);
+              } else if (error.response.data.message == 'User not Found') {
+                Alert.alert(`${error.response.data.message}`);
+              }
+            }
+          });
       });
     // .then(json => {
     //   // setloding(true);
@@ -270,7 +309,46 @@ const Login = ({navigation}: {navigation: any}) => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log('userInfo', userInfo);
+      // console.log('userInfo', userInfo);
+      setShowModal(true);
+      login({email: userInfo.user.email, password: userInfo.user.id})
+        .then(res => {
+          console.log('res', res);
+          setShowModal(false);
+          if (res.status == 'success') {
+            console.log('res', res);
+            logged(res)(dispatch);
+          }
+        })
+        .catch(error => {
+          console.log('err', error.response.data);
+          // Alert.alert("Credentials doesn't matched");
+          setShowModal(false);
+          if (error.response.data.status == 'error') {
+            if (error.response.data.is_verified == false) {
+              navigation.navigate('EmailVerification', {
+                email,
+              });
+              //   ToastAndroid.show(
+              //     `${error.response.data.message.email}`,
+              //     ToastAndroid.SHORT,
+              //   );
+              // Alert.alert(
+              //   `${error.response.data.message.email}`,
+              // );
+            } else if (
+              error.response.data.message == 'Invalid Username or Password'
+            ) {
+              //   ToastAndroid.show(
+              //     `${error.response.data.message.phoneno}`,
+              //     ToastAndroid.SHORT,
+              //   );
+              Alert.alert(`${error.response.data.message}`);
+            } else if (error.response.data.message == 'User not Found') {
+              Alert.alert(`${error.response.data.message}`);
+            }
+          }
+        });
       // this.setState({userInfo});
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {

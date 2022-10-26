@@ -6,6 +6,7 @@ const InitialCalState = {
   token: '',
   userImage: '',
   fcmtoken: '',
+  iEmail: '',
   checked: false,
   passwoord: '',
   notificationSymbol: false,
@@ -35,6 +36,9 @@ export default (state = InitialCalState, {type, payload}) => {
         ...state,
         verified: true,
       };
+    }
+    case ActionType.IEMAIL: {
+      return {...state, iEmail: payload};
     }
     case ActionType.LAT: {
       return {

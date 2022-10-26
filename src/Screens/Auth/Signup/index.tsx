@@ -20,7 +20,11 @@ import {
   GoogleSigninButton,
   statusCodes,
 } from '@react-native-google-signin/google-signin';
-import {logged} from '../../../redux/actions';
+import {
+  AppleButton,
+  appleAuth,
+} from '@invertase/react-native-apple-authentication';
+import {logged, iphoneEmail} from '../../../redux/actions';
 import {validateEmail} from '../../../lib/functions';
 import {useDispatch} from 'react-redux';
 import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
@@ -42,7 +46,102 @@ const Signup = ({navigation}: {navigation: any}) => {
   const [showModal, setShowModal] = useState(false);
   const [password, setPassword] = useState('');
   const [passwordErr, setPasswordErr] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [passwordConfirmErr, setPasswordConfirmErr] = useState('');
   const [keyboardStatus, setKeyboardStatus] = useState(false);
+  async function onAppleButtonPress() {
+    // performs login request
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+    });
+    console.log('res', appleAuthRequestResponse);
+    console.log('email', appleAuthRequestResponse.email);
+    console.log(
+      'name',
+      appleAuthRequestResponse.fullName.familyName +
+        appleAuthRequestResponse.fullName.givenName,
+    );
+    appleAuthRequestResponse.email &&
+      iphoneEmail(appleAuthRequestResponse.email)(dispatch);
+    // get current authentication state for user
+    // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+    const credentialState = await appleAuth.getCredentialStateForUser(
+      appleAuthRequestResponse.user,
+    );
+    console.log('Credentials', credentialState);
+    // use credentialState response to ensure the user is authenticated
+    if (credentialState === appleAuth.State.AUTHORIZED) {
+      // user is authenticated
+      // if (!appleAuthRequestResponse.email && iEmail) {
+      //   // Alert.alert('hello', appleAuthRequestResponse.email);
+      //   setloading(true);
+      //   const data = new FormData();
+      //   data.append('email', iEmail);
+      //   data.append('password', '12345678');
+      //   setloading(true);
+      //   fetch('https://bicicita.com/app/api/login', {
+      //     method: 'POST',
+      //     body: data,
+      //     headers: {
+      //       'Content-Type': 'multipart/form-data',
+      //     },
+      //   })
+      //     .then((response) => response.json())
+      //     .then((res) => {
+      //       console.log('res', res);
+      //       if (res.status == 'success') {
+      //         ToggleLoginSignup(res)(dispatch);
+      //         setloading(false);
+      //         seterrortextwhole('');
+      //       } else if (res.status == 'error') {
+      //         setIsVerified(!res.is_verified);
+      //         seterrortextwhole(res.message);
+      //         setloading(false);
+      //       }
+      //     })
+      //     .catch((error) => {
+      //       setloading(false);
+      //     })
+      //     .finally(() => {
+      //       setloading(false);
+      //     });
+      // } else {
+      //   navigation.navigate('ProfileConfirmation', {
+      //     userData: {
+      //       email: iEmail ? iEmail : appleAuthRequestResponse.email,
+      //       pass: '12345678',
+      //       name: appleAuthRequestResponse.fullName.familyName,
+      //     },
+      //     social: true,
+      //   });
+      //   // if (!emailIsValid(email.replace(/\s/g, '')) && !pass) {
+      //   //   setEmailErrortext('Email is required');
+      //   //   setpasserrortext('password is required');
+      //   //   return;
+      //   // }
+      //   // setloading(true);
+      //   // if (!emailIsValid(email.replace(/\s/g, ''))) {
+      //   //   setEmailErrortext('Enter Valid Email');
+      //   //   setloading(false);
+      //   //   return;
+      //   // }
+      //   // if (!pass) {
+      //   //   setpasserrortext('Enter your password');
+      //   //   setloading(false);
+      //   //   return;
+      //   // }
+      // }
+      // navigation.navigate('ProfileConfirmation', {
+      //   userData: {
+      //     email: iEmail ? iEmail : appleAuthRequestResponse.email,
+      //     pass: '12345678',
+      //     name: appleAuthRequestResponse.fullName.familyName,
+      //   },
+      //   social: true,
+      // });
+    }
+  }
   const getInfoFromToken = token => {
     console.log('------------------');
     fetch(
@@ -51,108 +150,64 @@ const Signup = ({navigation}: {navigation: any}) => {
     )
       .then(response => response.json())
       .then(json => {
-        console.log('json', json);
+        setShowModal(true);
+
+        const data = new FormData();
+        data.append('firstname', json.name);
+        data.append('email', json.email);
+        data.append('password', json.id);
+        data.append('password_confirmation', json.id);
+        {
+          image &&
+            data.append('image', {
+              uri: json.picture.data.url,
+              type: 'image/jpeg',
+              name: `image${new Date()}.jpg`,
+            });
+        }
+        register(data)
+          .then(res => {
+            console.log('res', res);
+
+            setShowModal(false);
+            if (res.status == 'success') {
+              logged(res)(dispatch);
+              // navigation.navigate('EmailVerification', {email});
+            }
+            // logged(res)(dispatch);
+          })
+          .catch(error => {
+            console.log('err', error.response.data);
+            setShowModal(false);
+            // console.log('Error MEssage ', error.response.data);
+            if (error.response.data.status == 'error') {
+              if (error.response.data.message.email) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.email}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(`${error.response.data.message.email}`);
+              }
+              if (error.response.data.message.phoneno) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.phoneno}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(`${error.response.data.message.phoneno}`);
+              }
+              if (error.response.data.message.firstname) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.phoneno}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(
+                  'The username has already been taken.',
+                  // `${error.response.data.message.firstname}`,
+                );
+              }
+            }
+          });
       });
-    // .then(json => {
-    //   // setloding(true);
-    //   const data = new FormData();
-    //   data.append('email', json.email);
-    //   data.append('password', json.id);
-    //   // data.append('social', 'true');
-    //   login({
-    //     typ: use == 'stu' ? 'student' : 'teacher',
-    //     data: data,
-    //   })
-    //     .then(res => {
-    //       console.log('---------', res);
-
-    //       if (res.status == 'success') {
-    //         setloding(false);
-    //         userAuthorize(res)(dispatch);
-    //         // navigation.navigate(use == 'stu' ? 'StudentTab' : 'TeacherTab');
-    //       } else {
-    //         setloding(false);
-    //         console.log('Some Thing Wrong');
-    //       }
-    //     })
-    //     .catch(error => {
-    //       // setloding(false);
-    //       // console.log('Message Error', error?.response?.data);
-    //       // seterr(error?.response?.data?.message);
-
-    //       if (error.response.data.status == 'error') {
-    //         var today = new Date();
-    //         var dd = String(today.getDate()).padStart(2, '0');
-    //         var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    //         var yyyy = today.getFullYear();
-
-    //         let vrifiddate = yyyy + '-' + mm + '-' + dd;
-
-    //         const data = new FormData();
-    //         data.append(
-    //           'first_name',
-    //           json.name
-    //             .split(' ')[0]
-    //             .replace(/^./, json.name.split(' ')[0][0].toUpperCase()),
-    //         );
-    //         data.append('email', json.email);
-    //         data.append('last_name', json.name.split(' ')[1]);
-    //         // data.append('name', json.name);
-    //         // data.append('email', json.email);
-    //         data.append('password', json.id);
-    //         data.append('password_confirmation', json.id);
-    //         data.append('email_verified_at', vrifiddate);
-    //         // data.append('type', type);
-    //         if (json.picture.data.url) {
-    //           json.picture.data.url &&
-    //             data.append('image', {
-    //               uri: json.picture.data.url,
-    //               type: 'image/jpeg',
-    //               name: 'image' + new Date() + '.jpg',
-    //             });
-    //           console.log('data,,,,,', data);
-    //         }
-    //         CompleteProfile({
-    //           typ: use == 'stu' ? 'student' : 'teacher',
-    //           data: data,
-    //         })
-    //           .then(res => {
-    //             console.log('-----', res);
-    //             if (res.status == 'success') {
-    //               setloding(false);
-    //               userAuthorize(res)(dispatch);
-    //               // navigation.navigate(use == 'stu' ? 'StudentTab' : 'Verificatiion');
-    //             } else {
-    //               setloding(false);
-    //               console.log('Some Thing Wrong');
-    //             }
-    //           })
-    //           .catch(error => {
-    //             setloding(false);
-    //             console.log('Message Error------1', error);
-    //             console.log('Message Error------2', error.response.message);
-    //             console.log('Message Error------3', error.data);
-    //             console.log('Message Error------4', error.response.data);
-    //             console.log('Message Error------5', error.message);
-
-    //             if (error?.response?.data?.message?.email) {
-    //               alert(error?.response?.data?.message?.email);
-    //             } else {
-    //               setloding(false);
-    //               console.log('Error Meaasge sign up', error.response.data);
-    //             }
-    //           });
-    //       } else {
-    //         // setloding(false);
-    //         console.log('Message Error', error);
-    //         // seterr('Some thing Wrong');
-    //       }
-    //     });
-    // })
-    // .catch(error => {
-    //   // setloding(false);
-    //   Alert.alert(error);
-    // });
   };
   useEffect(() => {
     GoogleSignin.configure({
@@ -165,7 +220,64 @@ const Signup = ({navigation}: {navigation: any}) => {
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      console.log('userInfo', userInfo);
+      setShowModal(true);
+
+      const data = new FormData();
+      data.append('firstname', userInfo.user.name);
+      data.append('email', userInfo.user.email);
+      data.append('password', userInfo.user.id);
+      data.append('password_confirmation', userInfo.user.id);
+      {
+        image &&
+          data.append('image', {
+            uri: userInfo.user.photo,
+            type: 'image/jpeg',
+            name: `image${new Date()}.jpg`,
+          });
+      }
+      register(data)
+        .then(res => {
+          console.log('res', res);
+
+          setShowModal(false);
+          if (res.status == 'success') {
+            logged(res)(dispatch);
+            // navigation.navigate('EmailVerification', {email});
+          }
+          // logged(res)(dispatch);
+        })
+        .catch(error => {
+          console.log('err', error.response.data);
+          setShowModal(false);
+          // console.log('Error MEssage ', error.response.data);
+          if (error.response.data.status == 'error') {
+            if (error.response.data.message.email) {
+              //   ToastAndroid.show(
+              //     `${error.response.data.message.email}`,
+              //     ToastAndroid.SHORT,
+              //   );
+              Alert.alert(`${error.response.data.message.email}`);
+            }
+            if (error.response.data.message.phoneno) {
+              //   ToastAndroid.show(
+              //     `${error.response.data.message.phoneno}`,
+              //     ToastAndroid.SHORT,
+              //   );
+              Alert.alert(`${error.response.data.message.phoneno}`);
+            }
+            if (error.response.data.message.firstname) {
+              //   ToastAndroid.show(
+              //     `${error.response.data.message.phoneno}`,
+              //     ToastAndroid.SHORT,
+              //   );
+              Alert.alert(
+                'The username has already been taken.',
+                // `${error.response.data.message.firstname}`,
+              );
+            }
+          }
+        });
+      // console.log('userInfo', userInfo);
       // this.setState({userInfo});
     } catch (error) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
@@ -425,16 +537,16 @@ const Signup = ({navigation}: {navigation: any}) => {
             </View>
             <View style={{marginTop: 30}}>
               <TextInput
-                value={password}
+                value={passwordConfirm}
                 placeholderTextColor={'grey'}
                 placeholder={'Confirm Password'}
                 secureTextEntry
                 onChangeText={text => {
-                  setPassword(text);
-                  setPasswordErr('');
+                  setPasswordConfirm(text);
+                  setPasswordConfirmErr('');
                 }}
                 style={{
-                  borderColor: passwordErr ? 'red' : 'grey',
+                  borderColor: passwordConfirmErr ? 'red' : 'grey',
                   borderWidth: 1,
                   height: 50,
                   borderRadius: 10,
@@ -469,86 +581,98 @@ const Signup = ({navigation}: {navigation: any}) => {
                 if (
                   validateEmail(email) &&
                   password.length >= 8 &&
+                  passwordConfirm.length >= 8 &&
                   firstName &&
                   zip &&
                   phone
                 ) {
-                  setShowModal(true);
-                  // navigation.navigate('EmailVerification', {
-                  //   firstName,
-                  //   lastName,
-                  //   zip,
-                  //   email,
-                  //   password,
-                  //   phone,
-                  //   image,
-                  // });
-                  const data = new FormData();
-                  data.append('firstname', firstName);
+                  if (password == passwordConfirm) {
+                    setShowModal(true);
+                    // navigation.navigate('EmailVerification', {
+                    //   firstName,
+                    //   lastName,
+                    //   zip,
+                    //   email,
+                    //   password,
+                    //   phone,
+                    //   image,
+                    // });
+                    const data = new FormData();
+                    data.append('firstname', firstName);
 
-                  data.append('zipcode', zip);
-                  data.append('email', email);
-                  data.append('password', password);
-                  data.append('phoneno', phone);
-                  {
-                    image &&
-                      data.append('image', {
-                        uri: image,
-                        type: 'image/jpeg',
-                        name: `image${new Date()}.jpg`,
+                    data.append('zipcode', zip);
+                    data.append('email', email);
+                    data.append('password', password);
+                    data.append('password_confirmation', passwordConfirm);
+                    data.append('phoneno', phone);
+                    {
+                      image &&
+                        data.append('image', {
+                          uri: image,
+                          type: 'image/jpeg',
+                          name: `image${new Date()}.jpg`,
+                        });
+                    }
+                    register(data)
+                      .then(res => {
+                        console.log('res', res);
+
+                        setShowModal(false);
+                        if (res.status == 'success') {
+                          navigation.navigate('EmailVerification', {email});
+                        }
+                        // logged(res)(dispatch);
+                      })
+                      .catch(error => {
+                        console.log('err', error.response.data);
+                        setShowModal(false);
+                        // console.log('Error MEssage ', error.response.data);
+                        if (error.response.data.status == 'error') {
+                          if (error.response.data.message.email) {
+                            //   ToastAndroid.show(
+                            //     `${error.response.data.message.email}`,
+                            //     ToastAndroid.SHORT,
+                            //   );
+                            Alert.alert(`${error.response.data.message.email}`);
+                          }
+                          if (error.response.data.message.phoneno) {
+                            //   ToastAndroid.show(
+                            //     `${error.response.data.message.phoneno}`,
+                            //     ToastAndroid.SHORT,
+                            //   );
+                            Alert.alert(
+                              `${error.response.data.message.phoneno}`,
+                            );
+                          }
+                          if (error.response.data.message.firstname) {
+                            //   ToastAndroid.show(
+                            //     `${error.response.data.message.phoneno}`,
+                            //     ToastAndroid.SHORT,
+                            //   );
+                            Alert.alert(
+                              'The username has already been taken.',
+                              // `${error.response.data.message.firstname}`,
+                            );
+                          }
+                        }
                       });
+                  } else {
+                    setPasswordErr('asd');
+                    setPasswordConfirmErr('asd');
                   }
-                  register(data)
-                    .then(res => {
-                      console.log('res', res);
 
-                      setShowModal(false);
-                      if (res.status == 'success') {
-                        navigation.navigate('EmailVerification', {email});
-                      }
-                      // logged(res)(dispatch);
-                    })
-                    .catch(error => {
-                      console.log('err', error.response.data);
-                      setShowModal(false);
-                      // console.log('Error MEssage ', error.response.data);
-                      if (error.response.data.status == 'error') {
-                        if (error.response.data.message.email) {
-                          //   ToastAndroid.show(
-                          //     `${error.response.data.message.email}`,
-                          //     ToastAndroid.SHORT,
-                          //   );
-                          Alert.alert(`${error.response.data.message.email}`);
-                        }
-                        if (error.response.data.message.phoneno) {
-                          //   ToastAndroid.show(
-                          //     `${error.response.data.message.phoneno}`,
-                          //     ToastAndroid.SHORT,
-                          //   );
-                          Alert.alert(`${error.response.data.message.phoneno}`);
-                        }
-                        if (error.response.data.message.firstname) {
-                          //   ToastAndroid.show(
-                          //     `${error.response.data.message.phoneno}`,
-                          //     ToastAndroid.SHORT,
-                          //   );
-                          Alert.alert(
-                            'The username has already been taken.',
-                            // `${error.response.data.message.firstname}`,
-                          );
-                        }
-                      }
-                    });
                   // navigation.navigate('TabNavigator');
                 } else if (
                   !validateEmail(email) &&
                   !password &&
+                  !passwordConfirm &&
                   !firstName &&
                   !zip &&
                   !phone
                 ) {
                   setEmailErr('asd');
                   setPasswordErr('asd');
+                  setPasswordConfirmErr('asd');
                   setFirstNameErr('asd');
                   // setLastNameErr('asd');
                   setZipErr('asd');
@@ -557,10 +681,19 @@ const Signup = ({navigation}: {navigation: any}) => {
                   setEmailErr('asd');
                 } else if (!password) {
                   setPasswordErr('asd');
+                } else if (!passwordConfirm) {
+                  setPasswordConfirmErr('asd');
                 } else if (password.length < 8) {
                   Alert.alert(
                     'Password length must be greater or equal to 8 characters',
                   );
+                } else if (passwordConfirm.length < 8) {
+                  Alert.alert(
+                    'Password length must be greater or equal to 8 characters',
+                  );
+                } else if (password != passwordConfirm) {
+                  setPasswordErr('asd');
+                  setPasswordConfirmErr('asd');
                 } else if (!firstName) {
                   setFirstNameErr('asd');
                 } else if (!zip) {
@@ -614,11 +747,13 @@ const Signup = ({navigation}: {navigation: any}) => {
                   style={{height: 40, width: 40, marginRight: 10}}
                 />
               </TouchableOpacity>
-
-              <Image
-                source={require('../../../assets/Images/apple.png')}
-                style={{height: 40, width: 40, marginRight: 10}}
-              />
+              <TouchableOpacity
+                onPress={() => Platform.OS == 'ios' && onAppleButtonPress()}>
+                <Image
+                  source={require('../../../assets/Images/apple.png')}
+                  style={{height: 40, width: 40, marginRight: 10}}
+                />
+              </TouchableOpacity>
             </View>
             <View
               style={{
