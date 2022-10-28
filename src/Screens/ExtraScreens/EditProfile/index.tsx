@@ -20,6 +20,7 @@ import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
 import MapView from 'react-native-maps';
 import Iconpencil from 'react-native-vector-icons/Octicons';
+import IconIos from 'react-native-vector-icons/EvilIcons';
 import {logged} from '../../../redux/actions';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
@@ -363,7 +364,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                   source={
                     image
                       ? {uri: image}
-                      : require('../../../assets/Images/blurt.png')
+                      : require('../../../assets/Images/girl.jpg')
                   }
                   style={{height: 100, width: 100, borderRadius: 50}}
                 />
@@ -389,10 +390,14 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                  <Iconpencil name="pencil" size={20} />
+                  {Platform.OS == 'ios' ? (
+                    <IconIos name="pencil" size={20} />
+                  ) : (
+                    <Iconpencil name="pencil" size={20} />
+                  )}
                 </View>
               </TouchableOpacity>
-              {!image && (
+              {/* {!image && (
                 <View
                   style={{
                     alignItems: 'center',
@@ -407,7 +412,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                   }}>
                   <Icon2 name="add-photo-alternate" size={20} color="#5F95F0" />
                 </View>
-              )}
+              )} */}
 
               {/* <Text
               style={{

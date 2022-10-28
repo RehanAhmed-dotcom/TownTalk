@@ -212,7 +212,47 @@ const Login = ({navigation}: {navigation: any}) => {
     // use credentialState response to ensure the user is authenticated
     if (credentialState === appleAuth.State.AUTHORIZED) {
       // user is authenticated
-      // if (!appleAuthRequestResponse.email && iEmail) {
+      if (!appleAuthRequestResponse.email && iEmail) {
+        setShowModal(true);
+        login({email: iEmail, password: '12345678'})
+          .then(res => {
+            console.log('res', res);
+            setShowModal(false);
+            if (res.status == 'success') {
+              console.log('res', res);
+              logged(res)(dispatch);
+            }
+          })
+          .catch(error => {
+            console.log('err', error.response.data);
+            // Alert.alert("Credentials doesn't matched");
+            setShowModal(false);
+            if (error.response.data.status == 'error') {
+              if (error.response.data.is_verified == false) {
+                navigation.navigate('EmailVerification', {
+                  email,
+                });
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.email}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                // Alert.alert(
+                //   `${error.response.data.message.email}`,
+                // );
+              } else if (
+                error.response.data.message == 'Invalid Username or Password'
+              ) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.phoneno}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(`${error.response.data.message}`);
+              } else if (error.response.data.message == 'User not Found') {
+                Alert.alert(`${error.response.data.message}`);
+              }
+            }
+          });
+      }
       //   // Alert.alert('hello', appleAuthRequestResponse.email);
       //   setloading(true);
       //   const data = new FormData();
@@ -712,7 +752,9 @@ const Login = ({navigation}: {navigation: any}) => {
                   />
                 </TouchableOpacity>
                 <TouchableOpacity
-                  onPress={() => Platform.OS == 'ios' && onAppleButtonPress()}>
+                  onPress={() =>
+                    Platform.OS == 'ios' && iEmail && onAppleButtonPress()
+                  }>
                   <Image
                     source={require('../../../assets/Images/apple.png')}
                     style={{height: 40, width: 40, marginRight: 10}}

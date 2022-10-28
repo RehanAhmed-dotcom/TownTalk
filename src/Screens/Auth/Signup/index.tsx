@@ -12,6 +12,7 @@ import {
   ScrollView,
   Alert,
   Text,
+  // TouchableWithoutFeedback,
 } from 'react-native';
 // import { useState } from 'react';
 import {register} from '../../../lib/api';
@@ -73,7 +74,68 @@ const Signup = ({navigation}: {navigation: any}) => {
     // use credentialState response to ensure the user is authenticated
     if (credentialState === appleAuth.State.AUTHORIZED) {
       // user is authenticated
-      // if (!appleAuthRequestResponse.email && iEmail) {
+      if (appleAuthRequestResponse.email) {
+        setShowModal(true);
+
+        const data = new FormData();
+        data.append(
+          'firstname',
+          appleAuthRequestResponse.fullName.familyName +
+            appleAuthRequestResponse.fullName.givenName,
+        );
+        data.append('email', appleAuthRequestResponse.email);
+        data.append('password', '12345678');
+        data.append('password_confirmation', '12345678');
+
+        // data.append('image', {
+        //   uri: userInfo.user.photo,
+        //   type: 'image/jpeg',
+        //   name: `image${new Date()}.jpg`,
+        // });
+
+        register(data)
+          .then(res => {
+            console.log('res', res);
+
+            setShowModal(false);
+            if (res.status == 'success') {
+              logged(res)(dispatch);
+              // navigation.navigate('EmailVerification', {email});
+            }
+            // logged(res)(dispatch);
+          })
+          .catch(error => {
+            console.log('err', error.response.data);
+            setShowModal(false);
+            // console.log('Error MEssage ', error.response.data);
+            if (error.response.data.status == 'error') {
+              if (error.response.data.message.email) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.email}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(`${error.response.data.message.email}`);
+              }
+              if (error.response.data.message.phoneno) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.phoneno}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(`${error.response.data.message.phoneno}`);
+              }
+              if (error.response.data.message.firstname) {
+                //   ToastAndroid.show(
+                //     `${error.response.data.message.phoneno}`,
+                //     ToastAndroid.SHORT,
+                //   );
+                Alert.alert(
+                  'The username has already been taken.',
+                  // `${error.response.data.message.firstname}`,
+                );
+              }
+            }
+          });
+      }
       //   // Alert.alert('hello', appleAuthRequestResponse.email);
       //   setloading(true);
       //   const data = new FormData();
@@ -150,6 +212,7 @@ const Signup = ({navigation}: {navigation: any}) => {
     )
       .then(response => response.json())
       .then(json => {
+        console.log('json', json);
         setShowModal(true);
 
         const data = new FormData();
@@ -157,14 +220,13 @@ const Signup = ({navigation}: {navigation: any}) => {
         data.append('email', json.email);
         data.append('password', json.id);
         data.append('password_confirmation', json.id);
-        {
-          image &&
-            data.append('image', {
-              uri: json.picture.data.url,
-              type: 'image/jpeg',
-              name: `image${new Date()}.jpg`,
-            });
-        }
+
+        data.append('image', {
+          uri: json.picture.data.url,
+          type: 'image/jpeg',
+          name: `image${new Date()}.jpg`,
+        });
+
         register(data)
           .then(res => {
             console.log('res', res);
@@ -227,14 +289,13 @@ const Signup = ({navigation}: {navigation: any}) => {
       data.append('email', userInfo.user.email);
       data.append('password', userInfo.user.id);
       data.append('password_confirmation', userInfo.user.id);
-      {
-        image &&
-          data.append('image', {
-            uri: userInfo.user.photo,
-            type: 'image/jpeg',
-            name: `image${new Date()}.jpg`,
-          });
-      }
+
+      data.append('image', {
+        uri: userInfo.user.photo,
+        type: 'image/jpeg',
+        name: `image${new Date()}.jpg`,
+      });
+
       register(data)
         .then(res => {
           console.log('res', res);
@@ -755,6 +816,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                 />
               </TouchableOpacity>
             </View>
+
             <View
               style={{
                 marginTop: 20,
