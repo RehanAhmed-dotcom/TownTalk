@@ -222,6 +222,9 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
               setSpecific(item);
               setShowModal(true);
             }}
+            hashPress={text => {
+              navigation.navigate('Hashes', {text});
+            }}
             press={alter}
             navigation={navigation}
           />

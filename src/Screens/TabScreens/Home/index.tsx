@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   Modal,
+  TextInput,
   Text,
   Platform,
   PermissionsAndroid,
@@ -26,9 +27,12 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/Entypo';
+import Icon1 from 'react-native-vector-icons/EvilIcons';
+import Icon2 from 'react-native-vector-icons/AntDesign';
+import Icon3 from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateToken} from '../../../lib/api';
-import {viewAllPost, hashTag} from '../../../lib/api';
+import {viewAllPost, blockUser, reportUser, hashTag} from '../../../lib/api';
 // import {logoutuser} from '../../../redux/actions';
 import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
@@ -47,10 +51,16 @@ const Home = ({navigation}) => {
   const [testArr, setTestArr] = useState([]);
   const [hash, setHash] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showfilter, setShowFilter] = useState(false);
+  const [reportId, setReportId] = useState('');
+  const [reportReason, setReportReason] = useState('');
+  const [blockuserId, setBlockuserId] = useState('');
+  const [filter, setFilter] = useState('all');
+  const [showReportModal, setShowReportModal] = useState(false);
   const {userData, Lat, Long} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [list, setList] = useState([]);
-  // console.log('lat long in redux', Lat, Long);
+  // console.log('lat long in redux', datas);
   const _usersList = useCallback(async () => {
     try {
       // setLoading(true);
@@ -167,6 +177,7 @@ const Home = ({navigation}) => {
       page: page + 1,
       latitude: latitude ? latitude : Lat,
       longitude: longitude ? longitude : Long,
+      filter_post: filter,
     })
       .then(res => {
         // console.log('res of pagination', res);
@@ -193,6 +204,7 @@ const Home = ({navigation}) => {
       page: 1,
       latitude: latitude ? latitude : Lat,
       longitude: longitude ? longitude : Long,
+      filter_post: filter,
     })
       .then(res => {
         // console.log('res', res);
@@ -218,6 +230,7 @@ const Home = ({navigation}) => {
         page: 1,
         latitude: latitude ? latitude : Lat,
         longitude: longitude ? longitude : Long,
+        filter_post: filter,
       })
         .then(res => {
           // console.log('res of new api', res);
@@ -279,48 +292,35 @@ const Home = ({navigation}) => {
           </Text> */}
         </View>
       </View>
-      <View style={{alignItems: 'center'}}>
-        {/* {item.counter ? (
-          <View
-            style={{
-              backgroundColor: '#5F95F0',
-              height: 20,
-              width: 20,
-              justifyContent: 'center',
-              alignItems: 'center',
-              borderRadius: 30,
-              marginBottom: 5,
-            }}>
-            <Text style={{color: 'white', fontSize: 12}}>{item.counter}</Text>
-            <Text>{moment(item.timestamp).format('DD/MM/YYYY HH:MM')}</Text>
-          </View>
-        ) : (
-          <Text style={{fontSize: 12}}>
-            {moment(item.timestamp).format('DD/MM/YYYY HH:MM')}
-          </Text>
-        )} */}
-        {/* <Text
-          style={{
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-            fontSize: 10,
-          }}>
-          {item.time}
-        </Text> */}
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: 30,
+          width: 30,
+          borderRadius: 20,
+          backgroundColor: '#5F95F0',
+        }}>
+        <Icon3 name="send" color="white" size={18} />
       </View>
     </TouchableOpacity>
   );
   const MyModal = (show: boolean) => {
     // console.log('show', latitude, longitude);
     return (
-      <Modal animationType="slide" transparent={true} visible={show}>
-        <View
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={show}
+        onRequestClose={() => setShowModal(!showModal)}>
+        <TouchableOpacity
+          onPress={() => setShowModal(!showModal)}
           style={{
             flex: 1,
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -328,10 +328,14 @@ const Home = ({navigation}) => {
             bottom: 0,
             // position: 'absolute',
           }}>
-          <View
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => console.log('hello')}
             style={{
-              height: '60%',
-              width: '90%',
+              // height: '45%',
+              maxHeight: '40%',
+              minHeight: '20%',
+              width: '100%',
               borderRadius: 10,
               backgroundColor: 'white',
             }}>
@@ -342,22 +346,177 @@ const Home = ({navigation}) => {
                 marginTop: 15,
                 marginRight: 15,
               }}>
-              <Icon
+              {/* <Icon
                 name="circle-with-cross"
                 size={20}
                 color="black"
                 onPress={() => setShowModal(false)}
-              />
+              /> */}
             </View>
-            <View style={{paddingHorizontal: 10}}>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 16,
+                color: 'black',
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Share with contacts
+            </Text>
+            <View style={{paddingHorizontal: 10, marginBottom: 20}}>
               <FlatList data={list} renderItem={render} />
             </View>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     );
   };
   // console.log('page', page);
+  const handleReport = id => {
+    setReportId(id);
+    setShowReportModal(true);
+  };
+  const blockUserComp = id => {
+    // console.log('block user id', id);
+    setBlockuserId(id);
+  };
+  const ReportModal = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showReportModal}
+        onRequestClose={() => setShowReportModal(false)}>
+        <TouchableOpacity
+          onPress={() => setShowReportModal(false)}
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => console.log('hello')}
+            style={{
+              height: '45%',
+              width: '100%',
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              padding: 20,
+            }}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                fontSize: 16,
+                color: 'black',
+              }}>
+              Report this post
+            </Text>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 14,
+                color: 'grey',
+                marginTop: 10,
+              }}>
+              If someone is in immediate danger, get help before reporting to
+              Towntalk. Don't wait.
+            </Text>
+            <TextInput
+              value={reportReason}
+              onChangeText={text => setReportReason(text)}
+              style={{
+                backgroundColor: '#ccc',
+                height: 100,
+                borderRadius: 10,
+                color: 'black',
+                padding: 10,
+                marginTop: 15,
+              }}
+              placeholder="Why do you want to report this post?"
+              placeholderTextColor="grey"
+              numberOfLines={4}
+              multiline
+              textAlignVertical="top"
+            />
+
+            <TouchableOpacity
+              onPress={() => {
+                reportUser({Auth: userData.token, post_id: reportId})
+                  .then(res => {
+                    console.log('res of report', res);
+                  })
+                  .catch(err => {
+                    console.log('err in report', err);
+                  });
+                setShowReportModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: '#5F95F0',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Report
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                reportUser({Auth: userData.token, post_id: reportId})
+                  .then(res => {
+                    console.log('res of report', res);
+                  })
+                  .catch(err => {
+                    console.log('err in report', err);
+                  });
+                blockUser({Auth: userData.token, block_user_id: blockuserId})
+                  .then(res => {
+                    console.log('res of block', res);
+                    setChange(!change);
+                  })
+                  .catch(err => {
+                    console.log('err in block', err);
+                  });
+                setShowReportModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: '#200E32',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Report & block user
+              </Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
   const renderItem1 = ({item}) => (
     <Posts
       item={item}
@@ -374,6 +533,8 @@ const Home = ({navigation}) => {
         console.log('text of hash tag', text);
         navigation.navigate('Hashes', {text});
       }}
+      handleReport={handleReport}
+      blockuser={blockUserComp}
     />
   );
   const getPlace = (latitude, longitude) => {
@@ -424,6 +585,7 @@ const Home = ({navigation}) => {
       page: 1,
       latitude: latitude ? latitude : Lat,
       longitude: longitude ? longitude : Long,
+      filter_post: filter,
     })
       .then(res => {
         // console.log('res of new api', res);
@@ -458,53 +620,119 @@ const Home = ({navigation}) => {
   // console.log('test arr length', testArr.length);
   return (
     <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
-          style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
-            alignItems: 'center',
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          backgroundColor: 'white',
+          // elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
 
-            paddingHorizontal: 15,
-            justifyContent: 'space-between',
-          }}>
-          <View>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: '#5F95F0',
-              }}>
-              {location}
-              {/* {`${userData?.userdata?.firstname}`} */}
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Image
+            style={{height: 50, width: 50, borderRadius: 30}}
+            source={
+              userData?.userdata?.image
+                ? {uri: userData?.userdata?.image}
+                : require('../../../assets/Images/girl.jpg')
+            }
+          />
+          <View style={{marginLeft: 10}}>
+            <Text style={{fontSize: 12, color: 'grey'}}>
+              Hello {userData?.userdata?.firstname}!
             </Text>
-            {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Icon1 name="location" size={20} color={'#5F95F0'} />
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  color: '#5F95F0',
+                }}>
+                {location}
+                {/* {`${userData?.userdata?.firstname}`} */}
+              </Text>
+              <TouchableOpacity
+                style={{
+                  height: 20,
+                  width: 20,
+                  backgroundColor: '#5F95F0',
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  marginLeft: 5,
+                  justifyContent: 'center',
+                }}>
+                <Icon1 name="pencil" size={15} color="white" />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               {location}
             </Text> */}
-          </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-              <Image
-                source={require('../../../assets/Images/search.png')}
-                style={{height: 15, width: 15}}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate('GroupPage')}>
-              <Image
-                source={require('../../../assets/Images/9055212_bxs_category_icon.png')}
-                style={{height: 15, marginLeft: 10, width: 15}}
-              />
-            </TouchableOpacity>
-          </View>
         </View>
-        {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-        {/* <ScrollView> */}
-        <View style={{marginTop: 10, paddingHorizontal: 12}}>
-          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity
+            style={{
+              width: 25,
+              height: 25,
+              borderWidth: 1,
+              backgroundColor: 'white',
+              borderRadius: 5,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderColor: '#ccc',
+            }}
+            onPress={() => navigation.navigate('Search')}>
+            <Icon2 name="search1" size={18} color="black" />
+            {/* <Image
+              source={require('../../../assets/Images/search.png')}
+              style={{height: 15, width: 15}}
+            /> */}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              width: 25,
+              height: 25,
+              borderWidth: 1,
+              backgroundColor: 'white',
+              borderRadius: 5,
+              alignItems: 'center',
+              marginLeft: 5,
+              justifyContent: 'center',
+              borderColor: '#ccc',
+            }}
+            onPress={() => navigation.navigate('GroupPage')}>
+            <Image
+              source={require('../../../assets/Images/BellIcon.png')}
+              style={{
+                height: 15,
+                // marginLeft: 10,
+                width: 15,
+                // borderWidth: 1,
+                // borderColor: 'grey',
+                // borderRadius: 5,
+              }}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+      {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+      {/* <ScrollView> */}
+      <View
+        style={{
+          // marginTop: 10,
+          backgroundColor: 'white',
+          paddingHorizontal: 12,
+          flex: 1,
+        }}>
+        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
               style={{
@@ -523,34 +751,198 @@ const Home = ({navigation}) => {
             </View>
           ))}
         </View> */}
-          {/* <FlatList horizontal data={hash} renderItem={renderItem} /> */}
-          {/* <ScrollView> */}
-          <View
+        {/* <FlatList horizontal data={hash} renderItem={renderItem} /> */}
+        {/* <ScrollView> */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            zIndex: 134,
+            justifyContent: 'space-between',
+          }}>
+          <Text
             style={{
-              marginTop: 10,
-              // flex: 1,
-              width: '100%',
-              paddingBottom: 0,
-              height: hp(Platform.OS == 'ios' ? 75 : 80),
+              fontSize: 14,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: 'black',
             }}>
-            <FlatList
-              data={datas}
-              // onEndReachedThreshold={0.5}
-              onRefresh={onRefresh}
-              keyExtractor={item => item.id + 'a'}
-              refreshing={refreshing}
-              onEndReached={increasePage}
-              renderItem={renderItem1}
+            Recent posts
+          </Text>
+          <TouchableOpacity
+            onPress={() => setShowFilter(!showfilter)}
+            style={{flexDirection: 'row', alignItems: 'center'}}>
+            <Image
+              source={require('../../../assets/Images/filters.png')}
+              style={{height: 20, width: 20}}
+              resizeMode="contain"
             />
-          </View>
-          {/* </ScrollView> */}
+            <Text
+              style={{
+                fontSize: 14,
+                fontFamily: 'MontserratAlternates-Regular',
+                color: 'black',
+                marginLeft: 3,
+              }}>
+              Filters
+            </Text>
+            {showfilter && (
+              <View
+                style={{
+                  height: 200,
+                  width: 150,
+                  right: 0,
+                  top: 20,
+                  zIndex: 250,
+                  position: 'absolute',
+                  // backgroundColor: '#ccc',
+                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFilter('all');
+                    setShowFilter(!showfilter);
+                    setTimeout(function () {
+                      setChange(!change);
+                    }, 1000);
+                  }}
+                  style={{
+                    height: 40,
+                    borderTopLeftRadius: 10,
+                    borderTopRightRadius: 10,
+
+                    justifyContent: 'center',
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'grey',
+
+                    paddingLeft: 10,
+                    backgroundColor: '#ccc',
+                    // elevation: 1,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'black',
+                      fontFamily: 'MontserratAlternates-Medium',
+                    }}>
+                    All
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFilter('recent');
+                    setShowFilter(!showfilter);
+                    setTimeout(function () {
+                      setChange(!change);
+                    }, 1000);
+                  }}
+                  style={{
+                    height: 40,
+
+                    justifyContent: 'center',
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'grey',
+
+                    paddingLeft: 10,
+                    backgroundColor: '#ccc',
+                    // elevation: 1,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'black',
+                      fontFamily: 'MontserratAlternates-Medium',
+                    }}>
+                    Most Recent
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFilter('likes');
+                    setShowFilter(!showfilter);
+                    setTimeout(function () {
+                      setChange(!change);
+                    }, 1000);
+                  }}
+                  style={{
+                    height: 40,
+
+                    justifyContent: 'center',
+                    borderBottomWidth: 1,
+                    borderBottomColor: 'grey',
+
+                    paddingLeft: 10,
+                    backgroundColor: '#ccc',
+                    // elevation: 1,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'black',
+                      fontFamily: 'MontserratAlternates-Medium',
+                    }}>
+                    Most Likes
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFilter('comments');
+                    setShowFilter(!showfilter);
+                    setTimeout(function () {
+                      setChange(!change);
+                    }, 1000);
+                  }}
+                  style={{
+                    height: 40,
+                    borderBottomLeftRadius: 10,
+                    borderBottomRightRadius: 10,
+
+                    justifyContent: 'center',
+                    // borderBottomWidth: 1,
+                    borderBottomColor: 'grey',
+
+                    paddingLeft: 10,
+                    backgroundColor: '#ccc',
+                    // elevation: 1,
+                  }}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: 'black',
+                      fontFamily: 'MontserratAlternates-Medium',
+                    }}>
+                    Most Comments
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </TouchableOpacity>
         </View>
-      </ImageBackground>
+        <View
+          style={{
+            marginTop: 10,
+            // flex: 1,
+            width: '100%',
+            paddingBottom: 0,
+            height: hp(Platform.OS == 'ios' ? 73 : 78.5),
+          }}>
+          <FlatList
+            data={datas}
+            // onEndReachedThreshold={0.5}
+            onRefresh={onRefresh}
+            keyExtractor={item => item.id + 'a'}
+            refreshing={refreshing}
+            onEndReached={increasePage}
+            renderItem={renderItem1}
+          />
+        </View>
+        {/* </ScrollView> */}
+      </View>
+      {/* </ImageBackground> */}
 
       {/* </ScrollView> */}
 
       {/* <Text>Home</Text> */}
       {MyModal(showModal)}
+      {ReportModal()}
     </SafeAreaView>
   );
 };

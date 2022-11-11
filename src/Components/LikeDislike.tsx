@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Text, TouchableOpacity, View} from 'react-native';
-import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/Feather';
 import {useSelector} from 'react-redux';
 import {likeDislike} from '../lib/api';
 const LikeDislike = props => {
@@ -46,7 +46,7 @@ const LikeDislike = props => {
         }}
         style={{flexDirection: 'row', alignItems: 'center'}}>
         <Icon
-          name="arrowup"
+          name="thumbs-up"
           size={20}
           color={item?.is_like == true ? '#5F95F0' : 'grey'}
           // color={like == true ? '#5F95F0' : 'grey'}
@@ -90,7 +90,7 @@ const LikeDislike = props => {
         }}
         style={{flexDirection: 'row', marginLeft: 10, alignItems: 'center'}}>
         <Icon
-          name="arrowdown"
+          name="thumbs-down"
           size={20}
           color={item?.is_like == false ? '#5F95F0' : 'grey'}
           // color={dislike == false ? '#5F95F0' : 'grey'}

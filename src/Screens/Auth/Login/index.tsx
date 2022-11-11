@@ -351,7 +351,11 @@ const Login = ({navigation}: {navigation: any}) => {
       const userInfo = await GoogleSignin.signIn();
       // console.log('userInfo', userInfo);
       setShowModal(true);
-      login({email: userInfo.user.email, password: userInfo.user.id})
+      login({
+        email: userInfo.user.email,
+
+        password: userInfo.user.id,
+      })
         .then(res => {
           console.log('res', res);
           setShowModal(false);

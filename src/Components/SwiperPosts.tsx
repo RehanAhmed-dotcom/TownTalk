@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/Entypo';
 import Swiper from 'react-native-swiper';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 const SwiperPosts = props => {
-  const {item, swipe, navigation, onShare, onPress, press} = props;
+  const {item, swipe, navigation, onShare, onPress, hashPress, press} = props;
   const {userData} = useSelector(({USER}) => USER);
 
   const [show, setShow] = useState(false);
@@ -108,7 +108,7 @@ const SwiperPosts = props => {
         <View style={{marginTop: 10}}>
           <View>
             <MentionHashtagTextView
-              mentionHashtagPress={text => console.log('text', text)}
+              mentionHashtagPress={hashPress}
               mentionHashtagColor={'#5F95F0'}
               style={{
                 fontSize: 13,

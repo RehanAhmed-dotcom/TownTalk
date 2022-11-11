@@ -4,31 +4,32 @@ import {
   View,
   FlatList,
   ScrollView,
+  Alert,
   TouchableOpacity,
   Image,
   Text,
 } from 'react-native';
 import LikeDislike from './LikeDislike';
+import Swiper from 'react-native-swiper';
 import moment from 'moment';
 import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import {useSelector} from 'react-redux';
-import Icon from 'react-native-vector-icons/Entypo';
-import Icon1 from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/Feather';
+import Icon2 from 'react-native-vector-icons/Entypo';
+import Icon1 from 'react-native-vector-icons/EvilIcons';
 const Posts = props => {
-  const {item, navigation, onShare, onPress, hashPress, press} = props;
+  const {
+    item,
+    navigation,
+    onShare,
+    blockuser,
+    onPress,
+    hashPress,
+    handleReport,
+    press,
+  } = props;
   const {userData} = useSelector(({USER}) => USER);
-  // const item = props?.item;
-  // const navigation = props?.navigation;
-  // const onShare = props?.onShare;
-  // const onPress = props?.onPress;
-  // const hashPress = props?.hashPress;
-  // const press = props?.press;
-
   const [show, setShow] = useState(false);
-  // console.log('item', item);
-  // const d = new Date();
-  // console.log('d', d.toLocaleDateString(), item.created_at);
-  // console.log('moment local', moment(item.created_at).format("").locale());
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -38,6 +39,7 @@ const Posts = props => {
         backgroundColor: 'white',
         marginRight: 3,
         elevation: 3,
+        zIndex: -110,
         // alignItems: 'center',
         // justifyContent: 'center',
         // minWidth: 100,
@@ -53,6 +55,7 @@ const Posts = props => {
           // marginTop: 5,
           flexDirection: 'row',
           alignItems: 'center',
+          // backgroundColor: 'red',
           justifyContent: 'space-between',
         }}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -86,51 +89,73 @@ const Posts = props => {
             </Text>
           </View>
         </View>
-        {/* <Icon
-          name="dots-three-horizontal"
+
+        <Icon2
+          name="dots-three-vertical"
           size={20}
           color={'black'}
           style={{bottom: 10}}
-        /> */}
+          onPress={() => setShow(!show)}
+        />
+        {show && (
+          <View
+            // onPress={() => Alert.alert('hello')}
+            style={{
+              position: 'absolute',
+              height: 100,
+              zIndex: 3,
+              width: 100,
+              // backgroundColor: 'red',
+              borderRadius: 10,
+              right: 0,
+              top: 30,
+            }}>
+            <TouchableOpacity
+              onPress={() => {
+                setShow(!show);
+              }}
+              style={{
+                height: 40,
+                borderTopLeftRadius: 10,
+                borderTopRightRadius: 10,
+                borderBottomLeftRadius:
+                  item.user.id == userData.userdata.id ? 10 : 0,
+                borderBottomRightRadius:
+                  item.user.id == userData.userdata.id ? 10 : 0,
+                justifyContent: 'center',
+                borderBottomWidth: item.user.id == userData.userdata.id ? 0 : 1,
+                borderBottomColor: 'grey',
+
+                paddingLeft: 10,
+                backgroundColor: '#ccc',
+                // elevation: 1,
+              }}>
+              <Text>Share Post</Text>
+            </TouchableOpacity>
+            {item.user.id != userData.userdata.id && (
+              <TouchableOpacity
+                onPress={() => {
+                  setShow(!show);
+                  handleReport(item.id);
+                  blockuser(item.user.id);
+                }}
+                // onPress={() =>}
+                style={{
+                  height: 40,
+                  borderBottomLeftRadius: 10,
+                  borderBottomRightRadius: 10,
+                  justifyContent: 'center',
+                  paddingLeft: 10,
+                  backgroundColor: '#ccc',
+                  // elevation: 1,
+                }}>
+                <Text>Report Post</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
       </TouchableOpacity>
-      <View
-        style={{
-          marginTop: 10,
-          width: '100%',
-          // flexDirection: 'row',
-          // alignItems: 'center',
-          flexDirection: 'row',
 
-          // backgroundColor: 'red',
-          overflow: 'hidden',
-        }}>
-        {/* {item?.hashtag?.map(element => (
-          <Text
-            style={{
-              marginRight: 5,
-              fontSize: 13,
-              fontFamily: 'MontserratAlternates-Medium',
-              color: '#5F95F0',
-            }}>
-            #{element}
-          </Text>
-        ))} */}
-
-        {/* <FlatList horizontal data={arr} renderItem={renderItem3} /> */}
-        {/* {arr.map(item => (
-        <View>
-          <Text
-            style={{
-              marginRight: 5,
-              fontSize: 13,
-              fontFamily: 'MontserratAlternates-Medium',
-              color: '#5F95F0',
-            }}>
-            #{item}
-          </Text>
-        </View>
-      ))} */}
-      </View>
       <View style={{marginTop: 10}}>
         {/* <Text
           style={{
@@ -140,7 +165,58 @@ const Posts = props => {
           }}>
           {item?.description}
         </Text> */}
-        <View>
+
+        {/* {item?.media.length > 0 && (
+          <View style={{width: '100%', marginTop: 10, height: 350}}>
+            <Swiper
+              loadMinimal={true}
+              showsPagination={true}
+              key={item?.media.length}
+              paginationStyle={{bottom: 10}}
+              activeDotColor="#5F95F0"
+              loop={true}
+              style={{
+                alignItems: 'center',
+                zIndex: 40,
+                justifyContent: 'center',
+              }}
+              showsButtons={false}>
+              {item?.media.map(item => (
+                //   <View style={{width: '100%', marginTop: 10, height: 150}}>
+                <Image
+                  source={{uri: item.media}}
+                  style={{
+                    height: undefined,
+                    aspectRatio: 1,
+                    borderRadius: 10,
+                    width: '100%',
+                    marginTop: 10,
+                  }}
+                />
+                //   </View>
+              ))}
+            </Swiper>
+          </View>
+        )} */}
+        {item?.media[0]?.media && (
+          <Image
+            source={
+              item?.media[0]?.media
+                ? {uri: item?.media[0]?.media}
+                : require('../assets/Images/social.jpg')
+            }
+            resizeMode="cover"
+            style={{
+              height: undefined,
+              aspectRatio: 1,
+              zIndex: -11,
+              borderRadius: 10,
+              width: '100%',
+              marginTop: 10,
+            }}
+          />
+        )}
+        <View style={{marginTop: 10}}>
           <MentionHashtagTextView
             numberOfLines={5}
             mentionHashtagPress={hashPress}
@@ -153,23 +229,6 @@ const Posts = props => {
             {item?.description}
           </MentionHashtagTextView>
         </View>
-        {item?.media[0]?.media && (
-          <Image
-            source={
-              item?.media[0]?.media
-                ? {uri: item?.media[0]?.media}
-                : require('../assets/Images/social.jpg')
-            }
-            resizeMode="cover"
-            style={{
-              height: undefined,
-              aspectRatio: 1,
-              borderRadius: 10,
-              width: '100%',
-              marginTop: 10,
-            }}
-          />
-        )}
       </View>
       <View
         style={{
@@ -179,7 +238,47 @@ const Posts = props => {
           marginTop: 10,
           // backgroundColor: 'red',
         }}>
-        <LikeDislike item={item} press={press} />
+        <View
+          style={{
+            flexDirection: 'row',
+            // backgroundColor: 'red',
+            alignItems: 'center',
+          }}>
+          <LikeDislike item={item} press={press} />
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Comments', {id: item.id})}
+            // onPress={() => {
+            //   setLike(!like);
+            //   setDislike(false);
+            // }}
+            style={{
+              flexDirection: 'row',
+              marginLeft: 0,
+              // backgroundColor: 'red',
+              // height: '100%',
+              // height: 20,
+              width: 35,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            {/* <Image
+                source={require('../assets/Images/comment.png')}
+                style={{height: 10, width: 10}}
+              /> */}
+            <Icon1 name="comment" size={25} color="black" />
+
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                // marginLeft: 5,
+                color: 'black',
+                fontSize: 13,
+              }}>
+              {item.comment_count}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
         {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
@@ -273,7 +372,7 @@ const Posts = props => {
               source={require('../assets/Images/share.png')}
               style={{height: 10, width: 10}}
             /> */}
-            <Icon name="share" size={16} color={'black'} />
+            <Icon name="send" size={16} color={'black'} />
             {/* <Text
               style={{
                 fontFamily: 'MontserratAlternates-Regular',
@@ -284,42 +383,51 @@ const Posts = props => {
               Share
             </Text> */}
           </TouchableOpacity>
-          {!show && (
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Comments', {id: item.id})}
-              // onPress={() => {
-              //   setLike(!like);
-              //   setDislike(false);
-              // }}
-              style={{
-                flexDirection: 'row',
-                marginLeft: 0,
-                // backgroundColor: 'red',
-                // height: '100%',
-                // height: 20,
-                width: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {/* <Image
-                source={require('../assets/Images/comment.png')}
-                style={{height: 10, width: 10}}
-              /> */}
-              <Icon1 name="commenting" size={15} color="black" />
-
-              {/* <Text
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  marginLeft: 5,
-                  color: 'black',
-                  fontSize: 13,
-                }}>
-                Comments
-              </Text> */}
-            </TouchableOpacity>
-          )}
         </View>
       </View>
+      {item?.comment_count > 0 && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Comments', {id: item.id})}
+          style={{marginTop: 10}}>
+          <Text
+            style={{
+              fontSize: 13,
+              color: 'black',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}>
+            View all{' '}
+            <Text
+              style={{
+                fontSize: 14,
+                color: 'black',
+                fontFamily: 'MontserratAlternates-Bold',
+              }}>
+              {item?.comment_count}
+            </Text>{' '}
+            comments
+          </Text>
+        </TouchableOpacity>
+      )}
+      {item?.recentcomments && (
+        <TouchableOpacity style={{marginTop: 10}}>
+          <Text
+            style={{
+              fontSize: 13,
+              color: 'black',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}>
+            <Text
+              style={{
+                fontSize: 14,
+                color: 'black',
+                fontFamily: 'MontserratAlternates-Bold',
+              }}>
+              {item?.recentcomments?.user.firstname}
+            </Text>{' '}
+            {item?.recentcomments?.comment}
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}
     </TouchableOpacity>

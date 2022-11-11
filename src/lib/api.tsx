@@ -183,7 +183,7 @@ const addgroup = (payload, data) => {
     });
 };
 const viewAllPost = payload => {
-  // console.log('data of payload for hashtag', payload);
+  console.log('data of payload for hashtag', payload);
   const request = `/view-post?page=${payload.page}`;
   return axios
     .post(request, payload, {
@@ -242,6 +242,24 @@ const creategroup = payload => {
 const hashTag = payload => {
   // console.log('data of payload', JSON.stringify(payload));
   const request = `/hashtag-list`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in hash tag', e);
+    });
+};
+const reportUser = payload => {
+  // console.log('data of payload', JSON.stringify(payload));
+  const request = `/report_post`;
   return axios
     .post(request, payload, {
       headers: {
@@ -330,7 +348,7 @@ const createComment = payload => {
     });
 };
 const blockUser = payload => {
-  // console.log('data of payload', JSON.stringify(data));
+  console.log('data of payload', payload);
   const request = `/blockUser`;
   return axios
     .post(request, payload, {
@@ -540,5 +558,6 @@ export {
   postDetail,
   likeDislikeProfile,
   updateToken,
+  reportUser,
   unBlockUser,
 };

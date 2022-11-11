@@ -15,6 +15,7 @@ import {
   // TouchableWithoutFeedback,
 } from 'react-native';
 // import { useState } from 'react';
+import moment from 'moment';
 import {register} from '../../../lib/api';
 import {
   GoogleSignin,
@@ -76,7 +77,9 @@ const Signup = ({navigation}: {navigation: any}) => {
       // user is authenticated
       if (appleAuthRequestResponse.email) {
         setShowModal(true);
+        var today = new Date();
 
+        let vrifiddate = moment(today).format('YYYY-MM-DD hh:mm:ss');
         const data = new FormData();
         data.append(
           'firstname',
@@ -86,7 +89,7 @@ const Signup = ({navigation}: {navigation: any}) => {
         data.append('email', appleAuthRequestResponse.email);
         data.append('password', '12345678');
         data.append('password_confirmation', '12345678');
-
+        data.append('email_verified_at', vrifiddate);
         // data.append('image', {
         //   uri: userInfo.user.photo,
         //   type: 'image/jpeg',
@@ -214,13 +217,15 @@ const Signup = ({navigation}: {navigation: any}) => {
       .then(json => {
         console.log('json', json);
         setShowModal(true);
+        var today = new Date();
 
+        let vrifiddate = moment(today).format('YYYY-MM-DD hh:mm:ss');
         const data = new FormData();
         data.append('firstname', json.name);
         data.append('email', json.email);
         data.append('password', json.id);
         data.append('password_confirmation', json.id);
-
+        data.append('email_verified_at', vrifiddate);
         data.append('image', {
           uri: json.picture.data.url,
           type: 'image/jpeg',
@@ -283,13 +288,15 @@ const Signup = ({navigation}: {navigation: any}) => {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
       setShowModal(true);
+      var today = new Date();
 
+      let vrifiddate = moment(today).format('YYYY-MM-DD hh:mm:ss');
       const data = new FormData();
       data.append('firstname', userInfo.user.name);
       data.append('email', userInfo.user.email);
       data.append('password', userInfo.user.id);
       data.append('password_confirmation', userInfo.user.id);
-
+      data.append('email_verified_at', vrifiddate);
       data.append('image', {
         uri: userInfo.user.photo,
         type: 'image/jpeg',
@@ -663,6 +670,7 @@ const Signup = ({navigation}: {navigation: any}) => {
 
                     data.append('zipcode', zip);
                     data.append('email', email);
+                    // data.append('social', false);
                     data.append('password', password);
                     data.append('password_confirmation', passwordConfirm);
                     data.append('phoneno', phone);
