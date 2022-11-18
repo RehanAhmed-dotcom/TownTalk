@@ -20,6 +20,7 @@ target 'TownTalk' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+
   target 'TownTalkTests' do
     inherit! :complete
     # Pods for testing

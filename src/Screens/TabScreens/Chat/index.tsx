@@ -15,17 +15,36 @@ import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {blockUserList, getfcm} from '../../../lib/api';
 import database from '@react-native-firebase/database';
+import Icon1 from 'react-native-vector-icons/Octicons';
+import Icon from 'react-native-vector-icons/Feather';
 import MyModal from '../../../Components/MyModal';
 const Chat = ({navigation}) => {
-  const [name, setName] = useState('Olivia Benson');
-  const [zip, setZip] = useState('');
   const [list, setList] = useState([]);
   const [block, setBlock] = useState([]);
+  const [searched, setSearched] = useState([]);
   const [fb, setFb] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [search, setSearch] = useState('');
   const [db, setDb] = useState(false);
   const {userData} = useSelector(({USER}) => USER);
-
+  const searchTextGiven = e => {
+    let filteredName = [];
+    // if (e) {
+    filteredName = list.filter(item => {
+      return (
+        item?.user?.firstname?.toLowerCase().includes(`${e.toLowerCase()}`) ||
+        item?.latestMessage?.toLowerCase().includes(`${e.toLowerCase()}`)
+      );
+      //  ||
+      // item?.vender?.business_specialty
+      //   ?.toLowerCase()
+      //   .includes(`${e.toLowerCase()}`)
+      // return item.vender.fullname.toLowerCase().includes(`${e.toLowerCase()}`);
+    });
+    setSearched(filteredName);
+    // filteredName = [];
+    // }
+  };
   useEffect(() => {
     console.log('only one ready');
     if (fb && db) {
@@ -79,6 +98,10 @@ const Chat = ({navigation}) => {
             .catch(err => {
               console.log('err', err);
               setShowModal(false);
+              navigation.navigate('SingleChat', {
+                item: item.user,
+                fcm_token: '',
+              });
             });
           //
         }}
@@ -113,7 +136,7 @@ const Chat = ({navigation}) => {
               <Text
                 style={{
                   marginTop: 5,
-                  color: 'black',
+                  color: '#EBEBEB',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}>
                 Image
@@ -122,7 +145,7 @@ const Chat = ({navigation}) => {
               <Text
                 style={{
                   marginTop: 5,
-                  color: 'black',
+                  color: 'grey',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}>
                 {item.latestMessage.slice(0, 23)}
@@ -153,13 +176,13 @@ const Chat = ({navigation}) => {
               </Text>
             </>
           ) : (
-            <Text style={{fontSize: 12}}>
+            <Text style={{fontSize: 12, color: 'grey'}}>
               {moment(item.timestamp).format('MM/DD/YYYY hh:mm a')}
             </Text>
           )}
           <Text
             style={{
-              color: 'black',
+              color: 'grey',
               fontFamily: 'MontserratAlternates-Regular',
               fontSize: 10,
             }}>
@@ -184,7 +207,7 @@ const Chat = ({navigation}) => {
         .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
         .orderByChild('timestamp')
         .on('value', dataSnapshot => {
-          let users = [];
+          let users: any[] = [];
           dataSnapshot.forEach(child => {
             users.push(child.val());
           });
@@ -201,11 +224,12 @@ const Chat = ({navigation}) => {
               }
             }
             setList(myArray.reverse());
+            setSearched(myArray.reverse());
             // setBlock(res.data);
             // setDb(!db);
             // console.log('block done');
           });
-          // setList(users.reverse());
+
           setFb(!fb);
           // setLoading(false);
           console.log('firebase done');
@@ -223,268 +247,82 @@ const Chat = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          // elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+        }}>
+        <View style={{width: 25}} />
+
+        <Text
+          style={{
+            fontSize: 16,
+            fontFamily: 'MontserratAlternates-SemiBold',
+            color: 'black',
+          }}>
+          My Chats
+        </Text>
+
+        <Icon1 name="diff-added" size={25} color="black" />
+      </View>
+      <View style={{paddingHorizontal: 15}}>
         <View
           style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
             flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: 15,
+            backgroundColor: '#EBEBEB',
+            height: 50,
+            borderRadius: 10,
+            marginBottom: 10,
+            paddingHorizontal: 10,
+          }}>
+          <Icon name="search" size={20} color="#5F95F0" />
+          <TextInput
+            value={search}
+            onChangeText={text => {
+              setSearch(text);
+              searchTextGiven(text);
+            }}
+            placeholder="Search"
+            placeholderTextColor={'grey'}
+            style={{color: 'black', flex: 1}}
+          />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          {/* <TouchableOpacity>
-            <Icon1 name="left" size={20} />
-          </TouchableOpacity> */}
-          <View style={{marginLeft: 10}}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-              }}>
-              Inbox
-            </Text>
-            {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
-              Chicago, IL 60611, USA
-            </Text> */}
-          </View>
-          {/* <Image
-            source={require('../../../assets/Images/search.png')}
-            style={{height: 20, width: 20}}
-          /> */}
-        </View>
-        <View style={{paddingHorizontal: 15}}>
-          <FlatList data={list} renderItem={render} />
-        </View>
-        {/* <ScrollView>
-          <Image
-            source={require('../../../assets/Images/restaurants.jpg')}
-            style={{height: 200, width: '100%'}}
-          />
-          <View
+          <Text
             style={{
-              marginTop: 0,
-              backgroundColor: 'white',
-              elevation: 3,
-              paddingHorizontal: 10,
-              borderRadius: 5,
-              marginHorizontal: 15,
+              fontSize: 14,
+              color: 'black',
+              fontFamily: 'MontserratAlternates-SemiBold',
             }}>
-            <View style={{width: '100%', marginTop: 10, alignItems: 'center'}}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: '#5F95F0',
-                }}>
-                Pearl Continental
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: '#5F95F0',
-                }}>
-                Hotel Rawalpindi
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginTop: 20,
-              }}>
-              <View>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    fontFamily: 'MontserratAlternates-Medium',
-                  }}>
-                  PKR 4500
-                </Text>
-              </View>
-              <View style={{alignItems: 'center'}}>
-                <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{marginLeft: 1}}
-                  />
-                  <Icon
-                    name="star"
-                    size={10}
-                    color="#5F95F0"
-                    style={{opacity: 0.5, marginLeft: 1}}
-                  />
-                </View>
-              </View>
-            </View>
-            <View style={{width: '100%', marginTop: 10, alignItems: 'center'}}>
-              <TouchableOpacity
-                style={{
-                  width: 200,
-                  height: 40,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  backgroundColor: '#5F95F0',
-                  marginTop: 10,
-                  borderRadius: 5,
-                }}>
-                <Text
-                  style={{
-                    fontSize: 10,
-                    color: 'white',
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                  }}>
-                  View Deal
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <Text
-              style={{
-                fontSize: 16,
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              About
-            </Text>
-            <Text
-              style={{
-                fontSize: 12,
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Pearl Continental Hotels & Resorts is the largest chain of
-              five-star hotels in Pakistan with properties in Karachi, Lahore,
-              Rawalpindi, Peshawar, Gawadar, Bhurban, Muzaffarabad and Malam
-              Jabba
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Amneties
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                alignItems: 'center',
-              }}>
-              <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/drink.png')}
-                style={{width: 15, height: 15}}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginLeft: 10,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Food & Drinks
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                alignItems: 'center',
-              }}>
-              <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/family.png')}
-                style={{width: 15, height: 15}}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginLeft: 10,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Family
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                marginTop: 10,
-                alignItems: 'center',
-              }}>
-              <Image
-                resizeMode="contain"
-                source={require('../../../assets/Images/clean.png')}
-                style={{width: 15, height: 15}}
-              />
-              <Text
-                style={{
-                  fontSize: 12,
-                  marginLeft: 10,
-                  fontFamily: 'MontserratAlternates-Regular',
-                }}>
-                Cleaning Services
-              </Text>
-            </View>
-            <View style={{height: 30}} />
-          </View>
-          <View style={{marginTop: 20, paddingHorizontal: 15}}>
-            <Text style={{fontFamily: 'MontserratAlternates-SemiBold'}}>
-              Restaurants address
-            </Text>
-            <Text
-              style={{
-                marginTop: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Sadar Rawalpindi, Pakistan
-            </Text>
-            <View
-              style={{
-                height: 200,
-                marginBottom: 10,
-                marginTop: 20,
-                borderRadius: 10,
-              }}>
-              <MapView
-                style={{flex: 1, borderRadius: 10}}
-                initialRegion={{
-                  latitude: 37.78825,
-                  longitude: -122.4324,
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
-                }}
-              />
-            </View>
-          </View>
-        </ScrollView> */}
-      </ImageBackground>
+            Messages
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              color: '#5F95F0',
+              textDecorationLine: 'underline',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}>
+            Requests
+          </Text>
+        </View>
+        <FlatList data={searched} renderItem={render} />
+      </View>
+      {/* </ImageBackground> */}
       {MyModal(showModal)}
     </SafeAreaView>
   );
