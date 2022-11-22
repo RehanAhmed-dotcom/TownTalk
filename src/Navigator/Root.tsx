@@ -9,6 +9,7 @@ import Code from '../Screens/Auth/Code';
 import Email from '../Screens/Auth/Email';
 import Password from '../Screens/Auth/Password';
 import TabNavigator from './Tab';
+import Requests from '../Screens/ExtraScreens/Requests';
 import Hashes from '../Screens/ExtraScreens/Hashes';
 import UserProfile from '../Screens/ExtraScreens/UserProfile';
 import PostDetails from '../Screens/ExtraScreens/PostDetails';
@@ -67,6 +68,7 @@ const Root = () => {
             <Stack.Screen name="Hashes" component={Hashes} />
             <Stack.Screen name="ContactUs" component={ContactUs} />
             <Stack.Screen name="GroupPage" component={GroupPage} />
+            <Stack.Screen name="Requests" component={Requests} />
             <Stack.Screen name="NewPassword" component={NewPassword} />
             <Stack.Screen name="SingleChat" component={SingleChat} />
             <Stack.Screen name="PostDetails" component={PostDetails} />

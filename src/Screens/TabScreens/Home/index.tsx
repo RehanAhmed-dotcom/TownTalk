@@ -710,6 +710,7 @@ const Home = ({navigation}) => {
             }}
             onPress={() => navigation.navigate('GroupPage')}>
             <Image
+              resizeMode="contain"
               source={require('../../../assets/Images/BellIcon.png')}
               style={{
                 height: 15,

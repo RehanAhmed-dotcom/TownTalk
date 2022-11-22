@@ -15,10 +15,10 @@ import {useSelector} from 'react-redux';
 import moment from 'moment';
 import {blockUserList, getfcm} from '../../../lib/api';
 import database from '@react-native-firebase/database';
-import Icon1 from 'react-native-vector-icons/Octicons';
+import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/Feather';
 import MyModal from '../../../Components/MyModal';
-const Chat = ({navigation}) => {
+const Requests = ({navigation}) => {
   const [list, setList] = useState([]);
   const [block, setBlock] = useState([]);
   const [searched, setSearched] = useState([]);
@@ -204,7 +204,10 @@ const Chat = ({navigation}) => {
     try {
       // setLoading(true);
       database()
-        .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .ref(
+          'requestusers/' +
+            userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+        )
         .orderByChild('timestamp')
         .on('value', dataSnapshot => {
           let users: any[] = [];
@@ -258,9 +261,11 @@ const Chat = ({navigation}) => {
           flexDirection: 'row',
           alignItems: 'center',
           paddingHorizontal: 15,
-          justifyContent: 'center',
+          justifyContent: 'space-between',
         }}>
-        <View style={{width: 25}} />
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon1 name="arrowleft" size={25} />
+        </TouchableOpacity>
 
         <Text
           style={{
@@ -268,9 +273,9 @@ const Chat = ({navigation}) => {
             fontFamily: 'MontserratAlternates-SemiBold',
             color: 'black',
           }}>
-          My Chats
+          My Requests
         </Text>
-
+        <View style={{width: 25}} />
         {/* <Icon1 name="diff-added" size={25} color="black" /> */}
       </View>
       <View style={{paddingHorizontal: 15}}>
@@ -308,19 +313,17 @@ const Chat = ({navigation}) => {
               color: 'black',
               fontFamily: 'MontserratAlternates-SemiBold',
             }}>
-            Messages
+            Requests
           </Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Requests')}>
-            <Text
-              style={{
-                fontSize: 14,
-                color: '#5F95F0',
-                textDecorationLine: 'underline',
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Requests
-            </Text>
-          </TouchableOpacity>
+          {/* <Text
+            style={{
+              fontSize: 14,
+              color: '#5F95F0',
+              textDecorationLine: 'underline',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}>
+            Requests
+          </Text> */}
         </View>
         <FlatList data={searched} renderItem={render} />
       </View>
@@ -329,4 +332,4 @@ const Chat = ({navigation}) => {
     </SafeAreaView>
   );
 };
-export default Chat;
+export default Requests;

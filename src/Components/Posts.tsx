@@ -81,6 +81,7 @@ const Posts = props => {
                 fontSize: 12,
                 fontFamily: 'MontserratAlternates-Regular',
                 marginTop: 5,
+                color: 'grey',
               }}>
               {/* {item.test} */}
               {/* // {d.toLocaleTimeString() } */}

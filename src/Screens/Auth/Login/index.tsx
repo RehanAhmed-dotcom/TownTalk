@@ -611,6 +611,7 @@ const Login = ({navigation}: {navigation: any}) => {
                       style={{
                         fontFamily: 'MontserratAlternates-Regular',
                         fontSize: 10,
+                        marginRight: 10,
                       }}>
                       {password ? (show ? 'Hide' : 'Show') : null}
                     </Text>

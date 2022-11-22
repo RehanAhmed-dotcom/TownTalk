@@ -442,9 +442,53 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
       hideSubscription.remove();
     };
   }, []);
+  const _chatUsersRequest = async () => {
+    try {
+      // console.log('user going to db', guestData);
+      // database()
+      //   .ref(
+      //     'requestusers/' +
+      //       userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+      //   )
+      //   .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+      //   .set({
+      //     latestMessage: message,
+      //     timestamp: database.ServerValue.TIMESTAMP,
+      //     counter: 0,
+      //     screen: image && items,
+      //     user: guestData,
+      //   });
+
+      database()
+        .ref('requestusers/' + guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .child(userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .once('value', snapshot => {
+          const counts = snapshot?.val()?.counter;
+          database()
+            .ref(
+              'requestusers/' + guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+            )
+            .child(userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+            .set({
+              latestMessage: message,
+              timestamp: database.ServerValue.TIMESTAMP,
+              counter: counts ? counts + 1 : 1,
+              screen: image && items,
+              user: user,
+            });
+        });
+    } catch (error) {}
+  };
   const _chatUsers = async () => {
     try {
       // console.log('user going to db', guestData);
+      database()
+        .ref(
+          'requestusers/' +
+            userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+        )
+        .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
+        .remove();
       database()
         .ref('users/' + userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''))
         .child(guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''))
@@ -837,17 +881,17 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   };
   const requestSend = () => {
     setMessage('');
-
+    console.log('called in request send');
     // _handlePushNotification();
     // console.log('message is here', message);
     senderMsg(
-      'Request for conversation',
-      userData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+      message,
+      userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
       guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
       Date.now(),
       '',
     );
-    _chatUsers()
+    _chatUsersRequest()
       .then(res => {
         console.log('no error found in send', res);
       })
@@ -856,13 +900,13 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
       });
 
     recieverMsg(
-      'Request for conversation',
-      userData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
+      message,
+      userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, ''),
       guestData.email.replace(/[^a-zA-Z0-9 ]/g, ''),
       Date.now(),
       '',
     );
-    _chatUsers()
+    _chatUsersRequest()
       .then(res => {
         console.log('no error found in rev', res);
       })
