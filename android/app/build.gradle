@@ -292,6 +292,8 @@ dependencies {
         implementation jscFlavor
     }
     // implementation ':react-native-audio'
+    implementation 'com.android.support:support-v4:20.0.+'
+   
 }
 
 if (isNewArchitectureEnabled()) {
