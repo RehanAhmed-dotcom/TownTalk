@@ -66,6 +66,8 @@
 	<string>Your current location will be displayed for job location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location service</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Need microphone access for uploading videos</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>App need to access your photo library to set image as profile avatar</string>
 	<key>UIAppFonts</key>

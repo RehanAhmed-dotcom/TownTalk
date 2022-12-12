@@ -11,11 +11,14 @@ import Icon4 from 'react-native-vector-icons/FontAwesome';
 import Home from '../Screens/TabScreens/Home';
 import Chat from '../Screens/TabScreens/Chat';
 import Create from '../Screens/TabScreens/Create';
+import Explore from '../Screens/TabScreens/Explore';
 import Notification from '../Screens/TabScreens/Notification';
 import Profile from '../Screens/TabScreens/Profile';
 import {useSelector} from 'react-redux';
 const TabNavigator = () => {
   const {userData} = useSelector(({USER}) => USER);
+  const focussed = require('../assets/Images/Compass.png');
+  const unfocused = require('../assets/Images/compas.png');
   return (
     <Tab.Navigator screenOptions={{headerShown: false, tabBarShowLabel: false}}>
       <Tab.Screen
@@ -47,8 +50,8 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Chat"
-        component={Chat}
+        name="Explore"
+        component={Explore}
         options={{
           tabBarIcon: ({focused}) => (
             <View
@@ -64,10 +67,12 @@ const TabNavigator = () => {
                 justifyContent: 'center',
                 // position: 'absolute',
               }}>
-              <Icon1
-                name="chat"
-                size={20}
-                color={focused ? '#5F95F0' : 'grey'}
+              <Image
+                source={focused ? focussed : unfocused}
+                // source={require(`../assets/Images/${
+                //   focused ? 'compass.png' : 'compas.png'
+                // }`)}
+                style={{height: 25, width: 25}}
               />
             </View>
           ),
@@ -97,8 +102,8 @@ const TabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Notification"
-        component={Notification}
+        name="Chat"
+        component={Chat}
         options={{
           tabBarIcon: ({focused}) => (
             <View
@@ -114,8 +119,8 @@ const TabNavigator = () => {
                 justifyContent: 'center',
                 // position: 'absolute',
               }}>
-              <Icon3
-                name="bell"
+              <Icon1
+                name="chat"
                 size={20}
                 color={focused ? '#5F95F0' : 'grey'}
               />
