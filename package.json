@@ -53,6 +53,7 @@
     "react-native-switch-with-icons": "^2.0.1",
     "react-native-tags": "^2.2.1",
     "react-native-vector-icons": "^9.1.0",
+    "react-native-video": "^5.2.1",
     "react-native-webview": "^11.23.0",
     "react-redux": "^8.0.1",
     "redux": "^4.2.0",

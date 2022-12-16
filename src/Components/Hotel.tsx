@@ -13,12 +13,7 @@ import LikeDislike from './LikeDislike';
 import {config} from '../../config';
 // import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/Fontisto';
-const Hotel = props => {
-  // console.log('confing', config);
-  const {navigation, item} = props;
-  // console.log('opne', item?.opening_hours?.open_now);
-  const [image, setImage] = useState('');
-  const [show, setShow] = useState(false);
+const Hotel = ({item, navigation}) => {
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('RestaurantsDetail', {item})}

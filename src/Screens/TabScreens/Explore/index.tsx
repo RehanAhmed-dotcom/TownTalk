@@ -5,18 +5,20 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  ScrollView,
   View,
   TextInput,
   FlatList,
 } from 'react-native';
 import Hotspot from '../../../Components/Hotspot';
 import Icon from 'react-native-vector-icons/Feather';
-const Explore = () => {
+const Explore = ({navigation}) => {
   const [search, setSearch] = useState('');
   const dummy = [1, 2, 3, 4, 5];
   const render = ({item}) => <Hotspot item={item} />;
   const renders = ({item}) => (
     <TouchableOpacity
+      onPress={() => navigation.navigate('ExploreTowns')}
       style={{
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
@@ -49,77 +51,84 @@ const Explore = () => {
 
         {/* <Icon1 name="diff-added" size={25} color="black" /> */}
       </View>
-      <View style={{paddingHorizontal: 15}}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
+      <ScrollView>
+        <View style={{paddingHorizontal: 15}}>
           <View
             style={{
               flexDirection: 'row',
+              justifyContent: 'space-between',
               alignItems: 'center',
-              height: 50,
-              paddingHorizontal: 15,
-              backgroundColor: '#ccc',
-              borderRadius: 10,
-              width: '80%',
             }}>
-            <Icon name="search" color="#5F95F0" size={20} />
-            <TextInput
-              value={search}
-              onChangeText={text => setSearch(text)}
-              placeholder="Search"
-              placeholderTextColor={'grey'}
-              style={{color: 'black', flex: 1}}
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                height: 50,
+                paddingHorizontal: 15,
+                backgroundColor: '#ccc',
+                borderRadius: 10,
+                width: '80%',
+              }}>
+              <Icon name="search" color="#5F95F0" size={20} />
+              <TextInput
+                value={search}
+                onChangeText={text => setSearch(text)}
+                placeholder="Search"
+                placeholderTextColor={'grey'}
+                style={{color: 'black', flex: 1}}
+              />
+            </View>
+            <TouchableOpacity
+              style={{
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#200E32',
+                height: 50,
+                width: 50,
+                borderRadius: 10,
+              }}>
+              <Image
+                source={require('../../../assets/Images/whitefilter.png')}
+                style={{height: 20, width: 20}}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 20,
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('HotspotsNearby')}>
+              <Text style={{fontSize: 16, color: 'black'}}>
+                Hotspots Nearby
+              </Text>
+            </TouchableOpacity>
+            <Text style={{color: 'grey'}}>See all</Text>
+          </View>
+          <View>
+            <FlatList
+              data={dummy}
+              renderItem={render}
+              horizontal
+              keyExtractor={item => `${item}a`}
             />
           </View>
-          <TouchableOpacity
-            style={{
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: '#200E32',
-              height: 50,
-              width: 50,
-              borderRadius: 10,
-            }}>
-            <Image
-              source={require('../../../assets/Images/whitefilter.png')}
-              style={{height: 20, width: 20}}
-              resizeMode="contain"
+          <Text style={{marginTop: 20, color: 'black', fontSize: 16}}>
+            #Trendingtowns
+          </Text>
+          <View>
+            <FlatList
+              data={dummy}
+              renderItem={renders}
+              keyExtractor={item => `${item}a`}
             />
-          </TouchableOpacity>
+          </View>
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            marginTop: 20,
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <Text style={{fontSize: 16, color: 'black'}}>Hotspots Nearby</Text>
-          <Text style={{color: 'grey'}}>See all</Text>
-        </View>
-        <View>
-          <FlatList
-            data={dummy}
-            renderItem={render}
-            horizontal
-            keyExtractor={item => `${item}a`}
-          />
-        </View>
-        <Text style={{marginTop: 20, color: 'black', fontSize: 16}}>
-          #Trendingtowns
-        </Text>
-        <View>
-          <FlatList
-            data={dummy}
-            renderItem={renders}
-            keyExtractor={item => `${item}a`}
-          />
-        </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };

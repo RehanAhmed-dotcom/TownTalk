@@ -11,8 +11,10 @@ import {
   Text,
   ImageBackground,
 } from 'react-native';
+import moment from 'moment';
 import {getNotification} from '../../../lib/api';
 import {useSelector} from 'react-redux';
+import Icon from 'react-native-vector-icons/AntDesign';
 const Notification = ({navigation}) => {
   const [notification, setNotification] = useState([]);
   const {userData} = useSelector(({USER}) => USER);
@@ -35,7 +37,7 @@ const Notification = ({navigation}) => {
         borderBottomWidth: 1,
         borderBottomColor: '#ccc',
         paddingBottom: 20,
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
       }}>
       {item.type == 'post_like' ? (
         <>
@@ -47,7 +49,7 @@ const Notification = ({navigation}) => {
             }
             style={{height: 40, width: 40, borderRadius: 30}}
           />
-          <View style={{width: '70%'}}>
+          <View style={{width: '70%', marginLeft: 15}}>
             <Text
               style={{
                 fontSize: 14,
@@ -74,7 +76,7 @@ const Notification = ({navigation}) => {
               color: 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            {item.time}
+            {moment(item.date).format('MM/DD/YYYY')}
           </Text>
         </>
       ) : item.type == 'post_dislike' ? (
@@ -87,7 +89,7 @@ const Notification = ({navigation}) => {
             }
             style={{height: 40, width: 40, borderRadius: 30}}
           />
-          <View style={{width: '70%'}}>
+          <View style={{width: '70%', marginLeft: 15}}>
             <Text
               style={{
                 fontSize: 14,
@@ -114,7 +116,7 @@ const Notification = ({navigation}) => {
               color: 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            {item.time}
+            {moment(item.date).format('MM/DD/YYYY')}
           </Text>
         </>
       ) : item.type == 'profile_dislike' ? (
@@ -127,7 +129,7 @@ const Notification = ({navigation}) => {
             }
             style={{height: 40, width: 40, borderRadius: 30}}
           />
-          <View style={{width: '70%'}}>
+          <View style={{width: '70%', marginLeft: 15}}>
             <Text
               style={{
                 fontSize: 14,
@@ -154,7 +156,7 @@ const Notification = ({navigation}) => {
               color: 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            {item.time}
+            {moment(item.date).format('MM/DD/YYYY')}
           </Text>
         </>
       ) : item.type == 'profile_like' ? (
@@ -167,7 +169,7 @@ const Notification = ({navigation}) => {
             }
             style={{height: 40, width: 40, borderRadius: 30}}
           />
-          <View style={{width: '70%'}}>
+          <View style={{width: '70%', marginLeft: 15}}>
             <Text
               style={{
                 fontSize: 14,
@@ -194,7 +196,7 @@ const Notification = ({navigation}) => {
               color: 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            {item.time}
+            {moment(item.date).format('MM/DD/YYYY')}
           </Text>
         </>
       ) : (
@@ -207,7 +209,7 @@ const Notification = ({navigation}) => {
             }
             style={{height: 40, width: 40, borderRadius: 30}}
           />
-          <View style={{width: '70%'}}>
+          <View style={{width: '70%', marginLeft: 15}}>
             <Text
               style={{
                 fontSize: 14,
@@ -241,55 +243,64 @@ const Notification = ({navigation}) => {
               color: 'black',
               fontSize: 10,
             }}>
-            {item.time}
+            {moment(item.date).format('MM/DD/YYYY')}
           </Text>
         </>
       )}
     </TouchableOpacity>
   );
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getNotification({Auth: userData.token}).then(res => {
-        // console.log('res of notifications', res);
-        setNotification(res.data.reverse());
-      });
+    getNotification({Auth: userData.token}).then(res => {
+      console.log('res of notifications', res);
+      setNotification(res.data.reverse());
     });
 
     // Return the function to unsubscribe from the event so it gets removed on unmount
-    return unsubscribe;
-  }, [navigation]);
+  }, []);
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
           style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
+            height: 30,
+            width: 30,
+            borderRadius: 5,
+            backgroundColor: '#ccc',
             alignItems: 'center',
-            paddingHorizontal: 15,
-            justifyContent: 'space-between',
+            justifyContent: 'center',
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <View style={{marginLeft: 10}}>
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  color: 'black',
-                }}>
-                Notification
-              </Text>
-            </View>
+          <Icon name="arrowleft" size={20} color="black" />
+        </TouchableOpacity>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View style={{marginLeft: 10}}>
+            <Text
+              style={{
+                fontSize: 16,
+                fontFamily: 'MontserratAlternates-SemiBold',
+                color: 'black',
+              }}>
+              Notifications
+            </Text>
           </View>
         </View>
-        <View style={{paddingHorizontal: 15, flex: 1}}>
-          <FlatList data={notification} renderItem={render} />
-        </View>
-      </ImageBackground>
+        <View style={{width: 30}} />
+      </View>
+      <View style={{paddingHorizontal: 15, flex: 1}}>
+        <FlatList data={notification} renderItem={render} />
+      </View>
+      {/* </ImageBackground> */}
     </SafeAreaView>
   );
 };

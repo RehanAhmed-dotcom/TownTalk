@@ -12,7 +12,7 @@ import Home from '../Screens/TabScreens/Home';
 import Chat from '../Screens/TabScreens/Chat';
 import Create from '../Screens/TabScreens/Create';
 import Explore from '../Screens/TabScreens/Explore';
-import Notification from '../Screens/TabScreens/Notification';
+
 import Profile from '../Screens/TabScreens/Profile';
 import {useSelector} from 'react-redux';
 const TabNavigator = () => {

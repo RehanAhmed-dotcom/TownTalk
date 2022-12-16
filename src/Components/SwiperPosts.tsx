@@ -5,12 +5,18 @@ import {
   FlatList,
   ScrollView,
   TouchableOpacity,
+  Platform,
   Image,
   Text,
 } from 'react-native';
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from 'react-native-responsive-screen';
 import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import LikeDislike from './LikeDislike';
-
+import Icons from 'react-native-vector-icons/AntDesign';
+import Video from 'react-native-video';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Entypo';
 import Swiper from 'react-native-swiper';
@@ -18,9 +24,9 @@ import Icon1 from 'react-native-vector-icons/FontAwesome';
 const SwiperPosts = props => {
   const {item, swipe, navigation, onShare, onPress, hashPress, press} = props;
   const {userData} = useSelector(({USER}) => USER);
-
+  const [paused, setPaused] = useState(false);
   const [show, setShow] = useState(false);
-
+  console.log('checking item', item);
   return (
     <ScrollView>
       <View
@@ -142,19 +148,95 @@ const SwiperPosts = props => {
                   justifyContent: 'center',
                 }}
                 showsButtons={false}>
-                {swipe.map(item => (
-                  //   <View style={{width: '100%', marginTop: 10, height: 150}}>
-                  <Image
-                    source={{uri: item.media}}
-                    style={{
-                      borderRadius: 10,
-                      width: '100%',
-                      height: '100%',
-                      resizeMode: 'cover',
-                    }}
-                  />
+                {swipe.map(
+                  item =>
+                    //   <View style={{width: '100%', marginTop: 10, height: 150}}>
+                    item?.media_type == 'image' ? (
+                      <Image
+                        source={{uri: item?.media}}
+                        style={{
+                          borderRadius: 10,
+                          width: '100%',
+                          height: '100%',
+                          resizeMode: 'cover',
+                        }}
+                      />
+                    ) : (
+                      <>
+                        <Video
+                          resizeMode="stretch"
+                          posterresizeMode="cover"
+                          repeat={Platform.OS == 'ios' ? true : false}
+                          onEnd={() => setPaused(true)}
+                          // onEnd={() => setPaused(!paused)}
+                          poster={'https://baconmockup.com/300/200/'}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            // width: wp(85),
+                            // back
+                            // borderRadius: 10,
+                            borderRadius: 10,
+                            bottom: 0,
+                            // height: 250,
+                            width: '100%',
+                            height: '100%',
+                            right: 0,
+                          }}
+                          // controls={true}
+                          paused={paused}
+                          source={{uri: item?.media}}
+                        />
+                        <View
+                          style={{
+                            position: 'absolute',
+                            height: '100%',
+                            width: '100%',
+                            alignItems: 'center',
+                            // backgroundColor: 'red',
+                            justifyContent: 'center',
+                          }}>
+                          {paused ? (
+                            <TouchableOpacity
+                              style={{
+                                width: 50,
+                                height: 50,
+                                borderRadius: 30,
+                                alignItems: 'center',
+                                backgroundColor: '#5F95F0',
+                                justifyContent: 'center',
+                              }}>
+                              <Icon
+                                name={'controller-play'}
+                                onPress={() => setPaused(!paused)}
+                                size={40}
+                                color="white"
+                              />
+                            </TouchableOpacity>
+                          ) : (
+                            <TouchableOpacity
+                              style={{
+                                width: 50,
+                                height: 50,
+                                backgroundColor: '#5F95F0',
+                                borderRadius: 30,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                              }}>
+                              <Icons
+                                name={'pause'}
+                                onPress={() => setPaused(!paused)}
+                                size={40}
+                                color="white"
+                              />
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      </>
+                    ),
                   //   </View>
-                ))}
+                )}
               </Swiper>
             </View>
           )}

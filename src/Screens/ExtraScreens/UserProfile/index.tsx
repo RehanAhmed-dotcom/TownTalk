@@ -452,7 +452,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <View
+          {/* <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -508,7 +508,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
                 Groups
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <FlatList
             showsVerticalScrollIndicator={false}
             data={select == 'Posts' ? posts.posts : posts.groups}

@@ -529,6 +529,10 @@ const Home = ({navigation}) => {
       }}
       press={alter}
       navigation={navigation}
+      tagPress={text => {
+        navigation.navigate('Hashes', {tag: item.business_tag});
+        console.log('tag press');
+      }}
       hashPress={text => {
         console.log('text of hash tag', text);
         navigation.navigate('Hashes', {text});
@@ -708,7 +712,7 @@ const Home = ({navigation}) => {
               justifyContent: 'center',
               borderColor: '#ccc',
             }}
-            onPress={() => navigation.navigate('GroupPage')}>
+            onPress={() => navigation.navigate('Notification')}>
             <Image
               resizeMode="contain"
               source={require('../../../assets/Images/BellIcon.png')}

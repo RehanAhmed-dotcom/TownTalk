@@ -6,17 +6,21 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
+  Platform,
   Image,
   Text,
 } from 'react-native';
 import LikeDislike from './LikeDislike';
+import Video from 'react-native-video';
 import Swiper from 'react-native-swiper';
+import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import moment from 'moment';
 import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Feather';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/EvilIcons';
+import Icon3 from 'react-native-vector-icons/AntDesign';
 const Posts = props => {
   const {
     item,
@@ -25,11 +29,13 @@ const Posts = props => {
     blockuser,
     onPress,
     hashPress,
+    tagPress,
     handleReport,
     press,
   } = props;
   const {userData} = useSelector(({USER}) => USER);
   const [show, setShow] = useState(false);
+  const [paused, setPaused] = useState(false);
   return (
     <TouchableOpacity
       activeOpacity={1}
@@ -68,14 +74,35 @@ const Posts = props => {
             style={{width: 50, height: 50, borderRadius: 50}}
           />
           <View style={{marginLeft: 10}}>
-            <Text
+            <View
               style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                fontSize: 16,
-                color: 'black',
+                width: wp(60),
               }}>
-              {`${item?.user?.firstname}`}
-            </Text>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
+                  color: 'black',
+                }}>
+                {`${item?.user?.firstname}`}
+                {item?.business_tag && (
+                  <Text style={{color: 'grey'}}>
+                    {' '}
+                    tagged{' '}
+                    <Text
+                      onPress={tagPress}
+                      style={{
+                        fontFamily: 'MontserratAlternates-SemiBold',
+                        fontSize: 16,
+                        color: 'black',
+                      }}>
+                      {item?.business_tag}
+                    </Text>
+                  </Text>
+                )}
+              </Text>
+            </View>
+
             <Text
               style={{
                 fontSize: 12,
@@ -83,10 +110,7 @@ const Posts = props => {
                 marginTop: 5,
                 color: 'grey',
               }}>
-              {/* {item.test} */}
-              {/* // {d.toLocaleTimeString() } */}
               {item?.created_at}
-              {/* {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')} */}
             </Text>
           </View>
         </View>
@@ -158,66 +182,106 @@ const Posts = props => {
       </TouchableOpacity>
 
       <View style={{marginTop: 10}}>
-        {/* <Text
-          style={{
-            fontSize: 13,
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          {item?.description}
-        </Text> */}
-
-        {/* {item?.media.length > 0 && (
-          <View style={{width: '100%', marginTop: 10, height: 350}}>
-            <Swiper
-              loadMinimal={true}
-              showsPagination={true}
-              key={item?.media.length}
-              paginationStyle={{bottom: 10}}
-              activeDotColor="#5F95F0"
-              loop={true}
+        {item?.media[0]?.media &&
+          (item?.media[0]?.media_type == 'image' ? (
+            <Image
+              source={
+                item?.media[0]?.media
+                  ? {uri: item?.media[0]?.media}
+                  : require('../assets/Images/social.jpg')
+              }
+              resizeMode="cover"
               style={{
-                alignItems: 'center',
-                zIndex: 40,
-                justifyContent: 'center',
+                height: undefined,
+                aspectRatio: 1,
+                zIndex: -11,
+                borderRadius: 10,
+                width: '100%',
+                marginTop: 10,
               }}
-              showsButtons={false}>
-              {item?.media.map(item => (
-                //   <View style={{width: '100%', marginTop: 10, height: 150}}>
-                <Image
-                  source={{uri: item.media}}
-                  style={{
-                    height: undefined,
-                    aspectRatio: 1,
-                    borderRadius: 10,
-                    width: '100%',
-                    marginTop: 10,
-                  }}
-                />
-                //   </View>
-              ))}
-            </Swiper>
-          </View>
-        )} */}
-        {item?.media[0]?.media && (
-          <Image
-            source={
-              item?.media[0]?.media
-                ? {uri: item?.media[0]?.media}
-                : require('../assets/Images/social.jpg')
-            }
-            resizeMode="cover"
-            style={{
-              height: undefined,
-              aspectRatio: 1,
-              zIndex: -11,
-              borderRadius: 10,
-              width: '100%',
-              marginTop: 10,
-            }}
-          />
-        )}
+            />
+          ) : (
+            <>
+              <Video
+                resizeMode="stretch"
+                posterresizeMode="cover"
+                repeat={Platform.OS == 'ios' ? true : false}
+                onEnd={() => setPaused(true)}
+                // onEnd={() => setPaused(!paused)}
+                poster={
+                  'https://towntalkapp.com/app/public/assets/thumbnail/thumbnail.png'
+                }
+                style={{
+                  // position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  // width: wp(85),
+                  // back
+                  // borderRadius: 10,
+                  borderRadius: 10,
+                  bottom: 0,
+                  // height: 250,
+                  width: '100%',
+                  // height: 300,
+                  height: undefined,
+                  aspectRatio: 1,
+                  right: 0,
+                }}
+                // controls={true}
+                paused={paused}
+                source={{uri: item?.media[0]?.media}}
+              />
+              <View
+                style={{
+                  position: 'absolute',
+                  height: undefined,
+                  aspectRatio: 1,
+                  // height: 300,
+                  width: '100%',
+                  alignItems: 'center',
+                  // backgroundColor: 'red',
+                  justifyContent: 'center',
+                }}>
+                {paused ? (
+                  <TouchableOpacity
+                    style={{
+                      width: 50,
+                      height: 50,
+                      borderRadius: 30,
+                      alignItems: 'center',
+                      backgroundColor: '#5F95F0',
+                      justifyContent: 'center',
+                    }}>
+                    <Icon2
+                      name={'controller-play'}
+                      onPress={() => setPaused(!paused)}
+                      size={40}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={{
+                      width: 50,
+                      height: 50,
+                      backgroundColor: '#5F95F0',
+                      borderRadius: 30,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}>
+                    <Icon3
+                      name={'pause'}
+                      onPress={() => setPaused(!paused)}
+                      size={40}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </>
+          ))}
         <View style={{marginTop: 10}}>
+          {/* <Text>{item?.description}</Text> */}
           <MentionHashtagTextView
             numberOfLines={5}
             mentionHashtagPress={hashPress}
@@ -262,10 +326,6 @@ const Posts = props => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            {/* <Image
-                source={require('../assets/Images/comment.png')}
-                style={{height: 10, width: 10}}
-              /> */}
             <Icon1 name="comment" size={25} color="black" />
 
             <Text
@@ -279,82 +339,6 @@ const Posts = props => {
             </Text>
           </TouchableOpacity>
         </View>
-
-        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() => {
-              setLike(!like);
-              setDislike(false);
-              // press();
-              likeDislike({
-                Auth: userData.token,
-                creator_id: item?.user?.id,
-                post_id: item?.id,
-                is_like: 1,
-              })
-                .then(res => {
-                  console.log('res', res);
-                  press();
-                })
-                .catch(err => {
-                  console.log('err', err);
-                });
-            }}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon
-              name="thumbs-up"
-              size={20}
-              color={like ? '#5F95F0' : 'grey'}
-            />
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                fontSize: 13,
-                marginLeft: 5,
-                color: 'black',
-              }}>
-              {likecount}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setDislike(!dislike);
-              setLike(false);
-              press();
-              likeDislike({
-                Auth: userData.token,
-                creator_id: item?.user?.id,
-                post_id: item?.id,
-                is_like: 0,
-              })
-                .then(res => {
-                  console.log('res', res);
-                })
-                .catch(err => {
-                  console.log('err', err);
-                });
-            }}
-            style={{
-              flexDirection: 'row',
-              marginLeft: 10,
-              alignItems: 'center',
-            }}>
-            <Icon
-              name="thumbs-down"
-              size={20}
-              color={dislike ? '#5F95F0' : 'grey'}
-            />
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                fontSize: 13,
-                marginLeft: 5,
-                color: 'black',
-              }}>
-              {dislikecount}
-            </Text>
-          </TouchableOpacity>
-        </View> */}
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
@@ -369,20 +353,7 @@ const Posts = props => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            {/* <Image
-              source={require('../assets/Images/share.png')}
-              style={{height: 10, width: 10}}
-            /> */}
             <Icon name="send" size={16} color={'black'} />
-            {/* <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                marginLeft: 5,
-                fontSize: 13,
-                color: 'black',
-              }}>
-              Share
-            </Text> */}
           </TouchableOpacity>
         </View>
       </View>
@@ -429,8 +400,6 @@ const Posts = props => {
           </Text>
         </TouchableOpacity>
       )}
-
-      {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}
     </TouchableOpacity>
   );
 };

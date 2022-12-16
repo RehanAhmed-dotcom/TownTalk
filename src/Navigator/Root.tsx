@@ -9,6 +9,7 @@ import Code from '../Screens/Auth/Code';
 import Email from '../Screens/Auth/Email';
 import Password from '../Screens/Auth/Password';
 import TabNavigator from './Tab';
+import ExploreTowns from '../Screens/ExtraScreens/ExploreTowns';
 import Requests from '../Screens/ExtraScreens/Requests';
 import Hashes from '../Screens/ExtraScreens/Hashes';
 import UserProfile from '../Screens/ExtraScreens/UserProfile';
@@ -21,6 +22,7 @@ import EditProfile from '../Screens/ExtraScreens/EditProfile';
 import ContactUs from '../Screens/ExtraScreens/ContactUs';
 import Setting from '../Screens/ExtraScreens/Setting';
 import phoneNo from '../Screens/Auth/phoneNo';
+import Notification from '../Screens/TabScreens/Notification';
 import {navigationRef} from '../config/NavigationService';
 // import Group from '../Components/Group';
 import Comments from '../Screens/ExtraScreens/Comments';
@@ -29,7 +31,7 @@ import GroupPage from '../Screens/ExtraScreens/GroupsPage';
 import GroupDetails from '../Screens/ExtraScreens/GroupDetails';
 import NewPassword from '../Screens/ExtraScreens/NewPassword';
 import CodePhone from '../Screens/Auth/CodePhone';
-
+import HotspotsNearby from '../Screens/ExtraScreens/HotspotsNearby';
 import BlockedUser from '../Screens/ExtraScreens/BlockedUser';
 import CreateGroup from '../Screens/ExtraScreens/CreateGroup';
 import Splash from '../Screens/Auth/Splash';
@@ -66,6 +68,9 @@ const Root = () => {
             <Stack.Screen name="CreateGroup" component={CreateGroup} />
             <Stack.Screen name="UserProfile" component={UserProfile} />
             <Stack.Screen name="Hashes" component={Hashes} />
+            <Stack.Screen name="HotspotsNearby" component={HotspotsNearby} />
+            <Stack.Screen name="ExploreTowns" component={ExploreTowns} />
+            <Stack.Screen name="Notification" component={Notification} />
             <Stack.Screen name="ContactUs" component={ContactUs} />
             <Stack.Screen name="GroupPage" component={GroupPage} />
             <Stack.Screen name="Requests" component={Requests} />

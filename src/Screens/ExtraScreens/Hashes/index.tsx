@@ -33,7 +33,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
 import {lat, long} from '../../../redux/actions';
 const Hashes = ({navigation, route}) => {
-  const {text} = route.params;
+  const {text, tag} = route.params;
   const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   const [latitude, setlatitude] = useState(0);
   const dispatch = useDispatch();
@@ -166,12 +166,13 @@ const Hashes = ({navigation, route}) => {
     viewAllPost({
       Auth: userData.token,
       page,
-      hashtag: text.substring(1),
+      hashtag: text ? text?.substring(1) : '',
+      business_tag: tag ? tag : '',
       latitude: Lat,
       longitude: Long,
     })
       .then(res => {
-        // console.log('res', res);
+        console.log('res of tag', res);
         setData(res.posts.data);
         setTestArr(res.posts.data);
       })
@@ -450,7 +451,7 @@ const Hashes = ({navigation, route}) => {
                 color: 'black',
                 marginLeft: 10,
               }}>
-              {text.substring(1)}
+              {text ? text?.substring(1) : tag}
             </Text>
             {/* <Text
               style={{
