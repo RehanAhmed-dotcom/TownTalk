@@ -10,6 +10,7 @@ import {
   TextInput,
   Text,
   Platform,
+  KeyboardAvoidingView,
   PermissionsAndroid,
   SafeAreaView,
   ImageBackground,
@@ -380,6 +381,7 @@ const Home = ({navigation}) => {
     setBlockuserId(id);
   };
   const ReportModal = () => {
+    const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
     return (
       <Modal
         animationType="slide"
@@ -401,9 +403,8 @@ const Home = ({navigation}) => {
             bottom: 0,
             // position: 'absolute',
           }}>
-          <TouchableOpacity
-            activeOpacity={1}
-            onPress={() => console.log('hello')}
+          <Wrapper
+            behavior="padding"
             style={{
               height: '45%',
               width: '100%',
@@ -450,7 +451,11 @@ const Home = ({navigation}) => {
 
             <TouchableOpacity
               onPress={() => {
-                reportUser({Auth: userData.token, post_id: reportId})
+                reportUser({
+                  Auth: userData.token,
+                  message: reportReason,
+                  post_id: reportId,
+                })
                   .then(res => {
                     console.log('res of report', res);
                   })
@@ -478,7 +483,11 @@ const Home = ({navigation}) => {
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
-                reportUser({Auth: userData.token, post_id: reportId})
+                reportUser({
+                  Auth: userData.token,
+                  message: reportReason,
+                  post_id: reportId,
+                })
                   .then(res => {
                     console.log('res of report', res);
                   })
@@ -512,7 +521,7 @@ const Home = ({navigation}) => {
                 Report & block user
               </Text>
             </TouchableOpacity>
-          </TouchableOpacity>
+          </Wrapper>
         </TouchableOpacity>
       </Modal>
     );

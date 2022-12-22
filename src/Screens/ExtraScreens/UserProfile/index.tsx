@@ -225,234 +225,257 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
   }, [change]);
   return (
     <View style={{flex: 1}}>
-      <ImageBackground
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          // backgroundColor: 'white',
+          // elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity
           style={{
-            height: 80,
+            width: 30,
+            height: 30,
+            borderRadius: 10,
             backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
             alignItems: 'center',
-            paddingHorizontal: 15,
-            // justifyContent: 'space-between',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icons name="arrowleft" size={20} color={'black'} />
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 16,
+            fontFamily: 'MontserratAlternates-SemiBold',
+            color: 'black',
+            // marginLeft: 20,
           }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icons name="left" size={20} color={'black'} />
-          </TouchableOpacity>
+          User Details
+        </Text>
+        <TouchableOpacity
+          style={{
+            width: 30,
+            height: 30,
+            borderRadius: 10,
+            backgroundColor: 'white',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigation.navigate('Setting')}>
+          <Icons name="setting" size={20} color={'black'} />
+        </TouchableOpacity>
+        {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+              Chicago, IL 60611, USA
+            </Text> */}
+      </View>
+      <View
+        style={{
+          paddingHorizontal: 5,
+          // backgroundColor: 'white',
+          paddingTop: 30,
+          flex: 1,
+        }}>
+        <View style={{alignItems: 'center'}}>
+          {userData.userdata.id != item.user.id && (
+            <TouchableOpacity
+              onPress={
+                () =>
+                  Alert.alert(
+                    'Block user',
+                    `Are you sure you want to block ${item.user.firstname}?`,
+                    [
+                      {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'OK',
+                        onPress: () => {
+                          blockUser({
+                            Auth: userData.token,
+                            block_user_id: item.user.id,
+                          })
+                            .then(res => {
+                              console.log('res', res);
+                              navigation.goBack();
+                            })
+                            .catch(err => {
+                              console.log('err', err);
+                            });
+                        },
+                      },
+                    ],
+                  )
+
+                // navigation.navigate('SingleChat', {item: item.user})
+              }
+              style={{
+                position: 'absolute',
+                // backgroundColor: 'blue',
+                width: '15%',
+                alignItems: 'center',
+                left: 0,
+                // alignItems: 'flex-end',
+                height: 100,
+              }}>
+              <Text
+                style={{
+                  color: '#5F95F0',
+                  fontFamily: 'MontserratAlternates-Regular',
+                  fontSize: 12,
+                }}>
+                Block
+              </Text>
+            </TouchableOpacity>
+          )}
+          <Image
+            source={
+              item.user.image
+                ? {uri: item.user.image}
+                : require('../../../assets/Images/girl.jpg')
+            }
+            style={{height: 100, width: 100, borderRadius: 50}}
+          />
           <Text
             style={{
               fontSize: 16,
-              fontFamily: 'MontserratAlternates-SemiBold',
               color: 'black',
-              marginLeft: 20,
+              fontFamily: 'MontserratAlternates-SemiBold',
             }}>
-            User Details
+            {item.user.firstname}
           </Text>
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
-              Chicago, IL 60611, USA
-            </Text> */}
+          <Text
+            style={{fontSize: 14, fontFamily: 'MontserratAlternates-Medium'}}>
+            {/* {userData.userdata.} */}
+          </Text>
+          {userData.userdata.id != item.user.id && (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('SingleChat', {
+                  item: item.user,
+                  fcm_token: item.user.fcm_token,
+                })
+              }
+              style={{
+                position: 'absolute',
+                // backgroundColor: 'blue',
+                width: '15%',
+                alignItems: 'center',
+                right: 0,
+                // alignItems: 'flex-end',
+                height: 100,
+              }}>
+              <Text
+                style={{
+                  color: '#5F95F0',
+                  fontFamily: 'MontserratAlternates-Regular',
+                  fontSize: 12,
+                }}>
+                Chat
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <View
           style={{
-            paddingHorizontal: 15,
-            // backgroundColor: 'red',
-            marginTop: 30,
-            flex: 1,
+            flexDirection: 'row',
+            // justifyContent: 'space-between',
+            alignItems: 'center',
+            marginTop: 20,
           }}>
-          <View style={{alignItems: 'center'}}>
-            {userData.userdata.id != item.user.id && (
-              <TouchableOpacity
-                onPress={
-                  () =>
-                    Alert.alert(
-                      'Block user',
-                      `Are you sure you want to block ${item.user.firstname}?`,
-                      [
-                        {
-                          text: 'Cancel',
-                          onPress: () => console.log('Cancel Pressed'),
-                          style: 'cancel',
-                        },
-                        {
-                          text: 'OK',
-                          onPress: () => {
-                            blockUser({
-                              Auth: userData.token,
-                              block_user_id: item.user.id,
-                            })
-                              .then(res => {
-                                console.log('res', res);
-                                navigation.goBack();
-                              })
-                              .catch(err => {
-                                console.log('err', err);
-                              });
-                          },
-                        },
-                      ],
-                    )
+          <TouchableOpacity
+            activeOpacity={1}
+            // onPress={() => {
+            //   userData.userdata.id != item.user.id &&
+            //     likeDislikeProfile({
+            //       Auth: userData.token,
+            //       profile_id: item.user.id,
+            //       is_like: 1,
+            //     }).then(res => {
+            //       alter();
+            //     });
 
-                  // navigation.navigate('SingleChat', {item: item.user})
-                }
-                style={{
-                  position: 'absolute',
-                  // backgroundColor: 'blue',
-                  width: '15%',
-                  alignItems: 'center',
-                  left: 0,
-                  // alignItems: 'flex-end',
-                  height: 100,
-                }}>
-                <Text
-                  style={{
-                    color: '#5F95F0',
-                    fontFamily: 'MontserratAlternates-Regular',
-                    fontSize: 12,
-                  }}>
-                  Block
-                </Text>
-              </TouchableOpacity>
-            )}
-            <Image
-              source={
-                item.user.image
-                  ? {uri: item.user.image}
-                  : require('../../../assets/Images/girl.jpg')
-              }
-              style={{height: 100, width: 100, borderRadius: 50}}
-            />
-            <Text
-              style={{
-                fontSize: 16,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-SemiBold',
-              }}>
-              {item.user.firstname}
-            </Text>
-            <Text
-              style={{fontSize: 14, fontFamily: 'MontserratAlternates-Medium'}}>
-              {/* {userData.userdata.} */}
-            </Text>
-            {userData.userdata.id != item.user.id && (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('SingleChat', {
-                    item: item.user,
-                    fcm_token: item.user.fcm_token,
-                  })
-                }
-                style={{
-                  position: 'absolute',
-                  // backgroundColor: 'blue',
-                  width: '15%',
-                  alignItems: 'center',
-                  right: 0,
-                  // alignItems: 'flex-end',
-                  height: 100,
-                }}>
-                <Text
-                  style={{
-                    color: '#5F95F0',
-                    fontFamily: 'MontserratAlternates-Regular',
-                    fontSize: 12,
-                  }}>
-                  Chat
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View
+            //   // setLike(!like);
+            //   // setDislike(false);
+            // }}
             style={{
-              flexDirection: 'row',
-              // justifyContent: 'space-between',
+              // flexDirection: 'column',
               alignItems: 'center',
-              marginTop: 20,
+              // backgroundColor: 'red',
+              height: 30,
+              justifyContent: 'center',
+              // flexDirection: 'row',
+              width: '50%',
+              borderRightWidth: 1,
+              borderRightColor: 'grey',
             }}>
-            <TouchableOpacity
-              activeOpacity={1}
-              // onPress={() => {
-              //   userData.userdata.id != item.user.id &&
-              //     likeDislikeProfile({
-              //       Auth: userData.token,
-              //       profile_id: item.user.id,
-              //       is_like: 1,
-              //     }).then(res => {
-              //       alter();
-              //     });
-
-              //   // setLike(!like);
-              //   // setDislike(false);
-              // }}
+            {/* <Icon2
+              name="arrowup"
+              size={20}
+              color={profileObject.is_like == true ? '#5F95F0' : 'grey'}
+            /> */}
+            <Text
               style={{
-                // flexDirection: 'column',
-                alignItems: 'center',
-                // backgroundColor: 'red',
-                height: 30,
-                justifyContent: 'center',
-                flexDirection: 'row',
-                width: '50%',
-                borderRightWidth: 1,
-                borderRightColor: 'grey',
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 14,
+                color: 'black',
+                marginLeft: 5,
               }}>
-              <Icon2
-                name="arrowup"
-                size={20}
-                color={profileObject.is_like == true ? '#5F95F0' : 'grey'}
-              />
-              <Text
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  fontSize: 14,
-                  color: 'black',
-                  marginLeft: 5,
-                }}>
-                {profileObject.like_count ? profileObject.like_count : 0}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={1}
-              // onPress={() => {
-              //   userData.userdata.id != item.user.id &&
-              //     likeDislikeProfile({
-              //       Auth: userData.token,
-              //       profile_id: item.user.id,
-              //       is_like: 0,
-              //     })
-              //       .then(res => {
-              //         console.log('res', res);
-              //         alter();
-              //       })
-              //       .catch(err => {
-              //         console.log('err', err);
-              //       });
-              // }}
+              {profileObject.like_count ? profileObject.like_count : 0}
+            </Text>
+            <Text style={{color: 'grey', fontSize: 12}}>Total likes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            activeOpacity={1}
+            // onPress={() => {
+            //   userData.userdata.id != item.user.id &&
+            //     likeDislikeProfile({
+            //       Auth: userData.token,
+            //       profile_id: item.user.id,
+            //       is_like: 0,
+            //     })
+            //       .then(res => {
+            //         console.log('res', res);
+            //         alter();
+            //       })
+            //       .catch(err => {
+            //         console.log('err', err);
+            //       });
+            // }}
+            style={{
+              // flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              // backgroundColor: 'red',
+              height: 50,
+              width: '50%',
+            }}>
+            {/* <Icon2
+              name="arrowdown"
+              size={20}
+              color={profileObject.is_like == false ? '#5F95F0' : 'grey'}
+            /> */}
+            <Text
               style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                // backgroundColor: 'red',
-                height: 50,
-                width: '50%',
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 14,
+                color: 'black',
+                marginLeft: 5,
               }}>
-              <Icon2
-                name="arrowdown"
-                size={20}
-                color={profileObject.is_like == false ? '#5F95F0' : 'grey'}
-              />
-              <Text
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  fontSize: 14,
-                  color: 'black',
-                  marginLeft: 5,
-                }}>
-                {profileObject.dislike_count ? profileObject.dislike_count : 0}
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {/* <View
+              {profileObject.dislike_count ? profileObject.dislike_count : 0}
+            </Text>
+            <Text style={{color: 'grey', fontSize: 12}}>Total dislikes</Text>
+          </TouchableOpacity>
+        </View>
+        {/* <View
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
@@ -509,13 +532,13 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               </Text>
             </TouchableOpacity>
           </View> */}
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={select == 'Posts' ? posts.posts : posts.groups}
-            renderItem={renders}
-          />
-        </View>
-      </ImageBackground>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={select == 'Posts' ? posts.posts : posts.groups}
+          renderItem={renders}
+        />
+      </View>
+      {/* </ImageBackground> */}
       {MyModal(showModal)}
     </View>
   );

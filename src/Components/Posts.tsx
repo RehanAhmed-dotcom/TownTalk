@@ -128,7 +128,7 @@ const Posts = props => {
             style={{
               position: 'absolute',
               height: 100,
-              zIndex: 3,
+              zIndex: 100,
               width: 100,
               // backgroundColor: 'red',
               borderRadius: 10,
@@ -181,7 +181,7 @@ const Posts = props => {
         )}
       </TouchableOpacity>
 
-      <View style={{marginTop: 10}}>
+      <View style={{marginTop: 10, zIndex: -2}}>
         {item?.media[0]?.media &&
           (item?.media[0]?.media_type == 'image' ? (
             <Image
@@ -301,6 +301,7 @@ const Posts = props => {
           justifyContent: 'space-between',
           alignItems: 'center',
           marginTop: 10,
+          zIndex: -3,
           // backgroundColor: 'red',
         }}>
         <View
