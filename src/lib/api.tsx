@@ -145,7 +145,7 @@ const verify = (payload: object) => {
     });
 };
 const addPost = (payload, data) => {
-  // console.log('data of payload', JSON.stringify(data));
+  console.log('data of payload', JSON.stringify(data));
   const request = `/create-post`;
   return axios
     .post(request, data, {
@@ -260,6 +260,25 @@ const hashTag = payload => {
 const reportUser = payload => {
   // console.log('data of payload', JSON.stringify(payload));
   const request = `/report_post`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in hash tag', e);
+    });
+};
+
+const deletePostApi = payload => {
+  // console.log('data of payload', JSON.stringify(payload));
+  const request = `/delete_post`;
   return axios
     .post(request, payload, {
       headers: {
@@ -554,6 +573,7 @@ export {
   blockUser,
   joingroup,
   singleGroup,
+  deletePostApi,
   getfcm,
   postDetail,
   likeDislikeProfile,

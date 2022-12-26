@@ -26,7 +26,7 @@ const Requests = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
   const [db, setDb] = useState(false);
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const searchTextGiven = e => {
     let filteredName = [];
     // if (e) {
@@ -250,7 +250,8 @@ const Requests = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
@@ -271,7 +272,7 @@ const Requests = ({navigation}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           My Requests
         </Text>
@@ -310,7 +311,7 @@ const Requests = ({navigation}) => {
           <Text
             style={{
               fontSize: 14,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-SemiBold',
             }}>
             Requests

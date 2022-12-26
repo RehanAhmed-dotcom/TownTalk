@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import {useSelector} from 'react-redux';
 import {likeDislike} from '../lib/api';
 const LikeDislike = props => {
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const {item, press} = props;
   const [like, setLike] = useState(item?.is_like == true ? true : false);
   const [dislike, setDislike] = useState(item?.is_like == false ? true : false);
@@ -15,7 +15,14 @@ const LikeDislike = props => {
   // console.log('like of component', like);
   // console.log('like of api', item.is_like);
   return (
-    <View style={{flexDirection: 'row', alignItems: 'center'}}>
+    <View
+      style={{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        // backgroundColor: 'blue',
+        width: '100%',
+        alignItems: 'center',
+      }}>
       <TouchableOpacity
         onPress={() => {
           // setLike(!like);
@@ -56,7 +63,7 @@ const LikeDislike = props => {
             fontFamily: 'MontserratAlternates-Regular',
             fontSize: 13,
             marginLeft: 5,
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           {item?.like_count}
         </Text>
@@ -88,7 +95,7 @@ const LikeDislike = props => {
               console.log('err', err);
             });
         }}
-        style={{flexDirection: 'row', marginLeft: 10, alignItems: 'center'}}>
+        style={{flexDirection: 'row', marginLeft: 20, alignItems: 'center'}}>
         <Icon
           name="thumbs-down"
           size={20}
@@ -100,11 +107,12 @@ const LikeDislike = props => {
             fontFamily: 'MontserratAlternates-Regular',
             fontSize: 13,
             marginLeft: 5,
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           {item?.dislike_count}
         </Text>
       </TouchableOpacity>
+      <View />
     </View>
   );
 };

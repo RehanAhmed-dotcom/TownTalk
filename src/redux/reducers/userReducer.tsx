@@ -10,6 +10,7 @@ const InitialCalState = {
   checked: false,
   passwoord: '',
   notificationSymbol: false,
+  darkmode: false,
   tog: false,
   ToggleSwitch: false,
   Lat: 0,
@@ -45,6 +46,9 @@ export default (state = InitialCalState, {type, payload}) => {
         ...state,
         Lat: payload,
       };
+    }
+    case ActionType.DARKMODE: {
+      return {...state, darkmode: !state.darkmode};
     }
     case ActionType.LONG: {
       return {

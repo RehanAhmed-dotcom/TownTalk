@@ -17,7 +17,7 @@ import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/AntDesign';
 const Notification = ({navigation}) => {
   const [notification, setNotification] = useState([]);
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const render = ({item, index}) => (
     <TouchableOpacity
       onPress={() => {
@@ -53,7 +53,7 @@ const Notification = ({navigation}) => {
             <Text
               style={{
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               {item.user_data.firstname}
@@ -73,7 +73,7 @@ const Notification = ({navigation}) => {
           <Text
             style={{
               fontSize: 10,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
             {moment(item.date).format('MM/DD/YYYY')}
@@ -93,11 +93,15 @@ const Notification = ({navigation}) => {
             <Text
               style={{
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               {item.user_data.firstname}
-              <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  color: darkmode ? 'white' : 'black',
+                }}>
                 {' '}
                 disliked your post
               </Text>
@@ -113,7 +117,7 @@ const Notification = ({navigation}) => {
           <Text
             style={{
               fontSize: 10,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
             {moment(item.date).format('MM/DD/YYYY')}
@@ -133,11 +137,15 @@ const Notification = ({navigation}) => {
             <Text
               style={{
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               {item.user_data.firstname}
-              <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  color: darkmode ? 'white' : 'black',
+                }}>
                 {' '}
                 disliked your profile
               </Text>
@@ -153,7 +161,7 @@ const Notification = ({navigation}) => {
           <Text
             style={{
               fontSize: 10,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
             {moment(item.date).format('MM/DD/YYYY')}
@@ -173,11 +181,15 @@ const Notification = ({navigation}) => {
             <Text
               style={{
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               {item.user_data.firstname}
-              <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  color: darkmode ? 'white' : 'black',
+                }}>
                 {' '}
                 liked your profile
               </Text>
@@ -193,7 +205,7 @@ const Notification = ({navigation}) => {
           <Text
             style={{
               fontSize: 10,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
             {moment(item.date).format('MM/DD/YYYY')}
@@ -213,7 +225,7 @@ const Notification = ({navigation}) => {
             <Text
               style={{
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               {item.user_data.firstname}
@@ -240,7 +252,7 @@ const Notification = ({navigation}) => {
           <Text
             style={{
               fontFamily: 'MontserratAlternates-Regular',
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontSize: 10,
             }}>
             {moment(item.date).format('MM/DD/YYYY')}
@@ -258,7 +270,8 @@ const Notification = ({navigation}) => {
     // Return the function to unsubscribe from the event so it gets removed on unmount
   }, []);
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
@@ -289,7 +302,7 @@ const Notification = ({navigation}) => {
               style={{
                 fontSize: 16,
                 fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
               }}>
               Notifications
             </Text>

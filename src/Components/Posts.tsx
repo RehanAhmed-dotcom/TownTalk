@@ -29,20 +29,21 @@ const Posts = props => {
     blockuser,
     onPress,
     hashPress,
+    deletePost,
     tagPress,
     handleReport,
     press,
   } = props;
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const [show, setShow] = useState(false);
-  const [paused, setPaused] = useState(false);
+  const [paused, setPaused] = useState(true);
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={onPress}
       style={{
         // height: 30,
-        backgroundColor: 'white',
+        backgroundColor: darkmode ? 'black' : 'white',
         marginRight: 3,
         elevation: 3,
         zIndex: -110,
@@ -82,7 +83,7 @@ const Posts = props => {
                 style={{
                   fontFamily: 'MontserratAlternates-SemiBold',
                   fontSize: 16,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                 }}>
                 {`${item?.user?.firstname}`}
                 {item?.business_tag && (
@@ -94,7 +95,7 @@ const Posts = props => {
                       style={{
                         fontFamily: 'MontserratAlternates-SemiBold',
                         fontSize: 16,
-                        color: 'black',
+                        color: darkmode ? 'white' : 'black',
                       }}>
                       {item?.business_tag}
                     </Text>
@@ -118,7 +119,7 @@ const Posts = props => {
         <Icon2
           name="dots-three-vertical"
           size={20}
-          color={'black'}
+          color={darkmode ? 'white' : 'black'}
           style={{bottom: 10}}
           onPress={() => setShow(!show)}
         />
@@ -138,15 +139,16 @@ const Posts = props => {
             <TouchableOpacity
               onPress={() => {
                 setShow(!show);
+                onShare();
               }}
               style={{
                 height: 40,
                 borderTopLeftRadius: 10,
                 borderTopRightRadius: 10,
-                borderBottomLeftRadius:
-                  item.user.id == userData.userdata.id ? 10 : 0,
-                borderBottomRightRadius:
-                  item.user.id == userData.userdata.id ? 10 : 0,
+                // borderBottomLeftRadius:
+                //   item.user.id == userData.userdata.id ? 10 : 0,
+                // borderBottomRightRadius:
+                //   item.user.id == userData.userdata.id ? 10 : 0,
                 justifyContent: 'center',
                 borderBottomWidth: item.user.id == userData.userdata.id ? 0 : 1,
                 borderBottomColor: 'grey',
@@ -155,8 +157,26 @@ const Posts = props => {
                 backgroundColor: '#ccc',
                 // elevation: 1,
               }}>
-              <Text>Share Post</Text>
+              <Text style={{color: 'black'}}>Share Post</Text>
             </TouchableOpacity>
+            {item.user.id == userData.userdata.id && (
+              <TouchableOpacity
+                onPress={() => {
+                  setShow(!show);
+                  deletePost(item.id);
+                }}
+                style={{
+                  height: 40,
+                  borderBottomLeftRadius: 10,
+                  borderBottomRightRadius: 10,
+                  justifyContent: 'center',
+                  paddingLeft: 10,
+                  backgroundColor: '#ccc',
+                  // elevation: 1,
+                }}>
+                <Text style={{color: 'black'}}>Delete Post</Text>
+              </TouchableOpacity>
+            )}
             {item.user.id != userData.userdata.id && (
               <TouchableOpacity
                 onPress={() => {
@@ -174,7 +194,7 @@ const Posts = props => {
                   backgroundColor: '#ccc',
                   // elevation: 1,
                 }}>
-                <Text>Report Post</Text>
+                <Text style={{color: 'black'}}>Report Post</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -288,7 +308,7 @@ const Posts = props => {
             mentionHashtagColor={'#5F95F0'}
             style={{
               fontSize: 13,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
             {item?.description}
@@ -308,9 +328,21 @@ const Posts = props => {
           style={{
             flexDirection: 'row',
             // backgroundColor: 'red',
+            width: '50%',
+            justifyContent: 'space-between',
             alignItems: 'center',
           }}>
           <LikeDislike item={item} press={press} />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            // backgroundColor: 'red',
+            justifyContent: 'space-between',
+            width: '50%',
+            alignItems: 'center',
+          }}>
+          {/* <View /> */}
           <TouchableOpacity
             onPress={() => navigation.navigate('Comments', {id: item.id})}
             // onPress={() => {
@@ -319,7 +351,7 @@ const Posts = props => {
             // }}
             style={{
               flexDirection: 'row',
-              marginLeft: 0,
+              marginLeft: 30,
               // backgroundColor: 'red',
               // height: '100%',
               // height: 20,
@@ -327,20 +359,18 @@ const Posts = props => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Icon1 name="comment" size={25} color="black" />
+            <Icon1 name="comment" size={25} color="grey" />
 
             <Text
               style={{
                 fontFamily: 'MontserratAlternates-Regular',
                 // marginLeft: 5,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontSize: 13,
               }}>
               {item.comment_count}
             </Text>
           </TouchableOpacity>
-        </View>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
               onShare();
@@ -354,7 +384,7 @@ const Posts = props => {
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-            <Icon name="send" size={16} color={'black'} />
+            <Icon name="send" size={16} color={'grey'} />
           </TouchableOpacity>
         </View>
       </View>
@@ -365,14 +395,14 @@ const Posts = props => {
           <Text
             style={{
               fontSize: 13,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
             View all{' '}
             <Text
               style={{
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Bold',
               }}>
               {item?.comment_count}
@@ -386,13 +416,13 @@ const Posts = props => {
           <Text
             style={{
               fontSize: 13,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-Regular',
             }}>
             <Text
               style={{
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Bold',
               }}>
               {item?.recentcomments?.user.firstname}

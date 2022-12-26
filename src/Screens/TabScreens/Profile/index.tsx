@@ -16,16 +16,16 @@ import moment from 'moment';
 import Icon3 from 'react-native-vector-icons/Entypo';
 import {profile, likeDislike} from '../../../lib/api';
 import LikeDislike from '../../../Components/LikeDislike';
-import Icon4 from 'react-native-vector-icons/FontAwesome';
+import Icon4 from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/Entypo';
 import Posts from '../../../Components/Posts';
 import Group from '../../../Components/Group';
-import {logoutuser} from '../../../redux/actions';
+import {darkMode} from '../../../redux/actions';
 import database from '@react-native-firebase/database';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
-import Icon2 from 'react-native-vector-icons/AntDesign';
-
+import Icon2 from 'react-native-vector-icons/EvilIcons';
+import Thumb from 'react-native-vector-icons/Feather';
 const Profile = ({navigation}) => {
   const [like, setLike] = useState(false);
   const [dislike, setDislike] = useState(false);
@@ -34,7 +34,7 @@ const Profile = ({navigation}) => {
   const [groups, setGroups] = useState([]);
   const [change, setChange] = useState(false);
   const [data, setData] = useState({});
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const [showModal, setShowModal] = useState(false);
   const [specific, setSpecific] = useState({});
   const [list, setList] = useState([]);
@@ -76,7 +76,7 @@ const Profile = ({navigation}) => {
           onPress={() => navigation.navigate('PostDetails', {item})}
           style={{
             // height: 30,
-            backgroundColor: 'white',
+            backgroundColor: darkmode ? 'black' : 'white',
             marginRight: 3,
             // elevation: 3,
             // alignItems: 'center',
@@ -110,7 +110,7 @@ const Profile = ({navigation}) => {
                   style={{
                     fontFamily: 'MontserratAlternates-SemiBold',
                     fontSize: 16,
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                   }}>
                   {`${item?.user?.firstname}`}
                 </Text>
@@ -119,6 +119,7 @@ const Profile = ({navigation}) => {
                     fontSize: 12,
                     fontFamily: 'MontserratAlternates-Regular',
                     marginTop: 5,
+                    color: 'grey',
                   }}>
                   {item?.created_at}
                   {/* {moment(item?.created_at).format('DD MMMM YYYY HH:MM a')} */}
@@ -146,7 +147,7 @@ const Profile = ({navigation}) => {
               mentionHashtagColor={'#5F95F0'}
               style={{
                 fontSize: 13,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Regular',
               }}>
               {item?.description}
@@ -177,7 +178,13 @@ const Profile = ({navigation}) => {
               marginTop: 10,
               // backgroundColor: 'red',
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '50%',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
               <TouchableOpacity
                 onPress={() => {
                   // setLike(!like);
@@ -208,8 +215,8 @@ const Profile = ({navigation}) => {
                     });
                 }}
                 style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Icon2
-                  name="arrowup"
+                <Thumb
+                  name="thumbs-up"
                   size={20}
                   color={item?.is_like == true ? '#5F95F0' : 'grey'}
                   // color={like == true ? '#5F95F0' : 'grey'}
@@ -219,7 +226,7 @@ const Profile = ({navigation}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     fontSize: 13,
                     marginLeft: 5,
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                   }}>
                   {item?.like_count.toString()}
                 </Text>
@@ -254,11 +261,11 @@ const Profile = ({navigation}) => {
                 }}
                 style={{
                   flexDirection: 'row',
-                  marginLeft: 10,
+                  marginLeft: 20,
                   alignItems: 'center',
                 }}>
-                <Icon2
-                  name="arrowdown"
+                <Thumb
+                  name="thumbs-down"
                   size={20}
                   color={item?.is_like == false ? '#5F95F0' : 'grey'}
                   // color={dislike == false ? '#5F95F0' : 'grey'}
@@ -268,14 +275,48 @@ const Profile = ({navigation}) => {
                     fontFamily: 'MontserratAlternates-Regular',
                     fontSize: 13,
                     marginLeft: 5,
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                   }}>
                   {item?.dislike_count.toString()}
                 </Text>
               </TouchableOpacity>
+              <View />
             </View>
             {/* <LikeDislike item={item} press={alter} /> */}
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '50%',
+                alignItems: 'center',
+              }}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Comments', {id: item.id})}
+                style={{
+                  flexDirection: 'row',
+                  marginLeft: 30,
+                  // backgroundColor: 'red',
+                  // height: '100%',
+                  // height: 20,
+                  width: 35,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                <Icon2
+                  name="comment"
+                  size={25}
+                  color={darkmode ? 'white' : 'black'}
+                />
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    marginLeft: 5,
+                    color: 'grey',
+                    fontSize: 13,
+                  }}>
+                  {item?.comment_count}
+                </Text>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
                   setSpecific(item);
@@ -288,21 +329,7 @@ const Profile = ({navigation}) => {
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
-                <Icon3 name="share" size={16} color={'black'} />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Comments', {id: item.id})}
-                style={{
-                  flexDirection: 'row',
-                  marginLeft: 0,
-                  // backgroundColor: 'red',
-                  // height: '100%',
-                  // height: 20,
-                  width: 30,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Icon4 name="commenting" size={15} color="black" />
+                <Thumb name="send" size={16} color={'grey'} />
               </TouchableOpacity>
             </View>
           </View>
@@ -362,7 +389,7 @@ const Profile = ({navigation}) => {
             style={{
               fontSize: 14,
               fontFamily: 'MontserratAlternates-SemiBold',
-              color: item.unread ? 'black' : 'black',
+              color: darkmode ? 'white' : 'black',
             }}>
             {`${item.user.firstname}`}
           </Text>
@@ -410,14 +437,61 @@ const Profile = ({navigation}) => {
   const MyModal = (show: boolean) => {
     //   console.log('show', show);
     return (
-      <Modal animationType="slide" transparent={true} visible={show}>
-        <View
+      // <Modal animationType="slide" transparent={true} visible={show}>
+      //   <View
+      //     style={{
+      //       flex: 1,
+      //       // height: hp(100),
+      //       backgroundColor: '#00000088',
+      //       alignItems: 'center',
+      //       justifyContent: 'center',
+      //       zIndex: 200,
+      //       left: 0,
+      //       top: 0,
+      //       right: 0,
+      //       bottom: 0,
+      //       // position: 'absolute',
+      //     }}>
+      //     <View
+      //       style={{
+      //         height: '60%',
+      //         width: '90%',
+      //         borderRadius: 10,
+      //         backgroundColor: 'white',
+      //       }}>
+      //       <View
+      //         style={{
+      //           flexDirection: 'row',
+      //           justifyContent: 'flex-end',
+      //           marginTop: 15,
+      //           marginRight: 15,
+      //         }}>
+      //         <Icon1
+      //           name="circle-with-cross"
+      //           size={20}
+      //           color="black"
+      //           onPress={() => setShowModal(false)}
+      //         />
+      //       </View>
+      //       <View style={{paddingHorizontal: 10}}>
+      //         <FlatList data={list} renderItem={render} />
+      //       </View>
+      //     </View>
+      //   </View>
+      // </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showModal}
+        onRequestClose={() => setShowModal(!showModal)}>
+        <TouchableOpacity
+          onPress={() => setShowModal(!showModal)}
           style={{
             flex: 1,
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -425,12 +499,16 @@ const Profile = ({navigation}) => {
             bottom: 0,
             // position: 'absolute',
           }}>
-          <View
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => console.log('hello')}
             style={{
-              height: '60%',
-              width: '90%',
+              // height: '45%',
+              maxHeight: '40%',
+              minHeight: '20%',
+              width: '100%',
               borderRadius: 10,
-              backgroundColor: 'white',
+              backgroundColor: darkmode ? 'black' : 'white',
             }}>
             <View
               style={{
@@ -439,18 +517,27 @@ const Profile = ({navigation}) => {
                 marginTop: 15,
                 marginRight: 15,
               }}>
-              <Icon1
+              {/* <Icon
                 name="circle-with-cross"
                 size={20}
                 color="black"
                 onPress={() => setShowModal(false)}
-              />
+              /> */}
             </View>
-            <View style={{paddingHorizontal: 10}}>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 16,
+                color: darkmode ? 'white' : 'black',
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Share with contacts
+            </Text>
+            <View style={{paddingHorizontal: 10, marginBottom: 20}}>
               <FlatList data={list} renderItem={render} />
             </View>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     );
   };
@@ -473,7 +560,8 @@ const Profile = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
@@ -493,7 +581,7 @@ const Profile = ({navigation}) => {
             style={{
               fontSize: 16,
               fontFamily: 'MontserratAlternates-SemiBold',
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
             }}>
             Profile
           </Text>
@@ -561,7 +649,7 @@ const Profile = ({navigation}) => {
           <Text
             style={{
               fontSize: 16,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-SemiBold',
             }}>
             {userData?.userdata?.fullname}
@@ -632,7 +720,7 @@ const Profile = ({navigation}) => {
                 style={{
                   fontFamily: 'MontserratAlternates-SemiBold',
                   fontSize: 16,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   // marginLeft: 5,
                 }}>
                 {posts?.like_count ? posts?.like_count : 0}
@@ -677,7 +765,7 @@ const Profile = ({navigation}) => {
                 style={{
                   fontFamily: 'MontserratAlternates-SemiBold',
                   fontSize: 16,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                 }}>
                 {posts?.dislike_count ? posts?.dislike_count : 0}
               </Text>

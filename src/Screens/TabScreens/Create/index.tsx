@@ -34,7 +34,7 @@ import {useSelector} from 'react-redux';
 import ImagePicker from 'react-native-image-crop-picker';
 import Swiper from 'react-native-swiper';
 const Create = ({navigation}) => {
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const [name, setName] = useState(`${userData?.userdata?.firstname}`);
   const [img, setImg] = useState([]);
   const [zip, setZip] = useState('');
@@ -46,10 +46,12 @@ const Create = ({navigation}) => {
   // const [hash, setHash] = useState([]);
   const [count, setCount] = useState(0);
   const [video, setVideo] = useState(true);
+  const [wholeTagedBusiness, setWholeTagedBusiness] = useState({});
   const [search, setSearch] = useState('');
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
   const d = new Date();
+  // console.log('whole', wholeTagedBusiness.photos);
   console.log('date', moment(d).format('MM-DD-YYYY hh:mm a'));
   // console.log('userdata', hash);
   const picker = (camera: string) => {
@@ -97,7 +99,26 @@ const Create = ({navigation}) => {
         data.append('description', description);
         data.append('dateTime', moment(d).format('MM-DD-YYYY hh:mm a'));
         data.append('title', name);
-
+        tagedBusiness && data.append('business_name', wholeTagedBusiness?.name);
+        tagedBusiness &&
+          data.append(
+            'business_image',
+            wholeTagedBusiness?.photos[0]?.photo_reference,
+          );
+        tagedBusiness &&
+          data.append('business_location', wholeTagedBusiness?.vicinity);
+        tagedBusiness &&
+          data.append('business_rating', wholeTagedBusiness?.rating);
+        tagedBusiness &&
+          data.append(
+            'business_latitude',
+            wholeTagedBusiness?.geometry?.location.lat,
+          );
+        tagedBusiness &&
+          data.append(
+            'business_longitude',
+            wholeTagedBusiness?.geometry?.location.lng,
+          );
         img.forEach(item => {
           // item.image
           // ? data.append('media_type', 'image')
@@ -233,6 +254,7 @@ const Create = ({navigation}) => {
     <TouchableOpacity
       onPress={() => {
         setTagedBusiness(item.name);
+        setWholeTagedBusiness(item);
         setTagBusinessModal(false);
       }}
       style={{
@@ -241,7 +263,9 @@ const Create = ({navigation}) => {
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
       }}>
-      <Text style={{fontSize: 16, color: 'black'}}>{item.name}</Text>
+      <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
+        {item.name}
+      </Text>
       <Text style={{color: 'grey', marginTop: 5}}>{item.vicinity}</Text>
     </TouchableOpacity>
   );
@@ -259,7 +283,7 @@ const Create = ({navigation}) => {
         }}>
         <View
           style={{
-            backgroundColor: 'white',
+            backgroundColor: darkmode ? 'black' : 'white',
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             width: '100%',
@@ -276,7 +300,12 @@ const Create = ({navigation}) => {
               color="#ccc"
             />
           </View>
-          <Text style={{fontSize: 18, fontWeight: '600', color: 'black'}}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: '600',
+              color: darkmode ? 'white' : 'black',
+            }}>
             Tag a business
           </Text>
           <Text style={{color: 'grey', marginTop: 5}}>
@@ -313,8 +342,10 @@ const Create = ({navigation}) => {
       </View>
     </Modal>
   );
+  console.log('video', video);
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       <View
         style={{
           height: 80,
@@ -333,7 +364,7 @@ const Create = ({navigation}) => {
             style={{
               fontSize: 16,
               fontFamily: 'MontserratAlternates-SemiBold',
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
             }}>
             Add Post
           </Text>
@@ -392,16 +423,20 @@ const Create = ({navigation}) => {
                     style={{
                       fontFamily: 'MontserratAlternates-Regular',
                       // color: 'grey',
-                      color: 'black',
+                      color: darkmode ? 'white' : 'black',
                       fontWeight: '700',
                     }}>
                     {userData?.userdata?.firstname}
                   </Text>
                   {tagedBusiness ? (
-                    <Text>
+                    <Text style={{color: 'grey'}}>
                       {' '}
                       tagged
-                      <Text style={{fontWeight: '700', color: 'black'}}>
+                      <Text
+                        style={{
+                          fontWeight: '700',
+                          color: darkmode ? 'white' : 'black',
+                        }}>
                         {' '}
                         {tagedBusiness}
                       </Text>
@@ -493,7 +528,12 @@ const Create = ({navigation}) => {
                       borderColor: '#5F95F0',
                     }}>
                     <Icon name="camera" size={30} color={'#5F95F0'} />
-                    <Text style={{fontSize: 12, marginTop: 5, color: 'black'}}>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        marginTop: 5,
+                        color: darkmode ? 'white' : 'black',
+                      }}>
                       Open Camera
                     </Text>
                   </TouchableOpacity>
@@ -516,7 +556,12 @@ const Create = ({navigation}) => {
                       size={30}
                       color={'#5F95F0'}
                     />
-                    <Text style={{fontSize: 12, marginTop: 5, color: 'black'}}>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        marginTop: 5,
+                        color: darkmode ? 'white' : 'black',
+                      }}>
                       Gallery
                     </Text>
                   </TouchableOpacity>
@@ -540,7 +585,12 @@ const Create = ({navigation}) => {
                     borderColor: '#5F95F0',
                   }}>
                   <Icon1 name="location" size={30} color={'#5F95F0'} />
-                  <Text style={{fontSize: 12, marginTop: 5, color: 'black'}}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      marginTop: 5,
+                      color: darkmode ? 'white' : 'black',
+                    }}>
                     Tag business
                   </Text>
                 </TouchableOpacity>
@@ -560,7 +610,12 @@ const Create = ({navigation}) => {
                     borderColor: '#5F95F0',
                   }}>
                   <Icon name="video" size={30} color={'#5F95F0'} />
-                  <Text style={{fontSize: 12, marginTop: 5, color: 'black'}}>
+                  <Text
+                    style={{
+                      fontSize: 12,
+                      marginTop: 5,
+                      color: darkmode ? 'white' : 'black',
+                    }}>
                     Video
                   </Text>
                 </TouchableOpacity>
@@ -603,6 +658,35 @@ const Create = ({navigation}) => {
               </Text>
             </View> */}
             <View style={{height: 50}} />
+            {tagedBusiness || description || img.length > 0 ? (
+              <TouchableOpacity
+                onPress={() => {
+                  setTagedBusiness('');
+                  setDescription('');
+                  setImg([]);
+                  setCount(0);
+                  setVideo(true);
+                }}
+                style={{
+                  backgroundColor: '#5F95F0',
+                  alignItems: 'center',
+                  height: 50,
+                  borderRadius: 10,
+                  marginTop: 70,
+                  elevation: 3,
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                    fontSize: 16,
+                    color: 'white',
+                  }}>
+                  Discard
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+
             {/* <View style={{marginTop: 30, marginBottom: 20}}>
                 <Text
                   style={{

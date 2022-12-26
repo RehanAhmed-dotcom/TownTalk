@@ -21,7 +21,7 @@ import Group from '../../../Components/Group';
 import MapView from 'react-native-maps';
 import Iconpencil from 'react-native-vector-icons/Octicons';
 import IconIos from 'react-native-vector-icons/EvilIcons';
-import {logged} from '../../../redux/actions';
+import {logged, darkMode} from '../../../redux/actions';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -32,7 +32,7 @@ import Icon1 from 'react-native-vector-icons/AntDesign';
 import Hotel from '../../../Components/Hotel';
 import {useSelector, useDispatch} from 'react-redux';
 const EditProfile = ({navigation}: {navigation: any}) => {
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const dispatch = useDispatch();
   const [showModal, setShowModal] = useState(false);
   const [show, setShow] = useState(false);
@@ -84,7 +84,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
             <Text
               style={{
                 marginLeft: 5,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Regular',
               }}>
               5 Miles
@@ -112,7 +112,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
             <Text
               style={{
                 marginLeft: 5,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Regular',
               }}>
               10 Miles
@@ -140,7 +140,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
             <Text
               style={{
                 marginLeft: 5,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Regular',
               }}>
               15 Miles
@@ -168,7 +168,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
             <Text
               style={{
                 marginLeft: 5,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Regular',
               }}>
               20 Miles
@@ -232,7 +232,8 @@ const EditProfile = ({navigation}: {navigation: any}) => {
   };
   const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
@@ -269,7 +270,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
             marginLeft: 20,
           }}>
           Edit Profile
@@ -391,9 +392,9 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                     justifyContent: 'center',
                   }}>
                   {Platform.OS == 'ios' ? (
-                    <IconIos name="pencil" size={20} />
+                    <IconIos name="pencil" size={20} color="grey" />
                   ) : (
-                    <Iconpencil name="pencil" size={20} />
+                    <Iconpencil name="pencil" size={20} color="grey" />
                   )}
                 </View>
               </TouchableOpacity>
@@ -439,7 +440,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
               <Text
                 style={{
                   fontSize: 12,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-SemiBold',
                 }}>
                 Full name
@@ -466,7 +467,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
               <Text
                 style={{
                   fontSize: 12,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-SemiBold',
                 }}>
                 Username
@@ -494,7 +495,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
               <Text
                 style={{
                   fontSize: 12,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-SemiBold',
                 }}>
                 Email
@@ -541,7 +542,7 @@ const EditProfile = ({navigation}: {navigation: any}) => {
                   fontFamily: 'MontserratAlternates-Regular',
                   // borderBottomWidth: 1,
                   height: 50,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                 }}
               />
             </View>

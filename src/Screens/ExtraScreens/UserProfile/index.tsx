@@ -33,7 +33,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
   const [select, setSelect] = useState('Posts');
   const [specific, setSpecific] = useState({});
   const [posts, setPosts] = useState([]);
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const [list, setList] = useState([]);
   const [change, setChange] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -224,7 +224,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
     });
   }, [change]);
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
@@ -254,7 +254,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
             // marginLeft: 20,
           }}>
           User Details
@@ -347,7 +347,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
           <Text
             style={{
               fontSize: 16,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-SemiBold',
             }}>
             {item.user.firstname}
@@ -414,8 +414,8 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               justifyContent: 'center',
               // flexDirection: 'row',
               width: '50%',
-              borderRightWidth: 1,
-              borderRightColor: 'grey',
+              // borderRightWidth: 1,
+              // borderRightColor: 'grey',
             }}>
             {/* <Icon2
               name="arrowup"
@@ -426,7 +426,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               style={{
                 fontFamily: 'MontserratAlternates-Regular',
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 marginLeft: 5,
               }}>
               {profileObject.like_count ? profileObject.like_count : 0}
@@ -467,7 +467,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
               style={{
                 fontFamily: 'MontserratAlternates-Regular',
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 marginLeft: 5,
               }}>
               {profileObject.dislike_count ? profileObject.dislike_count : 0}

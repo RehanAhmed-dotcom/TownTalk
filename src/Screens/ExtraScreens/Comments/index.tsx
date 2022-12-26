@@ -15,13 +15,17 @@ import {
   TextInput,
 } from 'react-native';
 import moment from 'moment';
+import {darkMode} from '../../../redux/actions';
 import {createComment, viewComment} from '../../../lib/api';
-import {useSelector} from 'react-redux';
+import {useSelector, useDispatch} from 'react-redux';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon3 from 'react-native-vector-icons/FontAwesome';
 const Comments = ({navigation, route}) => {
   const {id} = route.params;
+  const {darkmode} = useSelector(({USER}) => USER);
+  console.log('darkmode', darkmode);
+  const dispatch = useDispatch();
   console.log('id', id);
   const [comments, setComments] = useState([]);
   const {userData} = useSelector(({USER}) => USER);
@@ -51,6 +55,9 @@ const Comments = ({navigation, route}) => {
     <View
       style={{
         marginTop: 0,
+        borderBottomColor: 'grey',
+        borderBottomWidth: 1,
+        paddingBottom: 10,
       }}>
       {/* <Text
       style={{
@@ -80,7 +87,7 @@ const Comments = ({navigation, route}) => {
               style={{
                 fontFamily: 'MontserratAlternates-SemiBold',
                 fontSize: 14,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
               }}>
               {`${item.user.firstname}`}
             </Text>
@@ -106,7 +113,7 @@ const Comments = ({navigation, route}) => {
         style={{
           fontFamily: 'MontserratAlternates-Regular',
           marginTop: 10,
-          color: 'black',
+          color: darkmode ? 'white' : 'black',
         }}>
         {item.comment}
       </Text>
@@ -121,41 +128,51 @@ const Comments = ({navigation, route}) => {
   // console.log('comm', comments);
   const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <Wrapper behavior="padding" style={{flex: 1}}>
-          <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <Wrapper behavior="padding" style={{flex: 1}}>
+        <View
+          style={{
+            height: 80,
+            backgroundColor: darkmode ? 'black' : 'white',
+            elevation: 3,
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: 15,
+            // justifyContent: 'space-between',
+          }}>
+          <TouchableOpacity
             style={{
-              height: 80,
-              backgroundColor: 'white',
-              elevation: 3,
-              flexDirection: 'row',
+              height: 30,
+              width: 30,
+              backgroundColor: '#ccc',
               alignItems: 'center',
-              paddingHorizontal: 15,
-              // justifyContent: 'space-between',
+              borderRadius: 5,
+              justifyContent: 'center',
+            }}
+            onPress={() => navigation.goBack()}>
+            <Icon name="arrowleft" size={20} color={'black'} />
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: darkmode ? 'white' : 'black',
+              marginLeft: 20,
             }}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icon name="left" size={20} color={'black'} />
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-                marginLeft: 20,
-              }}>
-              Comments
-            </Text>
-            {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+            Comments
+          </Text>
+          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               Chicago, IL 60611, USA
             </Text> */}
-          </View>
-          {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-          {/* <ScrollView> */}
-          <View style={{flex: 1, paddingHorizontal: 15}}>
-            {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        </View>
+        {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+        {/* <ScrollView> */}
+        <View style={{flex: 1, paddingHorizontal: 15}}>
+          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
               style={{
@@ -174,46 +191,46 @@ const Comments = ({navigation, route}) => {
             </View>
           ))}
         </View> */}
-            {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+          {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
 
-            <FlatList data={comments} renderItem={renderItems} />
-          </View>
-          <View
+          <FlatList data={comments} renderItem={renderItems} />
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: 'grey',
+            height: 70,
+            marginBottom:
+              Platform.OS == 'android'
+                ? 0
+                : keyboardStatus == 'Keyboard Shown'
+                ? 20
+                : 0,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <TextInput
+            placeholder={'Add your comment'}
+            placeholderTextColor={'grey'}
+            value={comment}
+            onChangeText={text => {
+              setComment(text);
+            }}
             style={{
-              flexDirection: 'row',
-              backgroundColor: 'white',
-              height: 70,
-              marginBottom:
-                Platform.OS == 'android'
-                  ? 0
-                  : keyboardStatus == 'Keyboard Shown'
-                  ? 20
-                  : 0,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <TextInput
-              placeholder={'Add your comment'}
-              placeholderTextColor={'grey'}
-              value={comment}
-              onChangeText={text => {
-                setComment(text);
-              }}
-              style={{
-                width: '80%',
-                height: 50,
-                borderRadius: 30,
-                color: 'black',
-                paddingHorizontal: 10,
-                backgroundColor: '#ccc',
-              }}
-            />
-            <TouchableOpacity onPress={() => send()} style={{marginLeft: 10}}>
-              <Icon3 name="send" size={25} color="#5F95F0" />
-            </TouchableOpacity>
-          </View>
-        </Wrapper>
-      </ImageBackground>
+              width: '80%',
+              height: 50,
+              borderRadius: 30,
+              color: 'black',
+              paddingHorizontal: 10,
+              backgroundColor: '#ccc',
+            }}
+          />
+          <TouchableOpacity onPress={() => send()} style={{marginLeft: 10}}>
+            <Icon3 name="send" size={25} color="#5F95F0" />
+          </TouchableOpacity>
+        </View>
+      </Wrapper>
+      {/* </ImageBackground> */}
 
       {/* </ScrollView> */}
 

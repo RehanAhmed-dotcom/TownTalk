@@ -27,13 +27,19 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
-import Icon from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/EvilIcons';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 import Icon3 from 'react-native-vector-icons/Feather';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateToken} from '../../../lib/api';
-import {viewAllPost, blockUser, reportUser, hashTag} from '../../../lib/api';
+import {
+  viewAllPost,
+  blockUser,
+  reportUser,
+  deletePostApi,
+  hashTag,
+} from '../../../lib/api';
 // import {logoutuser} from '../../../redux/actions';
 import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
@@ -54,11 +60,12 @@ const Home = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
   const [showfilter, setShowFilter] = useState(false);
   const [reportId, setReportId] = useState('');
+  const [deleteModal, setDeleteModal] = useState(false);
   const [reportReason, setReportReason] = useState('');
   const [blockuserId, setBlockuserId] = useState('');
   const [filter, setFilter] = useState('all');
   const [showReportModal, setShowReportModal] = useState(false);
-  const {userData, Lat, Long} = useSelector(({USER}) => USER);
+  const {userData, darkmode, Lat, Long} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [list, setList] = useState([]);
   // console.log('lat long in redux', datas);
@@ -380,6 +387,10 @@ const Home = ({navigation}) => {
     // console.log('block user id', id);
     setBlockuserId(id);
   };
+  const deletePost = id => {
+    setReportId(id);
+    setDeleteModal(true);
+  };
   const ReportModal = () => {
     const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
     return (
@@ -526,6 +537,125 @@ const Home = ({navigation}) => {
       </Modal>
     );
   };
+  const DeleteModal = () => {
+    const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={deleteModal}
+        onRequestClose={() => setDeleteModal(false)}>
+        <TouchableOpacity
+          onPress={() => setDeleteModal(false)}
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <Wrapper
+            behavior="padding"
+            style={{
+              height: '45%',
+              width: '100%',
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              padding: 20,
+            }}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                fontSize: 16,
+                color: 'black',
+              }}>
+              Delete this post
+            </Text>
+            <View style={{alignItems: 'center', marginVertical: 15}}>
+              <Icon name="trash-bin-sharp" size={50} color="red" />
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 18,
+                  fontFamily: 'MontserratAlternates-Bold',
+                }}>
+                Are you sure?
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 14,
+                color: 'grey',
+                marginTop: 0,
+              }}>
+              Once deleted, you will not be able to recover this Post!
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                deletePostApi({
+                  Auth: userData.token,
+                  post_id: reportId,
+                })
+                  .then(res => {
+                    console.log('res of delete', res);
+                    setChange(!change);
+                  })
+                  .catch(err => {
+                    console.log('err in delete', err);
+                  });
+                setDeleteModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: 'red',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Delete Post
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setDeleteModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: '#200E32',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </Wrapper>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
   const renderItem1 = ({item}) => (
     <Posts
       item={item}
@@ -536,6 +666,7 @@ const Home = ({navigation}) => {
       onPress={() => {
         navigation.navigate('PostDetails', {item});
       }}
+      deletePost={deletePost}
       press={alter}
       navigation={navigation}
       tagPress={text => {
@@ -632,14 +763,15 @@ const Home = ({navigation}) => {
   // const long = 73.0525821;
   // console.log('test arr length', testArr.length);
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
       <View
         style={{
           height: 80,
-          backgroundColor: 'white',
+          backgroundColor: darkmode ? 'black' : 'white',
           // elevation: 3,
           flexDirection: 'row',
           alignItems: 'center',
@@ -742,7 +874,7 @@ const Home = ({navigation}) => {
       <View
         style={{
           // marginTop: 10,
-          backgroundColor: 'white',
+          backgroundColor: darkmode ? 'black' : 'white',
           paddingHorizontal: 12,
           flex: 1,
         }}>
@@ -778,9 +910,15 @@ const Home = ({navigation}) => {
             style={{
               fontSize: 14,
               fontFamily: 'MontserratAlternates-SemiBold',
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
             }}>
-            Recent posts
+            {filter == 'all'
+              ? 'All'
+              : filter == 'recent'
+              ? 'Recent posts'
+              : filter == 'likes'
+              ? 'Most Likes'
+              : 'Most Comments'}
           </Text>
           <TouchableOpacity
             onPress={() => setShowFilter(!showfilter)}
@@ -794,7 +932,7 @@ const Home = ({navigation}) => {
               style={{
                 fontSize: 14,
                 fontFamily: 'MontserratAlternates-Regular',
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 marginLeft: 3,
               }}>
               Filters
@@ -957,6 +1095,7 @@ const Home = ({navigation}) => {
       {/* <Text>Home</Text> */}
       {MyModal(showModal)}
       {ReportModal()}
+      {DeleteModal()}
     </SafeAreaView>
   );
 };

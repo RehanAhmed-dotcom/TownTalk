@@ -26,7 +26,7 @@ const Chat = ({navigation}) => {
   const [showModal, setShowModal] = useState(false);
   const [search, setSearch] = useState('');
   const [db, setDb] = useState(false);
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const searchTextGiven = e => {
     let filteredName = [];
     // if (e) {
@@ -128,7 +128,7 @@ const Chat = ({navigation}) => {
               style={{
                 fontSize: 14,
                 fontFamily: 'MontserratAlternates-SemiBold',
-                color: item.unread ? 'black' : 'black',
+                color: darkmode ? 'white' : 'black',
               }}>
               {`${item.user.firstname}`}
             </Text>
@@ -247,7 +247,8 @@ const Chat = ({navigation}) => {
     return unsubscribe;
   }, [navigation]);
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
@@ -266,7 +267,7 @@ const Chat = ({navigation}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           My Chats
         </Text>
@@ -305,7 +306,7 @@ const Chat = ({navigation}) => {
           <Text
             style={{
               fontSize: 14,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
               fontFamily: 'MontserratAlternates-SemiBold',
             }}>
             Messages

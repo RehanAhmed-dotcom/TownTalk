@@ -46,7 +46,7 @@ const Hashes = ({navigation, route}) => {
   const [testArr, setTestArr] = useState([]);
   const [hash, setHash] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const {userData, Lat, Long} = useSelector(({USER}) => USER);
+  const {userData, darkmode, Lat, Long} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [list, setList] = useState([]);
   console.log('lat long in redux', Lat, Long);
@@ -425,35 +425,47 @@ const Hashes = ({navigation, route}) => {
   // const long = 73.0525821;
   // console.log('test arr length', testArr.length);
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
-          style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
-            alignItems: 'center',
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          backgroundColor: darkmode ? 'black' : 'white',
+          elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
 
-            paddingHorizontal: 15,
-            justifyContent: 'space-between',
-          }}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon1 name="left" color="black" size={20} />
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-                marginLeft: 10,
-              }}>
-              {text ? text?.substring(1) : tag}
-            </Text>
-            {/* <Text
+          paddingHorizontal: 15,
+          justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View
+            style={{
+              height: 30,
+              width: 30,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: '#ccc',
+              borderRadius: 5,
+            }}>
+            <Icon1 name="arrowleft" color="black" size={20} />
+          </View>
+
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: darkmode ? 'white' : 'black',
+              marginLeft: 10,
+            }}>
+            {text ? text?.substring(1) : tag}
+          </Text>
+          {/* <Text
               style={{
                 fontSize: 16,
                 fontFamily: 'MontserratAlternates-SemiBold',
@@ -462,11 +474,11 @@ const Hashes = ({navigation, route}) => {
               {location}
              
             </Text> */}
-            {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               {location}
             </Text> */}
-          </TouchableOpacity>
-          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        </TouchableOpacity>
+        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <TouchableOpacity onPress={() => navigation.navigate('Search')}>
               <Image
                 source={require('../../../assets/Images/search.png')}
@@ -480,11 +492,11 @@ const Hashes = ({navigation, route}) => {
               />
             </TouchableOpacity>
           </View> */}
-        </View>
-        {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-        {/* <ScrollView> */}
-        <View style={{marginTop: 10, paddingHorizontal: 12}}>
-          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      </View>
+      {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+      {/* <ScrollView> */}
+      <View style={{marginTop: 10, paddingHorizontal: 12}}>
+        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
               style={{
@@ -503,26 +515,26 @@ const Hashes = ({navigation, route}) => {
             </View>
           ))}
         </View> */}
-          {/* <FlatList horizontal data={hash} renderItem={renderItem} /> */}
-          <ScrollView>
-            <View
-              style={{
-                marginTop: 10,
-                // flex: 1,
-                width: '100%',
-                paddingBottom: 0,
-                height: hp(Platform.OS == 'ios' ? 75 : 80),
-              }}>
-              <FlatList
-                data={datas}
-                // onEndReachedThreshold={0.5}
-                // onEndReached={increasePage}
-                renderItem={renderItem1}
-              />
-            </View>
-          </ScrollView>
-        </View>
-      </ImageBackground>
+        {/* <FlatList horizontal data={hash} renderItem={renderItem} /> */}
+        <ScrollView>
+          <View
+            style={{
+              marginTop: 10,
+              // flex: 1,
+              width: '100%',
+              paddingBottom: 0,
+              height: hp(Platform.OS == 'ios' ? 75 : 80),
+            }}>
+            <FlatList
+              data={datas}
+              // onEndReachedThreshold={0.5}
+              // onEndReached={increasePage}
+              renderItem={renderItem1}
+            />
+          </View>
+        </ScrollView>
+      </View>
+      {/* </ImageBackground> */}
 
       {/* </ScrollView> */}
 

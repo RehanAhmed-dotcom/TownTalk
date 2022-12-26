@@ -62,7 +62,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const audioPath = AudioUtils.DocumentDirectoryPath + '/test.aac';
   const mapRef = useRef(null);
   // const audioRecorderPlayer = new AudioRecorderPlayer();
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
   // const onStartRecord = async () => {
   //   const result = await audioRecorderPlayer.startRecorder();
@@ -735,6 +735,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
               : 'flex-start',
           marginBottom: 10,
           marginTop: index == 0 ? 10 : 10,
+          // backgroundColor:darkmode?"black":"white"
         }}>
         {check(item.msg) == true ? (
           <TouchableOpacity
@@ -916,7 +917,8 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   };
   // console.log('messages', messages);
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       <Wrapper behavior="padding" style={{flex: 1}}>
         <View
           style={{
@@ -929,7 +931,16 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
             justifyContent: 'space-between',
           }}>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#ccc',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 30,
+                width: 30,
+                borderRadius: 5,
+              }}
+              onPress={() => navigation.goBack()}>
               <Icon1 name="arrowleft" color="black" size={20} />
             </TouchableOpacity>
             <Image
@@ -950,7 +961,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                 style={{
                   fontSize: 16,
                   fontFamily: 'MontserratAlternates-SemiBold',
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                 }}>
                 {`${item?.firstname} `}
               </Text>
@@ -972,7 +983,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
         <View
           style={{
             paddingHorizontal: 15,
-            backgroundColor: 'white',
+            backgroundColor: darkmode ? 'black' : 'white',
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             flex: 1,
@@ -990,7 +1001,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
             height: 70,
 
             paddingHorizontal: 15,
-            backgroundColor: 'white',
+            backgroundColor: 'black',
             marginBottom:
               Platform.OS == 'android'
                 ? 0

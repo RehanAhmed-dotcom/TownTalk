@@ -33,7 +33,8 @@ const USER_AUTHORIZE = 'USER_SIGN_IN',
   REMEMBER = 'REMEMBER',
   NOTIFICATIONALERT = 'NOTIFICATIONALERT',
   TOGGLE = 'TOOGLE',
-  CITYADD = 'CITYADD';
+  CITYADD = 'CITYADD',
+  DARKMODE = 'DARKMODE';
 //========================================================Dispatchers
 const userAuthorize = payload => async dispatch => {
   dispatch({type: USER_AUTHORIZE, payload});
@@ -60,6 +61,9 @@ const cityAdd = payload => dispatch => {
 };
 const toggleSwitch = () => dispatch => {
   dispatch({type: TOGGLESWITCH});
+};
+const darkMode = () => dispatch => {
+  dispatch({type: DARKMODE});
 };
 const logout = () => dispatch => {
   dispatch({type: USER_LOGOUT});
@@ -165,6 +169,7 @@ const ActionType = {
   PRODUCTINC,
   PRODUCTDEC,
   USERLOGGED,
+  DARKMODE,
   LOGOUT,
   USERDATA,
   SELECTEDUSER,
@@ -196,6 +201,7 @@ export {
   diff,
   iphoneEmail,
   cart,
+  darkMode,
   verify,
   cartItemUpdate,
   increament,

@@ -11,7 +11,7 @@ import {
   FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import {logoutuser} from '../../../redux/actions';
+import {logoutuser, darkMode} from '../../../redux/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import {deleteAccount} from '../../../lib/api';
 import SwitchWithIcons from 'react-native-switch-with-icons';
@@ -19,9 +19,11 @@ import SwitchWithIcons from 'react-native-switch-with-icons';
 import ToggleSwitch from 'toggle-switch-react-native';
 import Icons from 'react-native-vector-icons/AntDesign';
 const Setting = ({navigation}) => {
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const dispatch = useDispatch();
-  const [check, setCheck] = useState(false);
-  const {userData} = useSelector(({USER}) => USER);
+  const [check, setCheck] = useState(darkmode);
+
+  console.log('darkmode', darkmode);
   const moon = require('../../../assets/Images/moon.png');
   const sun = require('../../../assets/Images/sunFull.png');
   const settings = [
@@ -152,7 +154,7 @@ const Setting = ({navigation}) => {
         <Text
           style={{
             fontSize: 16,
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
             fontFamily: 'MontserratAlternates-SemiBold',
           }}>
           {item.name}
@@ -169,7 +171,8 @@ const Setting = ({navigation}) => {
     </TouchableOpacity>
   );
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       <View
         style={{
           height: 80,
@@ -199,7 +202,7 @@ const Setting = ({navigation}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
             marginLeft: 20,
           }}>
           Settings
@@ -216,7 +219,10 @@ const Setting = ({navigation}) => {
               sun,
           }}
           onValueChange={
-            value => setCheck(!check)
+            value => {
+              setCheck(!check);
+              darkMode()(dispatch);
+            }
             // console.log(`Value has been updated to ${value}`)
           }
         />
