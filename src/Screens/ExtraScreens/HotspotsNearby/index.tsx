@@ -19,12 +19,14 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Hotspot from '../../../Components/Hotspot';
 import Icons from 'react-native-vector-icons/Feather';
 import Slider from '@react-native-community/slider';
+import {useSelector} from 'react-redux';
 import IconFire from 'react-native-vector-icons/MaterialIcons';
 import {config} from '../../../../config';
 const dummy = [1, 2, 3, 4, 5];
 
 const HotspotsNearby = ({navigation}) => {
   const [search, setSearch] = useState('');
+  const {darkmode} = useSelector(({USER}) => USER);
   const [selected, setSelected] = useState('Shopping');
   const [slideStartingValue, setslideStartingValue] = useState(1);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -178,7 +180,7 @@ const HotspotsNearby = ({navigation}) => {
         }}>
         <View
           style={{
-            backgroundColor: 'white',
+            backgroundColor: darkmode ? 'black' : 'white',
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             width: '100%',
@@ -195,7 +197,12 @@ const HotspotsNearby = ({navigation}) => {
               color="#ccc"
             />
           </View>
-          <Text style={{fontSize: 18, fontWeight: 'bold', color: 'black'}}>
+          <Text
+            style={{
+              fontSize: 18,
+              fontWeight: 'bold',
+              color: darkmode ? 'white' : 'black',
+            }}>
             Filter hotspots
           </Text>
           <View
@@ -226,8 +233,10 @@ const HotspotsNearby = ({navigation}) => {
               marginTop: 20,
               justifyContent: 'space-between',
             }}>
-            <Text style={{fontSize: 16, color: 'black'}}>Select radius</Text>
-            <Text style={{fontSize: 16, color: 'black'}}>
+            <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
+              Select radius
+            </Text>
+            <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
               {parseInt(slideStartingValue)} miles
             </Text>
           </View>
@@ -300,13 +309,15 @@ const HotspotsNearby = ({navigation}) => {
     </Modal>
   );
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       <View
         style={{
           height: 80,
           // elevation: 3,
           flexDirection: 'row',
           alignItems: 'center',
+          backgroundColor: darkmode ? '#242527' : 'white',
           paddingHorizontal: 15,
           justifyContent: 'space-between',
         }}>
@@ -326,7 +337,7 @@ const HotspotsNearby = ({navigation}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           Hotspots Nearby
         </Text>

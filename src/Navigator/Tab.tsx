@@ -16,11 +16,16 @@ import Explore from '../Screens/TabScreens/Explore';
 import Profile from '../Screens/TabScreens/Profile';
 import {useSelector} from 'react-redux';
 const TabNavigator = () => {
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const focussed = require('../assets/Images/Compass.png');
-  const unfocused = require('../assets/Images/compas.png');
+  const unfocused = require('../assets/Images/greyExplore.png');
   return (
-    <Tab.Navigator screenOptions={{headerShown: false, tabBarShowLabel: false}}>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {backgroundColor: darkmode ? '#242527' : 'white'},
+        tabBarShowLabel: false,
+      }}>
       <Tab.Screen
         // options={{}}
         name="Home"

@@ -21,6 +21,7 @@ import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Hotel from '../../../Components/Hotel';
 import {config} from '../../../../config';
+import {useSelector} from 'react-redux';
 import MyModal from '../../../Components/MyModal';
 const ResturantsNearby = ({
   navigation,
@@ -36,6 +37,7 @@ const ResturantsNearby = ({
   const {sel} = route.params;
   const city = route?.params?.city;
   const [list, setList] = useState([]);
+  const {darkmode} = useSelector(({USER}) => USER);
   // const arr = ['fun', 'danger', 'helpful', 'adventure', 'hobby'];
   const requestLocationPermission = async () => {
     try {
@@ -55,7 +57,9 @@ const ResturantsNearby = ({
     const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
     const location = `location=${lat},${long}`;
     const radius = '&radius=2000';
-    const type = `&keyword=${sel}`;
+    const type = `&keyword=All`;
+
+    // const type = `&keyword=${sel}`;
     const key = `&key=${config}`;
     const restaurantSearchUrl = url + location + radius + type + key;
     fetch(restaurantSearchUrl)
@@ -130,41 +134,51 @@ const ResturantsNearby = ({
   );
   // console.log('firsts', JSON.stringify(list[0]));
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          backgroundColor: darkmode ? '#242527' : 'white',
+          elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          // justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity
           style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
+            height: 30,
+            width: 30,
+            borderRadius: 5,
+            backgroundColor: '#ccc',
             alignItems: 'center',
-            paddingHorizontal: 15,
-            // justifyContent: 'space-between',
-          }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon1 name="left" size={20} color="black" />
-          </TouchableOpacity>
-          <View style={{marginLeft: 20}}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-              }}>
-              {sel} Nearby
-            </Text>
-            {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+            justifyContent: 'center',
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icon1 name="arrowleft" size={20} color="black" />
+        </TouchableOpacity>
+        <View style={{marginLeft: 20}}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: darkmode ? 'white' : 'black',
+            }}>
+            {sel} Nearby
+          </Text>
+          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               Chicago, IL 60611, USA
             </Text> */}
-          </View>
         </View>
-        {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-        {/* <ScrollView> */}
-        <View style={{marginHorizontal: 15}}>
-          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      </View>
+      {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+      {/* <ScrollView> */}
+      <View style={{marginHorizontal: 15}}>
+        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
               style={{
@@ -183,15 +197,15 @@ const ResturantsNearby = ({
             </View>
           ))}
         </View> */}
-          {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-          {/* <ScrollView> */}
-          <View style={{marginTop: 0, height: '93%', marginBottom: 10}}>
-            <FlatList data={list} renderItem={renderItem1} />
-          </View>
-
-          {/* </ScrollView> */}
+        {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+        {/* <ScrollView> */}
+        <View style={{marginTop: 0, height: '93%', marginBottom: 10}}>
+          <FlatList data={list} renderItem={renderItem1} />
         </View>
-      </ImageBackground>
+
+        {/* </ScrollView> */}
+      </View>
+      {/* </ImageBackground> */}
 
       {/* </ScrollView> */}
 

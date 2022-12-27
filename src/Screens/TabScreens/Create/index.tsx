@@ -349,7 +349,7 @@ const Create = ({navigation}) => {
       <View
         style={{
           height: 80,
-          // backgroundColor: 'white',
+          backgroundColor: darkmode ? '#242527' : 'white',
           // elevation: 3,
           flexDirection: 'row',
           alignItems: 'center',

@@ -19,11 +19,12 @@ import Icons from 'react-native-vector-icons/AntDesign';
 import Video from 'react-native-video';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Entypo';
+import Icon2 from 'react-native-vector-icons/Feather';
 import Swiper from 'react-native-swiper';
-import Icon1 from 'react-native-vector-icons/FontAwesome';
+import Icon1 from 'react-native-vector-icons/EvilIcons';
 const SwiperPosts = props => {
   const {item, swipe, navigation, onShare, onPress, hashPress, press} = props;
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const [paused, setPaused] = useState(false);
   const [show, setShow] = useState(false);
   console.log('checking item', item);
@@ -34,7 +35,7 @@ const SwiperPosts = props => {
         //   onPress={onPress}
         style={{
           // height: 30,
-          backgroundColor: 'white',
+          backgroundColor: darkmode ? '#242527' : 'white',
           marginRight: 3,
           elevation: 3,
           // alignItems: 'center',
@@ -54,7 +55,12 @@ const SwiperPosts = props => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              // backgroundColor: 'red',
+              alignItems: 'center',
+            }}>
             <Image
               source={
                 item?.user?.image
@@ -68,7 +74,7 @@ const SwiperPosts = props => {
                 style={{
                   fontFamily: 'MontserratAlternates-SemiBold',
                   fontSize: 16,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                 }}>
                 {`${item?.user?.firstname}`}
               </Text>
@@ -77,6 +83,7 @@ const SwiperPosts = props => {
                   fontSize: 12,
                   fontFamily: 'MontserratAlternates-Regular',
                   marginTop: 5,
+                  color: darkmode ? 'white' : 'black',
                 }}>
                 {item?.created_at}
               </Text>
@@ -255,10 +262,21 @@ const SwiperPosts = props => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginTop: 10,
+            // marginTop: 10,
+            zIndex: -3,
+            // backgroundColor: 'red',
           }}>
-          <LikeDislike item={item} press={press} />
-          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              width: '50%',
+              // backgroundColor: 'red',
+              alignItems: 'center',
+              marginTop: 10,
+            }}>
+            <LikeDislike item={item} press={press} />
+            {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => {
               setLike(!like);
@@ -333,35 +351,16 @@ const SwiperPosts = props => {
             </Text>
           </TouchableOpacity>
         </View> */}
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity
-              onPress={() => {
-                onShare();
-              }}
-              //   setLike(!like);
-              //   setDislike(false);
-              // }}
-              style={{
-                flexDirection: 'row',
-                width: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {/* <Image
-              source={require('../assets/Images/share.png')}
-              style={{height: 10, width: 10}}
-            /> */}
-              <Icon name="share" size={16} color={'black'} />
-              {/* <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                marginLeft: 5,
-                fontSize: 13,
-                color: 'black',
-              }}>
-              Share
-            </Text> */}
-            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '50%',
+              marginTop: 10,
+              justifyContent: 'space-between',
+              // backgroundColor: 'red',
+              alignItems: 'center',
+            }}>
             {!show && (
               <TouchableOpacity
                 onPress={() => navigation.navigate('Comments', {id: item.id})}
@@ -371,8 +370,8 @@ const SwiperPosts = props => {
                 // }}
                 style={{
                   flexDirection: 'row',
-                  marginLeft: 0,
-                  width: 30,
+                  marginLeft: 30,
+                  width: 35,
                   justifyContent: 'center',
                   alignItems: 'center',
                 }}>
@@ -380,8 +379,16 @@ const SwiperPosts = props => {
                 source={require('../assets/Images/comment.png')}
                 style={{height: 10, width: 10}}
               /> */}
-                <Icon1 name="commenting" size={15} color="black" />
-
+                <Icon1 name="comment" size={25} color="grey" />
+                <Text
+                  style={{
+                    fontFamily: 'MontserratAlternates-Regular',
+                    // marginLeft: 5,
+                    color: darkmode ? 'white' : 'black',
+                    fontSize: 13,
+                  }}>
+                  {item.comment_count}
+                </Text>
                 {/* <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
@@ -393,6 +400,34 @@ const SwiperPosts = props => {
               </Text> */}
               </TouchableOpacity>
             )}
+            <TouchableOpacity
+              onPress={() => {
+                onShare();
+              }}
+              //   setLike(!like);
+              //   setDislike(false);
+              // }}
+              style={{
+                flexDirection: 'row',
+                width: 30,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              {/* <Image
+              source={require('../assets/Images/share.png')}
+              style={{height: 10, width: 10}}
+            /> */}
+              <Icon2 name="send" size={16} color={'grey'} />
+              {/* <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                marginLeft: 5,
+                fontSize: 13,
+                color: 'black',
+              }}>
+              Share
+            </Text> */}
+            </TouchableOpacity>
           </View>
         </View>
 

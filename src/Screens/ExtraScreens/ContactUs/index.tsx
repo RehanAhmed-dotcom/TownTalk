@@ -21,41 +21,51 @@ import Icons from 'react-native-vector-icons/AntDesign';
 const ContactUs = ({navigation}) => {
   const dispatch = useDispatch();
   const [check, setCheck] = useState(false);
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const moon = require('../../../assets/Images/moon.png');
   const sun = require('../../../assets/Images/sunFull.png');
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+      {/* <ImageBackground
         style={{height: '100%'}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
-          style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
-            alignItems: 'center',
-            paddingHorizontal: 15,
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          backgroundColor: darkmode ? '#242527' : 'white',
+          elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
 
-            justifyContent: 'space-between',
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Icons name="left" size={20} color={'black'} />
-            </TouchableOpacity>
-            <Text
-              style={{
-                fontSize: 16,
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-                marginLeft: 20,
-              }}>
-              Contact us
-            </Text>
-          </View>
+          justifyContent: 'space-between',
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#ccc',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: 30,
+              width: 30,
+              borderRadius: 5,
+            }}
+            onPress={() => navigation.goBack()}>
+            <Icons name="arrowleft" size={20} color={'black'} />
+          </TouchableOpacity>
+          <Text
+            style={{
+              fontSize: 16,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: darkmode ? 'white' : 'black',
+              marginLeft: 20,
+            }}>
+            Contact us
+          </Text>
+        </View>
 
-          {/* <ToggleSwitch
+        {/* <ToggleSwitch
             isOn={check}
             onColor="black"
             offColor="#ccc"
@@ -64,7 +74,7 @@ const ContactUs = ({navigation}) => {
             size="small"
             onToggle={isOn => setCheck(!check)}
           /> */}
-          {/* <CheckBox
+        {/* <CheckBox
             style={{flex: 1, padding: 10}}
             onClick={() => {
               setCheck(!check);
@@ -72,104 +82,110 @@ const ContactUs = ({navigation}) => {
             isChecked={check}
             leftText={'CheckBox'}
           /> */}
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+        {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               Chicago, IL 60611, USA
             </Text> */}
-        </View>
-        <View
-          style={{
-            // alignItems: 'center',
-            marginTop: 15,
-            // flexDirection: 'row',
-            // justifyContent: 'space-between',
-            paddingHorizontal: 15,
-          }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon1 name="right" color={'black'} />
-            <Text
-              style={{
-                fontSize: 13,
-                color: 'black',
-                marginLeft: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Email
-            </Text>
-          </View>
+      </View>
+      <View
+        style={{
+          // alignItems: 'center',
+          marginTop: 15,
+          backgroundColor: darkmode ? '#242527' : 'white',
+          paddingVertical: 5,
+          // flexDirection: 'row',
+          // justifyContent: 'space-between',
+          paddingHorizontal: 15,
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Icon1 name="arrowright" color={'grey'} />
           <Text
             style={{
               fontSize: 13,
-              marginLeft: 30,
-              color: 'black',
-              marginTop: 10,
+              color: darkmode ? 'white' : 'black',
+              marginLeft: 10,
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            Towntalk@gmail.com
+            Email
           </Text>
         </View>
-        <View
+        <Text
           style={{
-            // alignItems: 'center',
-            marginTop: 15,
-            // flexDirection: 'row',
-            // justifyContent: 'space-between',
-            paddingHorizontal: 15,
+            fontSize: 13,
+            marginLeft: 30,
+            color: darkmode ? 'white' : 'black',
+            marginTop: 10,
+            fontFamily: 'MontserratAlternates-Regular',
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon1 name="right" color={'black'} />
-            <Text
-              style={{
-                fontSize: 13,
-                color: 'black',
-                marginLeft: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Twitter
-            </Text>
-          </View>
+          Towntalk@gmail.com
+        </Text>
+      </View>
+      <View
+        style={{
+          // alignItems: 'center',
+          marginTop: 15,
+          backgroundColor: darkmode ? '#242527' : 'white',
+          paddingVertical: 5,
+          // flexDirection: 'row',
+          // justifyContent: 'space-between',
+          paddingHorizontal: 15,
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Icon1 name="arrowright" color={'grey'} />
           <Text
             style={{
               fontSize: 13,
-              marginLeft: 30,
-              color: 'black',
-              marginTop: 10,
+              color: darkmode ? 'white' : 'black',
+              marginLeft: 10,
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            Towntalk@gmail.com
+            Twitter
           </Text>
         </View>
-        <View
+        <Text
           style={{
-            // alignItems: 'center',
-            marginTop: 15,
-            // flexDirection: 'row',
-            // justifyContent: 'space-between',
-            paddingHorizontal: 15,
+            fontSize: 13,
+            marginLeft: 30,
+            color: darkmode ? 'white' : 'black',
+            marginTop: 10,
+            fontFamily: 'MontserratAlternates-Regular',
           }}>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon1 name="right" color={'black'} />
-            <Text
-              style={{
-                fontSize: 13,
-                color: 'black',
-                marginLeft: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Phone
-            </Text>
-          </View>
+          Towntalk@gmail.com
+        </Text>
+      </View>
+      <View
+        style={{
+          // alignItems: 'center',
+          marginTop: 15,
+          // flexDirection: 'row',
+          backgroundColor: darkmode ? '#242527' : 'white',
+          paddingVertical: 5,
+          // justifyContent: 'space-between',
+          paddingHorizontal: 15,
+        }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <Icon1 name="right" color={'grey'} />
           <Text
             style={{
               fontSize: 13,
-              marginLeft: 30,
-              color: 'black',
-              marginTop: 10,
+              color: darkmode ? 'white' : 'black',
+              marginLeft: 10,
               fontFamily: 'MontserratAlternates-Regular',
             }}>
-            +100110011100
+            Phone
           </Text>
         </View>
-      </ImageBackground>
+        <Text
+          style={{
+            fontSize: 13,
+            marginLeft: 30,
+            color: darkmode ? 'white' : 'black',
+            marginTop: 10,
+            fontFamily: 'MontserratAlternates-Regular',
+          }}>
+          +100110011100
+        </Text>
+      </View>
+      {/* </ImageBackground> */}
     </SafeAreaView>
   );
 };

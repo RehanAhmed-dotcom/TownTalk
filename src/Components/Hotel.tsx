@@ -11,15 +11,17 @@ import {
 import Axios from 'axios';
 import LikeDislike from './LikeDislike';
 import {config} from '../../config';
+import {useSelector} from 'react-redux';
 // import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/Fontisto';
 const Hotel = ({item, navigation}) => {
+  const {darkmode} = useSelector(({USER}) => USER);
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('RestaurantsDetail', {item})}
       style={{
         // height: 30,
-        backgroundColor: 'white',
+        backgroundColor: darkmode ? '#242527' : 'white',
         marginRight: 10,
         elevation: 3,
         // alignItems: 'center',
@@ -49,57 +51,7 @@ const Hotel = ({item, navigation}) => {
               flexDirection: 'row',
               width: '100%',
               justifyContent: 'space-between',
-            }}>
-            <View style={{width: '90%'}}>
-              <Text
-                style={{
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                  fontSize: 16,
-                  color: 'black',
-                }}>
-                {item.name}
-              </Text>
-              {/* <View
-                style={{
-                  flexDirection: 'row',
-                  // backgroundColor: 'red',
-                  alignItems: 'center',
-                  width: '90%',
-                  flexWrap: 'wrap',
-                }}>
-                {item.types.map(element => (
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      fontFamily: 'MontserratAlternates-Medium',
-                      marginTop: 5,
-                      color: 'black',
-                    }}>
-                    {element},
-                  </Text>
-                ))}
-              </View> */}
-
-              {/* <Text
-                style={{
-                  fontSize: 12,
-                  fontFamily: 'MontserratAlternates-Medium',
-                  marginTop: 5,
-                  color: 'black',
-                }}>
-                Italian, Chinese, Pizza, Fastfood
-              </Text> */}
-            </View>
-            {/* <Text
-              style={{
-                fontSize: 12,
-                fontFamily: 'MontserratAlternates-Medium',
-                marginTop: 5,
-                color: 'black',
-              }}>
-              2 Km
-            </Text> */}
-          </View>
+            }}></View>
         </View>
         {/* <Icon name="dots-three-horizontal" size={20} /> */}
       </View>
@@ -111,118 +63,18 @@ const Hotel = ({item, navigation}) => {
           alignItems: 'center',
           // backgroundColor: 'red',
           overflow: 'hidden',
-        }}>
-        {/* <FlatList horizontal data={arr} renderItem={renderItem3} /> */}
-        {/* {arr.map(item => (
-        <View>
-          <Text
-            style={{
-              marginRight: 5,
-              fontSize: 13,
-              fontFamily: 'MontserratAlternates-Medium',
-              color: '#5F95F0',
-            }}>
-            #{item}
-          </Text>
-        </View>
-      ))} */}
-      </View>
+        }}></View>
       <View style={{marginTop: 5}}>
         <Text
           style={{
             fontSize: 12,
             fontFamily: 'MontserratAlternates-Medium',
             // marginTop: 5,
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           {item?.opening_hours?.open_now ? 'Open Now' : 'Closed'}
         </Text>
-        {/* <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-          <View>
-            <Text
-              style={{
-                fontSize: 13,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Medium',
-              }}>
-              PKR 4500
-            </Text>
-            <Text
-              style={{
-                fontSize: 10,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Booking.com
-            </Text>
-            <Text
-              style={{
-                fontSize: 10,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Reserve now, pay at stay
-            </Text>
-          </View>
-          <View style={{alignItems: 'center'}}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Icon
-                name="star"
-                size={10}
-                color="#5F95F0"
-                style={{marginLeft: 3}}
-              />
-              <Icon
-                name="star"
-                size={10}
-                color="#5F95F0"
-                style={{marginLeft: 3}}
-              />
-              <Icon
-                name="star"
-                size={10}
-                color="#5F95F0"
-                style={{marginLeft: 3}}
-              />
-              <Icon
-                name="star"
-                size={10}
-                color="#5F95F0"
-                style={{marginLeft: 3}}
-              />
-              <Icon
-                name="star"
-                size={10}
-                color="#5F95F0"
-                style={{opacity: 0.5, marginLeft: 3}}
-              />
-            </View>
-            <TouchableOpacity
-              style={{
-                width: 70,
-                height: 20,
-                alignItems: 'center',
-                justifyContent: 'center',
-                backgroundColor: '#5F95F0',
-                marginTop: 10,
-                borderRadius: 5,
-              }}>
-              <Text
-                style={{
-                  fontSize: 10,
-                  color: 'white',
-                  fontFamily: 'MontserratAlternates-SemiBold',
-                }}>
-                View Deal
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View> */}
+
         <Image
           resizeMode={'cover'}
           source={
@@ -234,6 +86,18 @@ const Hotel = ({item, navigation}) => {
           }
           style={{height: 150, borderRadius: 10, width: '100%', marginTop: 10}}
         />
+        <View style={{width: '90%', marginTop: 10}}>
+          <Text
+            style={{
+              fontFamily: 'MontserratAlternates-SemiBold',
+              fontSize: 16,
+
+              color: darkmode ? 'white' : 'black',
+            }}>
+            {item.name}
+            {/* {item.vicinity} */}
+          </Text>
+        </View>
       </View>
 
       {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}

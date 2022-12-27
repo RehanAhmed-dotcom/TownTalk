@@ -28,12 +28,13 @@ import {
 } from '@invertase/react-native-apple-authentication';
 import {logged, iphoneEmail} from '../../../redux/actions';
 import {validateEmail} from '../../../lib/functions';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
 import MyModal from '../../../Components/MyModal';
 import ImagePicker from 'react-native-image-crop-picker';
 const Signup = ({navigation}: {navigation: any}) => {
   const dispatch = useDispatch();
+  const {darkmode} = useSelector(({USER}) => USER);
   const [firstName, setFirstName] = useState('');
   const [image, setImage] = useState('');
   const [firstNameErr, setFirstNameErr] = useState('');
@@ -408,7 +409,8 @@ const Signup = ({navigation}: {navigation: any}) => {
   };
   const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         source={require('../../../assets/Images/SignupBackground.png')}
         style={{flex: 1}}> */}
@@ -421,7 +423,7 @@ const Signup = ({navigation}: {navigation: any}) => {
           fontSize: 18,
           marginTop: 30,
           marginLeft: 20,
-          color: 'black',
+          color: darkmode ? 'white' : 'black',
           paddingBottom: 5,
           fontFamily: 'MontserratAlternates-SemiBold',
         }}>
@@ -497,7 +499,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                   height: 50,
                   borderRadius: 10,
                   paddingHorizontal: 10,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}
                 placeholderTextColor={'grey'}
@@ -547,7 +549,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                   height: 50,
                   paddingHorizontal: 10,
                   borderRadius: 10,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}
               />
@@ -568,7 +570,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                   borderRadius: 10,
                   height: 50,
                   paddingHorizontal: 10,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}
               />
@@ -598,7 +600,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                   height: 50,
                   borderRadius: 10,
                   paddingHorizontal: 10,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}
               />
@@ -618,7 +620,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                   borderWidth: 1,
                   height: 50,
                   borderRadius: 10,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}
               />
@@ -636,7 +638,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                   height: 50,
                   borderRadius: 10,
                   paddingHorizontal: 10,
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-Regular',
                 }}
                 placeholderTextColor={'grey'}
@@ -836,7 +838,7 @@ const Signup = ({navigation}: {navigation: any}) => {
               <Text
                 style={{
                   fontFamily: 'MontserratAlternates-Regular',
-                  color: 'black',
+                  color: darkmode ? 'white' : 'black',
                 }}>
                 Already have an account?
               </Text>
@@ -846,7 +848,7 @@ const Signup = ({navigation}: {navigation: any}) => {
                     marginLeft: 7,
                     fontSize: 16,
                     fontFamily: 'MontserratAlternates-SemiBold',
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                   }}>
                   Sign in!
                 </Text>

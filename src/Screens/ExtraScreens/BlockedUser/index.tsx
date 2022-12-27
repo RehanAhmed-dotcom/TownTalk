@@ -14,7 +14,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {unBlockUser, blockUserList} from '../../../lib/api';
 const BlockedUser = ({navigation}) => {
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const [alter, setAlter] = useState(false);
   const [users, setUsers] = useState([]);
   useEffect(() => {
@@ -60,6 +60,7 @@ const BlockedUser = ({navigation}) => {
         borderBottomColor: 'grey',
         justifyContent: 'space-between',
         borderBottomWidth: 1,
+        backgroundColor: darkmode ? '#242527' : 'white',
         marginTop: 10,
         paddingBottom: 10,
         alignItems: 'center',
@@ -73,7 +74,9 @@ const BlockedUser = ({navigation}) => {
               : require('../../../assets/Images/girl.jpg')
           }
         />
-        <Text style={{marginLeft: 10, color: 'black'}}>{item.firstname}</Text>
+        <Text style={{marginLeft: 10, color: darkmode ? 'white' : 'black'}}>
+          {item.firstname}
+        </Text>
       </View>
       <TouchableOpacity
         onPress={() => {
@@ -127,40 +130,50 @@ const BlockedUser = ({navigation}) => {
     </TouchableOpacity>
   );
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+      {/* <ImageBackground
         style={{height: '100%'}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          backgroundColor: darkmode ? '#242527' : 'white',
+          elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          // justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity
           style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
+            backgroundColor: '#ccc',
+            borderRadius: 5,
+            height: 30,
+            width: 30,
             alignItems: 'center',
-            paddingHorizontal: 15,
-            // justifyContent: 'space-between',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icons name="left" size={20} color={'black'} />
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 16,
+            fontFamily: 'MontserratAlternates-SemiBold',
+            color: darkmode ? 'white' : 'black',
+            marginLeft: 20,
           }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icons name="left" size={20} color={'black'} />
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'MontserratAlternates-SemiBold',
-              color: 'black',
-              marginLeft: 20,
-            }}>
-            Blocked Users
-          </Text>
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+          Blocked Users
+        </Text>
+        {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
                   Chicago, IL 60611, USA
                 </Text> */}
-        </View>
-        <View style={{marginTop: 0, marginHorizontal: 10}}>
-          <FlatList data={users} renderItem={renderItem} />
-        </View>
-      </ImageBackground>
+      </View>
+      <View style={{marginTop: 0, marginHorizontal: 10}}>
+        <FlatList data={users} renderItem={renderItem} />
+      </View>
+      {/* </ImageBackground> */}
     </SafeAreaView>
   );
 };

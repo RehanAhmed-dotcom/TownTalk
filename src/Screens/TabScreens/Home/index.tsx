@@ -268,7 +268,11 @@ const Home = ({navigation}) => {
         marginTop: 20,
         justifyContent: 'space-between',
         borderBottomWidth: 1,
+        paddingTop: 5,
+        borderRadius: 5,
+        paddingHorizontal: 5,
         alignItems: 'center',
+        backgroundColor: darkmode ? '#242527' : 'white',
         paddingBottom: 20,
         borderBottomColor: '#ccc',
       }}>
@@ -286,7 +290,7 @@ const Home = ({navigation}) => {
             style={{
               fontSize: 14,
               fontFamily: 'MontserratAlternates-SemiBold',
-              color: item.unread ? 'black' : 'black',
+              color: darkmode ? 'white' : 'black',
             }}>
             {`${item.user.firstname}`}
           </Text>
@@ -345,7 +349,7 @@ const Home = ({navigation}) => {
               minHeight: '20%',
               width: '100%',
               borderRadius: 10,
-              backgroundColor: 'white',
+              backgroundColor: darkmode ? 'black' : 'white',
             }}>
             <View
               style={{
@@ -365,7 +369,7 @@ const Home = ({navigation}) => {
               style={{
                 marginLeft: 10,
                 fontSize: 16,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               Share with contacts
@@ -771,7 +775,7 @@ const Home = ({navigation}) => {
       <View
         style={{
           height: 80,
-          backgroundColor: darkmode ? 'black' : 'white',
+          backgroundColor: darkmode ? '#242527' : 'white',
           // elevation: 3,
           flexDirection: 'row',
           alignItems: 'center',

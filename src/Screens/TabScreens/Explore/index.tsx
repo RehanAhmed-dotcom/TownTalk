@@ -10,10 +10,12 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import Hotspot from '../../../Components/Hotspot';
 import Icon from 'react-native-vector-icons/Feather';
 const Explore = ({navigation}) => {
   const [search, setSearch] = useState('');
+  const {darkmode} = useSelector(({USER}) => USER);
   const dummy = [1, 2, 3, 4, 5];
   const render = ({item}) => <Hotspot item={item} />;
   const renders = ({item}) => (
@@ -22,15 +24,21 @@ const Explore = ({navigation}) => {
       style={{
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
+        paddingTop: 5,
+        paddingLeft: 5,
         paddingBottom: 20,
+        backgroundColor: darkmode ? '#242527' : 'white',
         marginTop: 20,
       }}>
-      <Text style={{fontSize: 16, color: 'black'}}>Middlesex County</Text>
+      <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
+        Middlesex County
+      </Text>
       <Text style={{marginTop: 5, color: 'grey'}}>2,334 Check ins</Text>
     </TouchableOpacity>
   );
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       <View
         style={{
           height: 80,
@@ -44,7 +52,7 @@ const Explore = ({navigation}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           Explore
         </Text>
@@ -103,7 +111,7 @@ const Explore = ({navigation}) => {
             }}>
             <TouchableOpacity
               onPress={() => navigation.navigate('HotspotsNearby')}>
-              <Text style={{fontSize: 16, color: 'black'}}>
+              <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
                 Hotspots Nearby
               </Text>
             </TouchableOpacity>
@@ -117,7 +125,12 @@ const Explore = ({navigation}) => {
               keyExtractor={item => `${item}a`}
             />
           </View>
-          <Text style={{marginTop: 20, color: 'black', fontSize: 16}}>
+          <Text
+            style={{
+              marginTop: 20,
+              color: darkmode ? 'white' : 'black',
+              fontSize: 16,
+            }}>
             #Trendingtowns
           </Text>
           <View>

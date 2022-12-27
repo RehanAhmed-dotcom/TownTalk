@@ -15,7 +15,7 @@ import {postDetail} from '../../../lib/api';
 import SwiperPosts from '../../../Components/SwiperPosts';
 import database from '@react-native-firebase/database';
 const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
-  const {userData} = useSelector(({USER}) => USER);
+  const {userData, darkmode} = useSelector(({USER}) => USER);
   const [data, setData] = useState({});
   const {item} = route.params;
   //   console.log('item in detail', item);
@@ -63,6 +63,9 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
         marginTop: 20,
         justifyContent: 'space-between',
         borderBottomWidth: 1,
+        backgroundColor: darkmode ? '#242527' : 'white',
+        borderRadius: 10,
+        paddingTop: 5,
         alignItems: 'center',
         paddingBottom: 20,
         borderBottomColor: '#ccc',
@@ -81,7 +84,7 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
             style={{
               fontSize: 14,
               fontFamily: 'MontserratAlternates-SemiBold',
-              color: item.unread ? 'black' : 'black',
+              color: darkmode ? 'white' : 'black',
             }}>
             {`${item.user.firstname}`}
           </Text>
@@ -129,14 +132,19 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
   const MyModal = (show: boolean) => {
     //   console.log('show', show);
     return (
-      <Modal animationType="slide" transparent={true} visible={show}>
-        <View
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={show}
+        onRequestClose={() => setShowModal(!showModal)}>
+        <TouchableOpacity
+          onPress={() => setShowModal(!showModal)}
           style={{
             flex: 1,
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -144,12 +152,16 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
             bottom: 0,
             // position: 'absolute',
           }}>
-          <View
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => console.log('hello')}
             style={{
-              height: '60%',
-              width: '90%',
+              // height: '45%',
+              maxHeight: '40%',
+              minHeight: '20%',
+              width: '100%',
               borderRadius: 10,
-              backgroundColor: 'white',
+              backgroundColor: darkmode ? 'black' : 'white',
             }}>
             <View
               style={{
@@ -158,18 +170,27 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
                 marginTop: 15,
                 marginRight: 15,
               }}>
-              <Icon1
+              {/* <Icon
                 name="circle-with-cross"
                 size={20}
                 color="black"
                 onPress={() => setShowModal(false)}
-              />
+              /> */}
             </View>
-            <View style={{paddingHorizontal: 10}}>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 16,
+                color: darkmode ? 'white' : 'black',
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Share with contacts
+            </Text>
+            <View style={{paddingHorizontal: 10, marginBottom: 20}}>
               <FlatList data={list} renderItem={render} />
             </View>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     );
   };
@@ -184,52 +205,61 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
   }, [change]);
   //   console.log('data', data);
   return (
-    <View style={{flex: 1}}>
-      <ImageBackground
+    <View style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+      {/* <ImageBackground
         style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          backgroundColor: darkmode ? '#242527' : 'white',
+          elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          // justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity
           style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
+            backgroundColor: '#ccc',
+            width: 30,
+            height: 30,
             alignItems: 'center',
-            paddingHorizontal: 15,
-            // justifyContent: 'space-between',
+            justifyContent: 'center',
+            borderRadius: 5,
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icon name="left" size={20} color={'black'} />
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 16,
+            fontFamily: 'MontserratAlternates-SemiBold',
+            color: darkmode ? 'white' : 'black',
+            marginLeft: 20,
           }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="left" size={20} color={'black'} />
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'MontserratAlternates-SemiBold',
-              color: 'black',
-              marginLeft: 20,
-            }}>
-            Post Details
-          </Text>
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+          Post Details
+        </Text>
+        {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               Chicago, IL 60611, USA
             </Text> */}
-        </View>
-        {check ? (
-          <SwiperPosts
-            item={data}
-            swipe={swipe}
-            onShare={() => {
-              setSpecific(item);
-              setShowModal(true);
-            }}
-            hashPress={text => {
-              navigation.navigate('Hashes', {text});
-            }}
-            press={alter}
-            navigation={navigation}
-          />
-        ) : null}
-      </ImageBackground>
+      </View>
+      {check ? (
+        <SwiperPosts
+          item={data}
+          swipe={swipe}
+          onShare={() => {
+            setSpecific(item);
+            setShowModal(true);
+          }}
+          hashPress={text => {
+            navigation.navigate('Hashes', {text});
+          }}
+          press={alter}
+          navigation={navigation}
+        />
+      ) : null}
+      {/* </ImageBackground> */}
       {MyModal(showModal)}
     </View>
   );

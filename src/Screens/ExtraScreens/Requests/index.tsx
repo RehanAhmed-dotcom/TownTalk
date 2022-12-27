@@ -264,7 +264,16 @@ const Requests = ({navigation}) => {
           paddingHorizontal: 15,
           justifyContent: 'space-between',
         }}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: '#ccc',
+            height: 30,
+            width: 30,
+            borderRadius: 5,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigation.goBack()}>
           <Icon1 name="arrowleft" size={25} />
         </TouchableOpacity>
 

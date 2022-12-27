@@ -10,13 +10,16 @@ import {
   TextInput,
   FlatList,
 } from 'react-native';
+import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Hotspot from '../../../Components/Hotspot';
 const ExploreTowns = ({navigation}) => {
+  const {darkmode} = useSelector(({USER}) => USER);
   const dummy = [1, 2, 3, 4, 5];
   const render = ({item}) => <Hotspot item={item} />;
   return (
-    <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       <View
         style={{
           height: 80,
@@ -24,6 +27,7 @@ const ExploreTowns = ({navigation}) => {
           flexDirection: 'row',
           alignItems: 'center',
           paddingHorizontal: 15,
+          backgroundColor: darkmode ? '#242527' : 'white',
           justifyContent: 'space-between',
         }}>
         <TouchableOpacity
@@ -42,7 +46,7 @@ const ExploreTowns = ({navigation}) => {
           style={{
             fontSize: 16,
             fontFamily: 'MontserratAlternates-SemiBold',
-            color: 'black',
+            color: darkmode ? 'white' : 'black',
           }}>
           Explore
         </Text>
@@ -50,10 +54,17 @@ const ExploreTowns = ({navigation}) => {
         {/* <Icon1 name="diff-added" size={25} color="black" /> */}
       </View>
       <View style={{paddingHorizontal: 15}}>
-        <Text style={{fontSize: 18, color: 'black'}}>Middlesex County</Text>
+        <Text style={{fontSize: 18, color: darkmode ? 'white' : 'black'}}>
+          Middlesex County
+        </Text>
         <View
           style={{flexDirection: 'row', alignItems: 'center', marginTop: 10}}>
-          <Text style={{fontSize: 16, fontWeight: 'bold', color: 'black'}}>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 'bold',
+              color: darkmode ? 'white' : 'black',
+            }}>
             2,334 <Text style={{color: 'grey', fontSize: 14}}>Checkins</Text>
           </Text>
           <Text
@@ -61,7 +72,7 @@ const ExploreTowns = ({navigation}) => {
               fontSize: 16,
               fontWeight: 'bold',
               marginLeft: 30,
-              color: 'black',
+              color: darkmode ? 'white' : 'black',
             }}>
             7:30pm{' '}
             <Text style={{color: 'grey', fontSize: 14}}>Hottest time</Text>
@@ -74,7 +85,7 @@ const ExploreTowns = ({navigation}) => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <Text style={{fontSize: 16, color: 'black'}}>
+          <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
             Hotspots in Middlesex County
           </Text>
           <Text style={{color: 'grey'}}>See all</Text>

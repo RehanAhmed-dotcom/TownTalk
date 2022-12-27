@@ -1001,7 +1001,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
             height: 70,
 
             paddingHorizontal: 15,
-            backgroundColor: 'black',
+            backgroundColor: darkmode ? '#242527' : 'white',
             marginBottom:
               Platform.OS == 'android'
                 ? 0

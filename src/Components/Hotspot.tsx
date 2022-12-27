@@ -3,14 +3,19 @@ import {View, Text, TouchableOpacity, Image} from 'react-native';
 import {widthPercentageToDP as wp} from 'react-native-responsive-screen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icons from 'react-native-vector-icons/EvilIcons';
+import {useSelector} from 'react-redux';
 import {config} from '../../config';
 const Hotspot = ({item, navigation}) => {
+  const {darkmode} = useSelector(({USER}) => USER);
   return (
     <View
       style={{
         marginRight: 30,
         marginTop: 15,
         width: wp(90),
+        backgroundColor: darkmode ? '#242527' : 'white',
+        borderRadius: 10,
+        padding: 10,
         // backgroundColor: 'red',
       }}>
       <Image
@@ -72,11 +77,15 @@ const Hotspot = ({item, navigation}) => {
           justifyContent: 'space-between',
         }}>
         <View style={{width: '70%'}}>
-          <Text style={{color: 'black', fontSize: 16}}>{item.name}</Text>
+          <Text style={{color: darkmode ? 'white' : 'black', fontSize: 16}}>
+            {item.name}
+          </Text>
           <View
             style={{flexDirection: 'row', marginTop: 5, alignItems: 'center'}}>
             <Icons name="location" size={15} color={'#5F95F0'} />
-            <Text style={{fontSize: 12, color: 'grey'}}>{item.vicinity}</Text>
+            <Text style={{fontSize: 12, color: darkmode ? '#242527' : 'grey'}}>
+              {item.vicinity}
+            </Text>
           </View>
         </View>
         <TouchableOpacity

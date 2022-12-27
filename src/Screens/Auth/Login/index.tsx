@@ -25,9 +25,12 @@ import {
 } from '@invertase/react-native-apple-authentication';
 import {useDispatch, useSelector} from 'react-redux';
 import MyModal from '../../../Components/MyModal';
+// import { useSelector } from 'react-redux';
 import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
 import {logged} from '../../../redux/actions';
 const Login = ({navigation}: {navigation: any}) => {
+  const {darkmode} = useSelector(({USER}) => USER);
+  console.log('darkmode', darkmode);
   const [email, setEmail] = useState('');
   const {iEmail} = useSelector(({USER}) => USER);
   const [emailErr, setEmailErr] = useState('');
@@ -428,7 +431,8 @@ const Login = ({navigation}: {navigation: any}) => {
   }, []);
   const dispatch = useDispatch();
   return (
-    <SafeAreaView style={{flex: 1}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         source={require('../../../assets/Images/SignupBackground.png')}
         style={{flex: 1}}> */}
@@ -480,7 +484,7 @@ const Login = ({navigation}: {navigation: any}) => {
             <Text
               style={{
                 fontSize: 18,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 marginTop: 40,
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
@@ -563,7 +567,7 @@ const Login = ({navigation}: {navigation: any}) => {
                     height: 50,
                     paddingHorizontal: 10,
                     borderRadius: 10,
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                     fontFamily: 'MontserratAlternates-Regular',
                   }}
                 />
@@ -600,7 +604,7 @@ const Login = ({navigation}: {navigation: any}) => {
                       width: '85%',
                       height: 50,
                       paddingHorizontal: 10,
-                      color: 'black',
+                      color: darkmode ? 'white' : 'black',
                       // borderBottomColor: passwrodErr ? 'red' : 'grey',
                       // borderBottomWidth: 1,
                       fontFamily: 'MontserratAlternates-Regular',
@@ -636,7 +640,7 @@ const Login = ({navigation}: {navigation: any}) => {
                   <Text
                     style={{
                       fontSize: 12,
-                      color: 'black',
+                      color: darkmode ? 'white' : 'black',
                       fontFamily: 'MontserratAlternates-Medium',
                     }}>
                     Forgot Password?
@@ -717,17 +721,17 @@ const Login = ({navigation}: {navigation: any}) => {
                   Login
                 </Text>
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => navigation.navigate('phoneNo')}>
+              {/* <TouchableOpacity onPress={() => navigation.navigate('phoneNo')}>
                 <Text
                   style={{
                     fontFamily: 'MontserratAlternates-Regular',
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                     alignSelf: 'center',
                     marginTop: 10,
                   }}>
                   Login With Phone
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
 
               <View
                 style={{
@@ -776,7 +780,7 @@ const Login = ({navigation}: {navigation: any}) => {
                 <Text
                   style={{
                     fontFamily: 'MontserratAlternates-Regular',
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                   }}>
                   Don't have an account?
                 </Text>
@@ -786,7 +790,7 @@ const Login = ({navigation}: {navigation: any}) => {
                       marginLeft: 7,
                       fontSize: 16,
                       fontFamily: 'MontserratAlternates-SemiBold',
-                      color: 'black',
+                      color: darkmode ? 'white' : 'black',
                     }}>
                     Sign Up!
                   </Text>
@@ -799,7 +803,7 @@ const Login = ({navigation}: {navigation: any}) => {
                 <Text
                   style={{
                     fontSize: 12,
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                     fontFamily: 'MontserratAlternates-SemiBold',
                   }}>
                   PHONE NO

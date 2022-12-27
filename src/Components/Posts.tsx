@@ -43,7 +43,7 @@ const Posts = props => {
       onPress={onPress}
       style={{
         // height: 30,
-        backgroundColor: darkmode ? 'black' : 'white',
+        backgroundColor: darkmode ? '#242527' : 'white',
         marginRight: 3,
         elevation: 3,
         zIndex: -110,

@@ -137,7 +137,7 @@ const Comments = ({navigation, route}) => {
         <View
           style={{
             height: 80,
-            backgroundColor: darkmode ? 'black' : 'white',
+            backgroundColor: darkmode ? '#242527' : 'white',
             elevation: 3,
             flexDirection: 'row',
             alignItems: 'center',
@@ -198,7 +198,7 @@ const Comments = ({navigation, route}) => {
         <View
           style={{
             flexDirection: 'row',
-            backgroundColor: 'grey',
+            backgroundColor: darkmode ? '#242527' : 'white',
             height: 70,
             marginBottom:
               Platform.OS == 'android'

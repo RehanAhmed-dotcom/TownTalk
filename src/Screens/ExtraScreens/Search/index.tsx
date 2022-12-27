@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -6,33 +6,130 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  PermissionsAndroid,
   Image,
+  Platform,
   Dimensions,
   Alert,
   Text,
   ImageBackground,
   TextInput,
 } from 'react-native';
+import {config} from '../../../../config';
+import Geolocation from 'react-native-geolocation-service';
 import {useSelector, useDispatch} from 'react-redux';
-import LikeDislike from '../../../Components/LikeDislike';
-import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/AntDesign';
-import CityList from '../../../Components/CityList';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 import Icon6 from 'react-native-vector-icons/Entypo';
+import Hotel from '../../../Components/Hotel';
 import Icon1 from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import Icon4 from 'react-native-vector-icons/Fontisto';
 import Icon7 from 'react-native-vector-icons/MaterialIcons';
-import Posts from '../../../Components/Posts';
+import MyModal from '../../../Components/MyModal';
 import {cityAdd} from '../../../redux/actions';
 const Search = ({navigation}) => {
-  const [sel, setSel] = useState('');
+  const [sel, setSel] = useState('All');
   const [city, setCity] = useState('');
   const dispatch = useDispatch();
-  const {CityAdd} = useSelector(({USER}) => USER);
+  const [list, setList] = useState([]);
+  const [searchList, setSearchList] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const {CityAdd, darkmode} = useSelector(({USER}) => USER);
   console.log('cityadd', CityAdd);
+  const renderItem1 = ({item}: {item: any}) => (
+    <Hotel item={item} navigation={navigation} />
+  );
+  useEffect(() => {
+    // handleAddress('solo');
+    setShowModal(true);
+
+    Platform.OS == 'ios'
+      ? Geolocation.requestAuthorization('always').then(res => {
+          cuRRentlocation();
+          console.log('res', res);
+        })
+      : requestLocationPermission();
+  }, [sel]);
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        cuRRentlocation();
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+  const cuRRentlocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        // setlatitude(position.coords.latitude);
+        // setlongitude(position.coords.longitude);
+
+        handleRestaurantSearch(
+          position.coords.latitude,
+          position.coords.longitude,
+        );
+
+        // getPlace(position.coords.latitude, position.coords.longitude);
+        // getPlace('47.751076', '-120.740135');
+        // console.log('users location', position.coords.longitude);
+
+        // console.log('users location', position.coords.latitude);
+      },
+      error => {
+        console.log('error in loc', error);
+      },
+      {
+        enableHighAccuracy: true,
+        // timeout: 15000,
+        // maximumAge: 10000
+      },
+    );
+  };
+  const searchTextGiven = e => {
+    let filteredName = [];
+    // if (e) {
+    filteredName = list.filter(item => {
+      return item?.name?.toLowerCase().includes(`${e.toLowerCase()}`);
+      // return item.vender.fullname.toLowerCase().includes(`${e.toLowerCase()}`);
+    });
+    setSearchList(filteredName);
+    // filteredName = [];
+    // }
+  };
+  const handleRestaurantSearch = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=${sel == 'All' ? '' : sel}`;
+
+    // const type = `&keyword=${sel}`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setList(result.results);
+        setSearchList(result.results);
+        setShowModal(false);
+        console.log('results', result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        setShowModal(false);
+      });
+  };
   const arr = [
+    {
+      name: 'All',
+      image: null,
+    },
     {
       name: 'Banks',
       image: <Icon1 name="bank" size={15} color={'#5F95F0'} />,
@@ -80,26 +177,26 @@ const Search = ({navigation}) => {
       onPress={() => setSel(item.name)}
       style={{
         height: 30,
-        backgroundColor: 'white',
+        backgroundColor: sel == item.name ? '#5F95F0' : 'white',
         marginRight: 10,
         paddingHorizontal: 10,
         marginLeft: 3,
         marginVertical: 3,
         elevation: 3,
         flexDirection: 'row',
-        borderWidth: sel == item.name ? 1 : 0,
+        // borderWidth: sel == item.name ? 1 : 0,
         // maxWidth: 150,
-        borderColor: '#5F95F0',
+        // borderColor: '#5F95F0',
         alignItems: 'center',
         justifyContent: 'center',
         minWidth: 100,
-        borderRadius: 5,
+        borderRadius: 50,
       }}>
       {item.image}
       {/* <Image source={require(`../../../assets/Images/${item.image}`)} /> */}
       <Text
         style={{
-          color: '#5F95F0',
+          color: sel == item.name ? 'white' : '#5F95F0',
           marginLeft: 5,
           fontFamily: 'MontserratAlternates-Medium',
         }}>
@@ -107,53 +204,61 @@ const Search = ({navigation}) => {
       </Text>
     </TouchableOpacity>
   );
-  const renderItems = ({item}) => (
-    <CityList item={item} navigation={navigation} />
-  );
+
   const height = Dimensions.get('screen').height;
   console.log('hei', height);
   console.log('selected', CityAdd);
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ImageBackground
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+      {/* <ImageBackground
         style={{height: '100%'}}
-        source={require('../../../assets/Images/back.png')}>
-        <View
+        source={require('../../../assets/Images/back.png')}> */}
+      <View
+        style={{
+          height: 80,
+          backgroundColor: darkmode ? '#' : 'white',
+          elevation: 3,
+          flexDirection: 'row',
+          alignItems: 'center',
+          paddingHorizontal: 15,
+          // justifyContent: 'space-between',
+        }}>
+        <TouchableOpacity
           style={{
-            height: 80,
-            backgroundColor: 'white',
-            elevation: 3,
-            flexDirection: 'row',
+            height: 30,
+            width: 30,
+            borderRadius: 5,
+            backgroundColor: '#ccc',
             alignItems: 'center',
-            paddingHorizontal: 15,
-            // justifyContent: 'space-between',
+            justifyContent: 'center',
+          }}
+          onPress={() => navigation.goBack()}>
+          <Icon name="left" size={20} color={'black'} />
+        </TouchableOpacity>
+        <Text
+          style={{
+            fontSize: 16,
+            fontFamily: 'MontserratAlternates-SemiBold',
+            color: darkmode ? 'white' : 'black',
+            marginLeft: 20,
           }}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Icon name="left" size={20} color={'black'} />
-          </TouchableOpacity>
-          <Text
-            style={{
-              fontSize: 16,
-              fontFamily: 'MontserratAlternates-SemiBold',
-              color: 'black',
-              marginLeft: 20,
-            }}>
-            Search
-          </Text>
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
+          Search
+        </Text>
+        {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               Chicago, IL 60611, USA
             </Text> */}
-        </View>
-        {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
-        {/* <ScrollView> */}
-        <View
-          style={{
-            marginTop: 20,
-            // flex: 0.9,
-            // backgroundColor: 'red',
-            marginHorizontal: 15,
-          }}>
-          {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
+      </View>
+      {/* <FlatList horizontal data={arr} renderItem={renderItem} /> */}
+      {/* <ScrollView> */}
+      <View
+        style={{
+          marginTop: 10,
+          // flex: 0.9,
+          // backgroundColor: 'red',
+          marginHorizontal: 15,
+        }}>
+        {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
           {arr.map(item => (
             <View
               style={{
@@ -172,98 +277,102 @@ const Search = ({navigation}) => {
             </View>
           ))}
         </View> */}
-          <FlatList horizontal data={arr} renderItem={renderItem} />
-          <View
-            style={{
-              backgroundColor: 'white',
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              height: 40,
-              borderRadius: 10,
-              marginTop: 10,
-              alignItems: 'center',
-              borderWidth: 1,
-              paddingLeft: 10,
-              borderColor: 'black',
-            }}>
-            <TextInput
-              placeholder="Where to now..."
-              placeholderTextColor="grey"
-              value={city}
-              onChangeText={text => {
-                setCity(text);
-              }}
-              style={{
-                width: '90%',
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Regular',
-              }}
-            />
-            <TouchableOpacity
-              style={{
-                // backgroundColor: 'red',
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: 30,
-              }}
-              onPress={() => {
-                if (sel && city) {
-                  const data = {name: city, category: sel};
-                  navigation.navigate('ResturantsNearby', {sel, city});
-                  cityAdd(data)(dispatch);
-                } else {
-                  Alert.alert('Select Category and City');
-                }
-              }}>
-              <Image
-                source={require('../../../assets/Images/search.png')}
-                style={{height: 15, width: 15}}
-              />
-            </TouchableOpacity>
-          </View>
-          <TouchableOpacity
-            onPress={() => {
-              if (sel) {
-                navigation.navigate('ResturantsNearby', {sel});
-              } else {
-                Alert.alert('Select Category');
-              }
+        <View
+          style={{
+            backgroundColor: 'white',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            height: 40,
+            borderRadius: 10,
+            // marginTop: 10,
+            alignItems: 'center',
+            borderWidth: 1,
+            paddingLeft: 10,
+            borderColor: 'black',
+          }}>
+          <TextInput
+            placeholder="Where to now..."
+            placeholderTextColor="grey"
+            value={city}
+            onChangeText={text => {
+              setCity(text);
+              searchTextGiven(text);
             }}
             style={{
-              borderBottomWidth: 1,
-              borderBottomColor: 'grey',
-              marginTop: 20,
-              flexDirection: 'row',
-              paddingBottom: 10,
+              width: '90%',
+              color: 'black',
+              fontFamily: 'MontserratAlternates-Regular',
+            }}
+          />
+          <TouchableOpacity
+            style={{
+              // backgroundColor: 'red',
+              height: '100%',
               alignItems: 'center',
+              justifyContent: 'center',
+              width: 30,
+            }}
+            onPress={() => {
+              if (sel && city) {
+                const data = {name: city, category: sel};
+                navigation.navigate('ResturantsNearby', {sel, city});
+                cityAdd(data)(dispatch);
+              } else {
+                Alert.alert('Select Category and City');
+              }
             }}>
-            <Icon1 name="send" size={15} />
-            <Text
-              style={{
-                marginLeft: 10,
-                fontFamily: 'MontserratAlternates-Regular',
-              }}>
-              Nearby me...
-            </Text>
+            <Image
+              source={require('../../../assets/Images/search.png')}
+              style={{height: 15, width: 15}}
+            />
           </TouchableOpacity>
+        </View>
+        <FlatList horizontal data={arr} renderItem={renderItem} />
 
-          {/* <View
+        {/* <TouchableOpacity
+          onPress={() => {
+            if (sel) {
+              navigation.navigate('ResturantsNearby', {sel});
+            } else {
+              Alert.alert('Select Category');
+            }
+          }}
+          style={{
+            borderBottomWidth: 1,
+            borderBottomColor: 'grey',
+            marginTop: 20,
+            flexDirection: 'row',
+            paddingBottom: 10,
+            alignItems: 'center',
+          }}>
+          <Icon1 name="send" size={15} color={'grey'} />
+          <Text
+            style={{
+              marginLeft: 10,
+              fontFamily: 'MontserratAlternates-Regular',
+              color: darkmode ? 'white' : 'black',
+            }}>
+            Nearby me...
+          </Text>
+        </TouchableOpacity> */}
+
+        {/* <View
             style={{
               height: height > 850 ? '70%' : '78%',
               backgroundColor: 'red',
             }}>
            
           </View> */}
-        </View>
-        <View style={{height: height > 850 ? '70%' : '65%'}}>
-          <FlatList data={CityAdd} renderItem={renderItems} />
-        </View>
-      </ImageBackground>
+      </View>
+      <View style={{height: height > 850 ? '80%' : '75%'}}>
+        <FlatList data={searchList} renderItem={renderItem1} />
+      </View>
+      {/* </ImageBackground> */}
 
       {/* </ScrollView> */}
 
       {/* <Text>Home</Text> */}
+      {MyModal(showModal)}
     </SafeAreaView>
   );
 };

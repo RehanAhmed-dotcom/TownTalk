@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   SafeAreaView,
@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/Feather';
 import {logoutuser, darkMode} from '../../../redux/actions';
 import {useDispatch, useSelector} from 'react-redux';
 import {deleteAccount} from '../../../lib/api';
@@ -104,7 +103,7 @@ const Setting = ({navigation}) => {
               onPress: () => {
                 deleteAccount({Auth: userData.token})
                   .then(res => {
-                    console.log('res of delte', res);
+                    // console.log('res of delte', res);
                   })
                   .catch(err => {
                     console.log('err', err.response.data);
@@ -170,6 +169,8 @@ const Setting = ({navigation}) => {
       </View>
     </TouchableOpacity>
   );
+  // console.log('county', Counties.Alabama[1]);
+
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
