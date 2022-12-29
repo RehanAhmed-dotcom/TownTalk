@@ -103,7 +103,8 @@ const Search = ({navigation}) => {
   };
   const handleRestaurantSearch = (lat: Number, long: Number) => {
     // console.log('here');
-    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const url =
+      'https://maps.googleapis.com/maps/api/cities/nearbysearch/json?';
     const location = `location=${lat},${long}`;
     const radius = '&radius=2000';
     const type = `&keyword=${sel == 'All' ? '' : sel}`;

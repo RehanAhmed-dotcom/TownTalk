@@ -39,6 +39,8 @@ import {
   reportUser,
   deletePostApi,
   hashTag,
+  getCountiesList,
+  updateLocation,
 } from '../../../lib/api';
 // import {logoutuser} from '../../../redux/actions';
 import Geolocation from 'react-native-geolocation-service';
@@ -68,7 +70,25 @@ const Home = ({navigation}) => {
   const {userData, darkmode, Lat, Long} = useSelector(({USER}) => USER);
   const [change, setChange] = useState(false);
   const [list, setList] = useState([]);
-  // console.log('lat long in redux', datas);
+  const [countyList, setCountyList] = useState([]);
+  const [searchedCounty, setSearchedCounty] = useState([]);
+  const [searchCounty, setSearchCounty] = useState('');
+  const [countyModal, setCountyModal] = useState(false);
+  // console.log('lat long in redux', countyList);
+  const searchTextGiven = e => {
+    let filteredName = [];
+    // if (e) {
+    filteredName = countyList.filter(item => {
+      return (
+        item?.county?.toLowerCase().includes(`${e.toLowerCase()}`) ||
+        item?.county_fips?.toLowerCase().includes(`${e.toLowerCase()}`)
+      );
+      // return item.vender.fullname.toLowerCase().includes(`${e.toLowerCase()}`);
+    });
+    setSearchedCounty(filteredName);
+    // filteredName = [];
+    // }
+  };
   const _usersList = useCallback(async () => {
     try {
       // setLoading(true);
@@ -104,15 +124,37 @@ const Home = ({navigation}) => {
       console.warn(err);
     }
   };
+  const locationChanger = (lats: string, lngs: string) => {
+    updateLocation({Auth: userData.token, latitude: lats, longitude: lngs})
+      .then(res => {
+        console.log('res of update loacation', res);
+        setlatitude(lats);
+        setlongitude(lngs);
+        lat(lats)(dispatch);
+        long(lngs)(dispatch);
+        // getPlace('40.6727', '-74.2152');
+        getPlace(lats, lngs);
+      })
+      .catch(err => {
+        console.log('error in update location', err);
+      });
+  };
   const cuRRentlocation = () => {
     Geolocation.getCurrentPosition(
       position => {
-        setlatitude(position.coords.latitude);
-        setlongitude(position.coords.longitude);
-        lat(position.coords.latitude)(dispatch);
-        long(position.coords.longitude)(dispatch);
-        // getPlace('40.6727', '-74.2152');
-        getPlace(position.coords.latitude, position.coords.longitude);
+        updateLocation({
+          Auth: userData.token,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        }).then(res => {
+          setlatitude(position.coords.latitude);
+          setlongitude(position.coords.longitude);
+          lat(position.coords.latitude)(dispatch);
+          long(position.coords.longitude)(dispatch);
+          // getPlace('40.6727', '-74.2152');
+          getPlace(position.coords.latitude, position.coords.longitude);
+        });
+
         // viewAllPost({
         //   Auth: userData.token,
         //   page,
@@ -130,6 +172,7 @@ const Home = ({navigation}) => {
         // console.log('users location', position.coords.longitude);
 
         // console.log('users location', position.coords.latitude);
+        setChange(!change);
       },
       error => {
         console.log('error in loc', error);
@@ -143,6 +186,7 @@ const Home = ({navigation}) => {
   };
   useEffect(() => {
     getToken();
+
     // PushNotification.cancelAllLocalNotifications();
   }, []);
   const getToken = async () => {
@@ -215,7 +259,7 @@ const Home = ({navigation}) => {
       filter_post: filter,
     })
       .then(res => {
-        // console.log('res', res);
+        console.log('res of changing on my own');
         setData(res.posts.data);
         setTestArr(res.posts.data);
       })
@@ -247,6 +291,15 @@ const Home = ({navigation}) => {
         })
         .catch(err => {
           console.log('err in home', err.response.data);
+        });
+      getCountiesList({Auth: userData.token})
+        .then(res => {
+          console.log('res of counties', res);
+          setCountyList(res.data);
+          setSearchedCounty(res.data);
+        })
+        .catch(err => {
+          console.log('err in counties', err);
         });
     });
 
@@ -317,6 +370,52 @@ const Home = ({navigation}) => {
       </View>
     </TouchableOpacity>
   );
+  const renderCounty = ({item}) => (
+    <TouchableOpacity
+      onPress={() => {
+        setCountyModal(false);
+        locationChanger(item.lat, item.lng);
+        // navigation.navigate('SingleChat', {
+        //   item: item.user,
+        //   image: specific.media[0].media,
+        //   items: specific,
+        // });
+      }}
+      style={{
+        flexDirection: 'row',
+        marginTop: 20,
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        paddingTop: 5,
+        borderRadius: 5,
+        paddingHorizontal: 5,
+        alignItems: 'center',
+        backgroundColor: darkmode ? '#242527' : 'white',
+        paddingBottom: 20,
+        borderBottomColor: '#ccc',
+      }}>
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <View style={{marginLeft: 10}}>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: darkmode ? 'white' : 'black',
+            }}>
+            {`${item.county}`}
+          </Text>
+          <Text
+            style={{
+              fontSize: 14,
+              fontFamily: 'MontserratAlternates-SemiBold',
+              color: 'grey',
+            }}>
+            {`${item.county_fips}`}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
   const MyModal = (show: boolean) => {
     // console.log('show', latitude, longitude);
     return (
@@ -376,6 +475,148 @@ const Home = ({navigation}) => {
             </Text>
             <View style={{paddingHorizontal: 10, marginBottom: 20}}>
               <FlatList data={list} renderItem={render} />
+            </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+  const CountiesModal = (show: boolean) => {
+    // console.log('show', latitude, longitude);
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={show}
+        onRequestClose={() => setCountyModal(!countyModal)}>
+        <TouchableOpacity
+          onPress={() => setCountyModal(!countyModal)}
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => console.log('hello')}
+            style={{
+              // height: '45%',
+              maxHeight: '90%',
+              minHeight: '20%',
+              width: '100%',
+              borderRadius: 10,
+              backgroundColor: darkmode ? 'black' : 'white',
+            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'flex-end',
+                marginTop: 15,
+                marginRight: 15,
+              }}>
+              {/* <Icon
+                name="circle-with-cross"
+                size={20}
+                color="black"
+                onPress={() => setShowModal(false)}
+              /> */}
+            </View>
+
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 16,
+                color: darkmode ? 'white' : 'black',
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Select location
+            </Text>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 14,
+                color: 'grey',
+                marginTop: 10,
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Select neighbourhood which you want to checkout
+            </Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingHorizontal: 10,
+                marginHorizontal: 10,
+                marginTop: 10,
+                borderRadius: 10,
+                backgroundColor: '#ccc',
+                height: 50,
+              }}>
+              <Icon3 name="search" color={'#5F95F0'} size={25} />
+              <TextInput
+                value={searchCounty}
+                onChangeText={text => {
+                  searchTextGiven(text);
+                  setSearchCounty(text);
+                }}
+                placeholder={'Search by name or zipcode'}
+                placeholderTextColor="grey"
+                style={{flex: 1}}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={() => {
+                setCountyModal(false);
+                cuRRentlocation();
+                // navigation.navigate('SingleChat', {
+                //   item: item.user,
+                //   image: specific.media[0].media,
+                //   items: specific,
+                // });
+              }}
+              style={{
+                flexDirection: 'row',
+                marginTop: 20,
+                justifyContent: 'space-between',
+                borderBottomWidth: 1,
+                paddingTop: 5,
+                borderRadius: 5,
+                paddingHorizontal: 5,
+                alignItems: 'center',
+                backgroundColor: darkmode ? '#242527' : 'white',
+                paddingBottom: 20,
+                borderBottomColor: '#ccc',
+              }}>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <View
+                  style={{
+                    marginLeft: 10,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginTop: 10,
+                  }}>
+                  <Icon1 name="location" size={20} color={'#5F95F0'} />
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: 'MontserratAlternates-SemiBold',
+                      color: darkmode ? 'white' : 'black',
+                    }}>
+                    Use Current Location
+                  </Text>
+                </View>
+              </View>
+            </TouchableOpacity>
+            <View style={{paddingHorizontal: 10, marginBottom: 20}}>
+              <FlatList data={searchedCounty} renderItem={renderCounty} />
             </View>
           </TouchableOpacity>
         </TouchableOpacity>
@@ -719,6 +960,7 @@ const Home = ({navigation}) => {
         // console.log('city current city', currentCity);
 
         setLocation(currentCity);
+        setChange(!change);
         // console.log('place', JSON.stringify(data.results[0].name));
         // return status === 200 || status === 201 ? data : null;
       })
@@ -808,6 +1050,7 @@ const Home = ({navigation}) => {
                 {/* {`${userData?.userdata?.firstname}`} */}
               </Text>
               <TouchableOpacity
+                onPress={() => setCountyModal(!countyModal)}
                 style={{
                   height: 20,
                   width: 20,
@@ -1100,6 +1343,7 @@ const Home = ({navigation}) => {
       {MyModal(showModal)}
       {ReportModal()}
       {DeleteModal()}
+      {CountiesModal(countyModal)}
     </SafeAreaView>
   );
 };

@@ -551,7 +551,7 @@ const Profile = ({navigation}) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       profile({Auth: userData.token, id: userData.userdata.id}).then(res => {
-        console.log('res of profile', JSON.stringify(res));
+        // console.log('res of profile', JSON.stringify(res));
         setPosts(res.data);
       });
     });

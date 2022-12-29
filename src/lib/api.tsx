@@ -120,6 +120,20 @@ const editProfile = (payload, data) => {
       throw e;
     });
 };
+
+const updateLocation = payload => {
+  const request = `/update_lat_long`;
+  authorizedHeaders.Authorization = `Bearer ${payload.Auth}`;
+  return axios
+    .post(request, payload, {headers: authorizedHeaders})
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in updateLocation', e);
+      throw e;
+    });
+};
 const changePassword = payload => {
   const request = `/change-password`;
   authorizedHeaders.Authorization = `Bearer ${payload.Auth}`;
@@ -183,7 +197,7 @@ const addgroup = (payload, data) => {
     });
 };
 const viewAllPost = payload => {
-  console.log('data of payload for hashtag', payload);
+  console.log('data of payload for View all post', payload);
   const request = `/view-post?page=${payload.page}`;
   return axios
     .post(request, payload, {
@@ -328,6 +342,24 @@ const blockUserList = payload => {
     })
     .catch(e => {
       console.log('in blockUserList', e);
+    });
+};
+const getCountiesList = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/counties`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in counties list', e);
     });
 };
 const likeDislikeProfile = payload => {
@@ -576,8 +608,10 @@ export {
   deletePostApi,
   getfcm,
   postDetail,
+  updateLocation,
   likeDislikeProfile,
   updateToken,
   reportUser,
+  getCountiesList,
   unBlockUser,
 };
