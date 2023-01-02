@@ -17,6 +17,7 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import Tags from 'react-native-tags';
+import Axios from 'axios';
 import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import {config} from '../../../../config';
 import Geolocation from 'react-native-geolocation-service';
@@ -38,6 +39,7 @@ const Create = ({navigation}) => {
   const [name, setName] = useState(`${userData?.userdata?.firstname}`);
   const [img, setImg] = useState([]);
   const [zip, setZip] = useState('');
+  const [locationName, setLocationName] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [tagedBusiness, setTagedBusiness] = useState('');
   const [description, setDescription] = useState('');
@@ -94,6 +96,7 @@ const Create = ({navigation}) => {
         // });
         data.append('zipcode', zip);
         data.append('latitude', latitude);
+        data.append('location', locationName);
         data.append('longitude', longitude);
         data.append('business_tag', tagedBusiness);
         data.append('description', description);
@@ -193,16 +196,51 @@ const Create = ({navigation}) => {
         // setShowModal(false);
       });
   };
+  const getPlace = (latitude, longitude) => {
+    // console.log('inside get place fuction');
+    // console.log('lat long', latitude, longitude);
+    let radius = 100;
+    // let myapikey = 'AIzaSyB_H2_55fkLI8-EyfYLUlJI4obywUd-KnE';
+    // let mapKey = 'AIzaSyBC2R0hGR9kjgysDNUsOWHWF_oU0jc6DIg';
+    let mapKey = 'AIzaSyCmhmQiZWqaMzKclPUY-mEshxF7Lj4T4NI';
+    // let request = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${latitude},${longitude}&radius=${radius}&key=${myapikey}`;
+    let request = `https://maps.googleapis.com/maps/api/geocode/json?address=${latitude},${longitude}&key=${mapKey}`;
+    // let request = `https://maps.googleapis.com/maps/api/geocode/json?address=${lot},${logo}&key=${mapKey}`;
+    return Axios.get(request)
+      .then(({data, status}) => {
+        // console.log('data', data.results[0].address_components);
+        // setLocation("Rawalpindi")
+        // console.log('whole responce', JSON.stringify(data));
+        // const currentCity = data.results[0].address_components.filter(
+        //   x =>
+        //     x.types.filter(
+        //       t =>
+        //         t == 'administrative_area_level_2' ||
+        //         'administrative_area_level_1',
+        //     ).length > 0,
+        // )[2].long_name;
+        const currentCity = data.results[0].address_components.filter(
+          x =>
+            x.types.filter(
+              t =>
+                t == 'administrative_area_level_1' ||
+                t == 'administrative_area_level_2',
+            ).length > 0,
+        )[0].long_name;
+        // console.log('city current city', currentCity);
+
+        setLocationName(currentCity);
+        // console.log('place', JSON.stringify(data.results[0].name));
+        // return status === 200 || status === 201 ? data : null;
+      })
+      .catch(e => {});
+  };
   const cuRRentlocation = () => {
     Geolocation.getCurrentPosition(
       position => {
         setlatitude(position.coords.latitude);
         setlongitude(position.coords.longitude);
-        // getPlace(position.coords.latitude, position.coords.longitude);
-        // getPlace('47.751076', '-120.740135');
-        console.log('users location', position.coords.longitude);
-
-        console.log('users location', position.coords.latitude);
+        getPlace(position.coords.latitude, position.coords.longitude);
       },
       error => {
         console.log('error in loc', error);
@@ -464,7 +502,7 @@ const Create = ({navigation}) => {
                     borderRadius: 5,
                     // flex: 1,
                     width: 250,
-                    color: 'black',
+                    color: darkmode ? 'white' : 'black',
                     height: 100,
                   }}
                 />

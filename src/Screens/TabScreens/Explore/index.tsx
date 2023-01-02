@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   SafeAreaView,
@@ -13,14 +13,19 @@ import {
 import {useSelector} from 'react-redux';
 import Hotspot from '../../../Components/Hotspot';
 import Icon from 'react-native-vector-icons/Feather';
+import {hotspots, trending_town} from '../../../lib/api';
 const Explore = ({navigation}) => {
   const [search, setSearch] = useState('');
-  const {darkmode} = useSelector(({USER}) => USER);
+  const [hotSpots, setHotSpot] = useState([]);
+  const [trending, setTrending] = useState([]);
+  const [searchedHotSpot, setSearchedHotSpot] = useState([]);
+  const {darkmode, userData} = useSelector(({USER}) => USER);
+
   const dummy = [1, 2, 3, 4, 5];
   const render = ({item}) => <Hotspot item={item} />;
   const renders = ({item}) => (
     <TouchableOpacity
-      onPress={() => navigation.navigate('ExploreTowns')}
+      onPress={() => navigation.navigate('ExploreTowns', {city: item})}
       style={{
         borderBottomColor: '#ccc',
         borderBottomWidth: 1,
@@ -31,11 +36,55 @@ const Explore = ({navigation}) => {
         marginTop: 20,
       }}>
       <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
-        Middlesex County
+        {item}
       </Text>
-      <Text style={{marginTop: 5, color: 'grey'}}>2,334 Check ins</Text>
+      {/* <Text style={{marginTop: 5, color: 'grey'}}>2,334 Check ins</Text> */}
     </TouchableOpacity>
   );
+  const getUnique = (arr, index) => {
+    const unique = arr
+      .map(e => e[index])
+
+      // store the keys of the unique objects
+      .map((e, i, final) => final.indexOf(e) === i && i)
+
+      // eliminate the dead keys & store unique objects
+      .filter(e => arr[e])
+      .map(e => arr[e]);
+
+    return unique;
+  };
+  useEffect(() => {
+    trending_town()
+      .then(res => {
+        console.log('res of trending town', res);
+        setTrending(res.data);
+      })
+      .catch(err => {
+        console.log('err in trending town', err);
+      });
+    hotspots({Auth: userData.token})
+      .then(res => {
+        // console.log('res of hotspot', res);
+        // console.log('unique array', );
+        setHotSpot(getUnique(res.data, 'name'));
+        setSearchedHotSpot(getUnique(res.data, 'name'));
+      })
+      .catch(err => {
+        console.log('err in hotspot', err);
+      });
+  }, []);
+  const searchTextReceive = e => {
+    let filteredName = [];
+    // if (e) {
+    filteredName = hotSpots.filter(item => {
+      return item?.name?.toLowerCase().includes(`${e.toLowerCase()}`);
+      // return item.name.toLowerCase().includes(`${e.toLowerCase()}`);
+    });
+    setSearchedHotSpot(filteredName);
+    // filteredName = [];
+    // }
+  };
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
@@ -80,7 +129,10 @@ const Explore = ({navigation}) => {
               <Icon name="search" color="#5F95F0" size={20} />
               <TextInput
                 value={search}
-                onChangeText={text => setSearch(text)}
+                onChangeText={text => {
+                  searchTextReceive(text);
+                  setSearch(text);
+                }}
                 placeholder="Search"
                 placeholderTextColor={'grey'}
                 style={{color: 'black', flex: 1}}
@@ -119,7 +171,7 @@ const Explore = ({navigation}) => {
           </View>
           <View>
             <FlatList
-              data={dummy}
+              data={searchedHotSpot}
               renderItem={render}
               horizontal
               keyExtractor={item => `${item}a`}
@@ -135,7 +187,7 @@ const Explore = ({navigation}) => {
           </Text>
           <View>
             <FlatList
-              data={dummy}
+              data={trending}
               renderItem={renders}
               keyExtractor={item => `${item}a`}
             />

@@ -8,6 +8,7 @@ const authorizedHeaders = {
   Accept: 'application/json',
   Authorization: '',
 };
+
 const login = (payload: object) => {
   const request = `/login`;
   console.log('payload', payload);
@@ -18,6 +19,18 @@ const login = (payload: object) => {
     })
     .catch(e => {
       console.log('in catch login', e);
+      throw e;
+    });
+};
+const trending_town = () => {
+  const request = `/trending_town`;
+  return axios
+    .get(request)
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in catch trending_town', e);
       throw e;
     });
 };
@@ -121,6 +134,19 @@ const editProfile = (payload, data) => {
     });
 };
 
+const city_posts = payload => {
+  const request = `/city_posts`;
+  authorizedHeaders.Authorization = `Bearer ${payload.Auth}`;
+  return axios
+    .post(request, payload, {headers: authorizedHeaders})
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in city_posts', e);
+      throw e;
+    });
+};
 const updateLocation = payload => {
   const request = `/update_lat_long`;
   authorizedHeaders.Authorization = `Bearer ${payload.Auth}`;
@@ -344,6 +370,25 @@ const blockUserList = payload => {
       console.log('in blockUserList', e);
     });
 };
+const hotspots = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/hotspots`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in hotspots', e);
+    });
+};
+
 const getCountiesList = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/counties`;
@@ -614,4 +659,7 @@ export {
   reportUser,
   getCountiesList,
   unBlockUser,
+  city_posts,
+  hotspots,
+  trending_town,
 };

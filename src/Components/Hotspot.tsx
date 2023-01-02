@@ -21,9 +21,9 @@ const Hotspot = ({item, navigation}) => {
       <Image
         resizeMode={'cover'}
         source={
-          item?.photos
+          item?.image
             ? {
-                uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${item?.photos[0]?.photo_reference}&key=${config}`,
+                uri: item?.image,
               }
             : require('../assets/Images/imagePlaceholder.png')
         }
@@ -83,9 +83,7 @@ const Hotspot = ({item, navigation}) => {
           <View
             style={{flexDirection: 'row', marginTop: 5, alignItems: 'center'}}>
             <Icons name="location" size={15} color={'#5F95F0'} />
-            <Text style={{fontSize: 12, color: darkmode ? '#242527' : 'grey'}}>
-              {item.vicinity}
-            </Text>
+            <Text style={{fontSize: 12, color: 'grey'}}>{item.location}</Text>
           </View>
         </View>
         <TouchableOpacity
