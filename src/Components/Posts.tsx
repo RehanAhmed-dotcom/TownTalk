@@ -202,104 +202,107 @@ const Posts = props => {
       </TouchableOpacity>
 
       <View style={{marginTop: 10, zIndex: -2}}>
-        {item?.media[0]?.media &&
-          (item?.media[0]?.media_type == 'image' ? (
-            <Image
-              source={
-                item?.media[0]?.media
-                  ? {uri: item?.media[0]?.media}
-                  : require('../assets/Images/social.jpg')
-              }
-              resizeMode="cover"
-              style={{
-                height: undefined,
-                aspectRatio: 1,
-                zIndex: -11,
-                borderRadius: 10,
-                width: '100%',
-                marginTop: 10,
-              }}
-            />
-          ) : (
-            <>
-              <Video
-                resizeMode="stretch"
-                posterresizeMode="cover"
-                repeat={Platform.OS == 'ios' ? true : false}
-                onEnd={() => setPaused(true)}
-                // onEnd={() => setPaused(!paused)}
-                poster={
-                  'https://towntalkapp.com/app/public/assets/thumbnail/thumbnail.png'
+        <TouchableOpacity>
+          {item?.media[0]?.media &&
+            (item?.media[0]?.media_type == 'image' ? (
+              <Image
+                source={
+                  item?.media[0]?.media
+                    ? {uri: item?.media[0]?.media}
+                    : require('../assets/Images/social.jpg')
                 }
+                resizeMode="cover"
                 style={{
-                  // position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  // width: wp(85),
-                  // back
-                  // borderRadius: 10,
+                  height: undefined,
+                  aspectRatio: 1,
+                  zIndex: -11,
                   borderRadius: 10,
-                  bottom: 0,
-                  // height: 250,
                   width: '100%',
-                  // height: 300,
-                  height: undefined,
-                  aspectRatio: 1,
-                  right: 0,
+                  marginTop: 10,
                 }}
-                // controls={true}
-                paused={paused}
-                source={{uri: item?.media[0]?.media}}
               />
-              <View
-                style={{
-                  position: 'absolute',
-                  height: undefined,
-                  aspectRatio: 1,
-                  // height: 300,
-                  width: '100%',
-                  alignItems: 'center',
-                  // backgroundColor: 'red',
-                  justifyContent: 'center',
-                }}>
-                {paused ? (
-                  <TouchableOpacity
-                    style={{
-                      width: 50,
-                      height: 50,
-                      borderRadius: 30,
-                      alignItems: 'center',
-                      backgroundColor: '#5F95F0',
-                      justifyContent: 'center',
-                    }}>
-                    <Icon2
-                      name={'controller-play'}
-                      onPress={() => setPaused(!paused)}
-                      size={40}
-                      color="white"
-                    />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={{
-                      width: 50,
-                      height: 50,
-                      backgroundColor: '#5F95F0',
-                      borderRadius: 30,
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}>
-                    <Icon3
-                      name={'pause'}
-                      onPress={() => setPaused(!paused)}
-                      size={40}
-                      color="white"
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-            </>
-          ))}
+            ) : (
+              <>
+                <Video
+                  resizeMode="stretch"
+                  posterresizeMode="cover"
+                  repeat={Platform.OS == 'ios' ? true : false}
+                  onEnd={() => setPaused(true)}
+                  // onEnd={() => setPaused(!paused)}
+                  poster={
+                    'https://towntalkapp.com/app/public/assets/thumbnail/thumbnail.png'
+                  }
+                  style={{
+                    // position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    // width: wp(85),
+                    // back
+                    // borderRadius: 10,
+                    borderRadius: 10,
+                    bottom: 0,
+                    // height: 250,
+                    width: '100%',
+                    // height: 300,
+                    height: undefined,
+                    aspectRatio: 1,
+                    right: 0,
+                  }}
+                  // controls={true}
+                  paused={paused}
+                  source={{uri: item?.media[0]?.media}}
+                />
+                <View
+                  style={{
+                    position: 'absolute',
+                    height: undefined,
+                    aspectRatio: 1,
+                    // height: 300,
+                    width: '100%',
+                    alignItems: 'center',
+                    // backgroundColor: 'red',
+                    justifyContent: 'center',
+                  }}>
+                  {paused ? (
+                    <TouchableOpacity
+                      style={{
+                        width: 50,
+                        height: 50,
+                        borderRadius: 30,
+                        alignItems: 'center',
+                        backgroundColor: '#5F95F0',
+                        justifyContent: 'center',
+                      }}>
+                      <Icon2
+                        name={'controller-play'}
+                        onPress={() => setPaused(!paused)}
+                        size={40}
+                        color="white"
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      style={{
+                        width: 50,
+                        height: 50,
+                        backgroundColor: '#5F95F0',
+                        borderRadius: 30,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}>
+                      <Icon3
+                        name={'pause'}
+                        onPress={() => setPaused(!paused)}
+                        size={40}
+                        color="white"
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </>
+            ))}
+        </TouchableOpacity>
+
         <View style={{marginTop: 10}}>
           {/* <Text>{item?.description}</Text> */}
           <MentionHashtagTextView

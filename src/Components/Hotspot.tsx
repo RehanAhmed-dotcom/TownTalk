@@ -8,7 +8,12 @@ import {config} from '../../config';
 const Hotspot = ({item, navigation}) => {
   const {darkmode} = useSelector(({USER}) => USER);
   return (
-    <View
+    <TouchableOpacity
+      onPress={() => {
+        item.id
+          ? navigation.navigate('RestaurantsDetailBackend', {id: item.id})
+          : navigation.navigate('RestaurantsDetail', {item});
+      }}
       style={{
         marginRight: 30,
         marginTop: 15,
@@ -24,6 +29,10 @@ const Hotspot = ({item, navigation}) => {
           item?.image
             ? {
                 uri: item?.image,
+              }
+            : item?.photos
+            ? {
+                uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${item?.photos[0]?.photo_reference}&key=${config}`,
               }
             : require('../assets/Images/imagePlaceholder.png')
         }
@@ -83,7 +92,9 @@ const Hotspot = ({item, navigation}) => {
           <View
             style={{flexDirection: 'row', marginTop: 5, alignItems: 'center'}}>
             <Icons name="location" size={15} color={'#5F95F0'} />
-            <Text style={{fontSize: 12, color: 'grey'}}>{item.location}</Text>
+            <Text style={{fontSize: 12, color: 'grey'}}>
+              {item.location ? item.location : item.vicinity}
+            </Text>
           </View>
         </View>
         <TouchableOpacity
@@ -98,7 +109,7 @@ const Hotspot = ({item, navigation}) => {
           <Text style={{color: 'white'}}>Check in</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 export default Hotspot;

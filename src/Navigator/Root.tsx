@@ -22,6 +22,7 @@ import EditProfile from '../Screens/ExtraScreens/EditProfile';
 import ContactUs from '../Screens/ExtraScreens/ContactUs';
 import Setting from '../Screens/ExtraScreens/Setting';
 import phoneNo from '../Screens/Auth/phoneNo';
+import RestaurantsDetailBackend from '../Screens/ExtraScreens/RestaurantsDetailBackend';
 import Notification from '../Screens/TabScreens/Notification';
 import {navigationRef} from '../config/NavigationService';
 // import Group from '../Components/Group';
@@ -75,6 +76,10 @@ const Root = () => {
             <Stack.Screen name="GroupPage" component={GroupPage} />
             <Stack.Screen name="Requests" component={Requests} />
             <Stack.Screen name="NewPassword" component={NewPassword} />
+            <Stack.Screen
+              name="RestaurantsDetailBackend"
+              component={RestaurantsDetailBackend}
+            />
             <Stack.Screen name="SingleChat" component={SingleChat} />
             <Stack.Screen name="PostDetails" component={PostDetails} />
             <Stack.Screen name="GroupDetails" component={GroupDetails} />

@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -15,33 +15,51 @@ import {
   ImageBackground,
   Keyboard,
 } from 'react-native';
+import {likeDislike} from '../../../lib/api';
 import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import {config} from '../../../../config';
 import StarRating from 'react-native-star-rating';
 import Reviews from '../../../Components/Reviews';
 import {useSelector} from 'react-redux';
-import {reviewPost} from '../../../lib/api';
+import {reviewPost, businessDetail} from '../../../lib/api';
 import MapView, {Marker} from 'react-native-maps';
 import ImageModal from '../../../Components/ImageModal';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import Icon2 from 'react-native-vector-icons/Entypo';
 import Icon3 from 'react-native-vector-icons/EvilIcons';
+import MyModal from '../../../Components/MyModal';
 import Icon from 'react-native-vector-icons/Feather';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Swiper from 'react-native-swiper';
-const RestaurantsDetail = ({navigation, route}) => {
-  const {item} = route.params;
+const RestaurantsDetailBackend = ({navigation, route}) => {
+  const {id} = route.params;
   const {darkmode, userData} = useSelector(({USER}) => USER);
   const [showModal, setShowModal] = useState(false);
   const [stars, setStars] = useState(0);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [review, setReview] = useState('');
+  const [showLoader, setShowLoader] = useState(true);
+  const [data, setData] = useState({});
+  const [rerender, setRerender] = useState(false);
   const alter = () => {
     setShowModal(!showModal);
   };
+  useEffect(() => {
+    businessDetail({Auth: userData.token, id})
+      .then(res => {
+        console.log('res of business detail', res);
+        setShowLoader(false);
+        if (res.status == 'success') {
+          setData(res.data);
+        }
+      })
+      .catch(err => {
+        console.log('err in business detail', err);
+      });
+  }, [rerender]);
   const ReviewModal = () => {
     const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
     return (
@@ -139,6 +157,9 @@ const RestaurantsDetail = ({navigation, route}) => {
                   })
                     .then(res => {
                       console.log('res of review', res);
+                      if (res.status == 'success') {
+                        setRerender(!rerender);
+                      }
                     })
                     .catch(err => {
                       console.log('err in review', err);
@@ -238,7 +259,19 @@ const RestaurantsDetail = ({navigation, route}) => {
               top: 5,
               // backgroundColor: 'red',
             }}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => {
+                likeDislike({
+                  Auth: userData?.token,
+                  creator_id: item?.user?.id,
+                  post_id: item.id,
+                  is_like: 1,
+                }).then(res => {
+                  console.log('like', res);
+                  setRerender(!rerender);
+                });
+              }}
+              style={{flexDirection: 'row', alignItems: 'center'}}>
               <Icon
                 name="thumbs-up"
                 size={20}
@@ -260,8 +293,19 @@ const RestaurantsDetail = ({navigation, route}) => {
                 }}>
                 {item?.like_count}
               </Text>
-            </View>
-            <View
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                likeDislike({
+                  Auth: userData?.token,
+                  creator_id: item?.user?.id,
+                  post_id: item.id,
+                  is_like: 0,
+                }).then(res => {
+                  console.log('hello', res);
+                  setRerender(!rerender);
+                });
+              }}
               style={{
                 flexDirection: 'row',
                 marginLeft: 15,
@@ -288,8 +332,9 @@ const RestaurantsDetail = ({navigation, route}) => {
                 }}>
                 {item?.dislike_count}
               </Text>
-            </View>
-            <View
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('Comments', {id: item.id})}
               style={{
                 marginLeft: 15,
                 flexDirection: 'row',
@@ -310,7 +355,7 @@ const RestaurantsDetail = ({navigation, route}) => {
                 }}>
                 {item.comment_count}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
           <View></View>
         </View>
@@ -321,9 +366,6 @@ const RestaurantsDetail = ({navigation, route}) => {
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
-      {/* <ImageBackground
-        style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}> */}
       <View
         style={{
           height: 80,
@@ -357,22 +399,19 @@ const RestaurantsDetail = ({navigation, route}) => {
             }}>
             Detail
           </Text>
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
-              Chicago, IL 60611, USA
-            </Text> */}
         </View>
       </View>
       <ScrollView nestedScrollEnabled={true}>
         <TouchableOpacity
           onPress={() => {
-            if (item.photos) {
+            if (data?.photos) {
               setShowModal(true);
             }
           }}
           style={{height: 200, width: '100%'}}>
           <Image
             source={
-              item.photos
+              data?.photos
                 ? {
                     uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${item.photos[0].photo_reference}&key=${config}`,
                   }
@@ -381,10 +420,7 @@ const RestaurantsDetail = ({navigation, route}) => {
             style={{height: 200, width: '100%'}}
           />
         </TouchableOpacity>
-        {/* <Image
-            source={require('../../../assets/Images/restaurants.jpg')}
-            style={{height: 200, width: '100%'}}
-          /> */}
+
         <View
           style={{
             marginTop: 0,
@@ -408,7 +444,7 @@ const RestaurantsDetail = ({navigation, route}) => {
                 fontFamily: 'MontserratAlternates-SemiBold',
                 color: darkmode ? 'white' : 'black',
               }}>
-              {item.name}
+              {data?.name}
             </Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Icon1 name="star" color="lightgreen" />
@@ -418,7 +454,7 @@ const RestaurantsDetail = ({navigation, route}) => {
                   fontSize: 16,
                   marginLeft: 3,
                 }}>
-                {item.rating} (5)
+                {data?.rating} (5)
               </Text>
             </View>
           </View>
@@ -436,56 +472,21 @@ const RestaurantsDetail = ({navigation, route}) => {
                   color: darkmode ? 'white' : 'black',
                   fontFamily: 'MontserratAlternates-Medium',
                 }}>
-                {item.vicinity ? item.vicinity : item.location}
+                {data?.vicinity ? data?.vicinity : data?.location}
               </Text>
             </View>
           </View>
-          {item?.opening_hours && (
+          {data?.opening_hours && (
             <View style={{marginTop: 10}}>
               <Text style={{color: darkmode ? 'white' : 'black'}}>
-                {item?.opening_hours.open_now == true ? 'Open Now' : 'Closed'}
+                {data?.opening_hours.open_now == true ? 'Open Now' : 'Closed'}
               </Text>
             </View>
           )}
 
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {/* {item.types.map(element => (
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontFamily: 'MontserratAlternates-Medium',
-                    // marginTop: 5,
-                    color: 'black',
-                  }}>
-                  {element},{' '}
-                </Text>
-              ))} */}
-          </View>
-          {/* <View style={{width: 100, marginTop: 10}}>
-            <Text
-              style={{
-                fontSize: 16,
-                marginTop: 10,
-                color: darkmode ? 'white' : 'black',
-                fontFamily: 'MontserratAlternates-Medium',
-                marginBottom: 10,
-              }}>
-              Rating
-            </Text>
-            <StarRating
-              disabled={true}
-              maxStars={5}
-              rating={item.rating}
-              starSize={20}
-              fullStarColor={darkmode ? 'white' : 'black'}
-              // style={{marginTop: 10}}
-              // selectedStar={(rating) => this.onStarRatingPress(rating)}
-            />
-            <Text style={{marginTop: 10, color: darkmode ? 'white' : 'black'}}>
-              {item.rating}
-            </Text>
-          </View> */}
-          {item?.types && (
+          <View style={{flexDirection: 'row', alignItems: 'center'}}></View>
+
+          {data?.types && (
             <>
               <Text
                 style={{
@@ -496,18 +497,13 @@ const RestaurantsDetail = ({navigation, route}) => {
                 }}>
                 Amneties
               </Text>
-              {item?.types.map(element => (
+              {data?.types.map(element => (
                 <View
                   style={{
                     flexDirection: 'row',
                     marginTop: 5,
                     alignItems: 'center',
                   }}>
-                  {/* <Image
-               resizeMode="contain"
-               source={require('../../../assets/Images/drink.png')}
-               style={{width: 15, height: 15}}
-             /> */}
                   <Text
                     style={{
                       fontSize: 12,
@@ -526,87 +522,74 @@ const RestaurantsDetail = ({navigation, route}) => {
           <View style={{height: 10}} />
         </View>
         <View style={{marginTop: 20, paddingHorizontal: 15}}>
-          {/* <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-              }}>
-              Restaurants address
-            </Text> */}
-          {/* <Text
-              style={{
-                fontSize: 13,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Medium',
-              }}>
-              {item.vicinity}
-            </Text> */}
-          <View
-            style={{
-              backgroundColor: '#ccc',
-              marginBottom: 30,
-              padding: 10,
-              borderRadius: 10,
-            }}>
+          {data?.latitude && (
             <View
               style={{
-                height: 150,
-                // marginBottom: 30,
-                // backgroundColor: 'red',
-                // marginTop: 20,
+                backgroundColor: '#ccc',
+                marginBottom: 30,
+                padding: 10,
                 borderRadius: 10,
-                zIndex: -1,
-                overflow: 'hidden',
               }}>
-              <MapView
+              <View
                 style={{
-                  flex: 1,
-                  height: '100%',
-                  width: '100%',
+                  height: 150,
+                  // marginBottom: 30,
+                  // backgroundColor: 'red',
+                  // marginTop: 20,
                   borderRadius: 10,
-                }}
-                initialRegion={{
-                  latitude: item?.geometry
-                    ? item?.geometry?.location.lat
-                    : JSON.parse(item?.latitude),
-                  longitude: item?.geometry
-                    ? item?.geometry?.location.lng
-                    : JSON.parse(item?.longitude),
-                  latitudeDelta: 0.0922,
-                  longitudeDelta: 0.0421,
+                  zIndex: -1,
+                  overflow: 'hidden',
                 }}>
-                <Marker
-                  // key={index}
-                  coordinate={{
-                    latitude: item?.geometry
-                      ? item?.geometry?.location.lat
-                      : JSON.parse(item?.latitude),
-                    longitude: item?.geometry
-                      ? item?.geometry?.location.lng
-                      : JSON.parse(item?.longitude),
+                <MapView
+                  style={{
+                    flex: 1,
+                    height: '100%',
+                    width: '100%',
+                    borderRadius: 10,
                   }}
-                  title={'location'}
-                  // description={marker.description}
-                />
-              </MapView>
-            </View>
-            <Text style={{marginTop: 10}}>
-              {item.vicinity ? item.vicinity : item.location}
-            </Text>
-            <TouchableOpacity>
-              <Text
-                style={{
-                  color: '#5F95F0',
-                  textDecorationColor: '#5F95F0',
-                  textDecorationLine: 'underline',
-                  fontWeight: '500',
-                }}>
-                Get direction
-              </Text>
-            </TouchableOpacity>
-          </View>
+                  initialRegion={{
+                    latitude: data?.geometry
+                      ? data?.geometry?.location.lat
+                      : JSON.parse(data?.latitude),
+                    longitude: data?.geometry
+                      ? data?.geometry?.location.lng
+                      : JSON.parse(data?.longitude),
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                  }}>
+                  <Marker
+                    // key={index}
+                    coordinate={{
+                      latitude: data?.geometry
+                        ? data?.geometry?.location.lat
+                        : JSON.parse(data?.latitude),
+                      longitude: data?.geometry
+                        ? data?.geometry?.location.lng
+                        : JSON.parse(data?.longitude),
+                    }}
+                    title={'location'}
+                    // description={marker.description}
+                  />
+                </MapView>
+              </View>
 
-          {item?.posts && (
+              <Text style={{marginTop: 10}}>
+                {data?.vicinity ? data?.vicinity : data?.location}
+              </Text>
+              <TouchableOpacity>
+                <Text
+                  style={{
+                    color: '#5F95F0',
+                    textDecorationColor: '#5F95F0',
+                    textDecorationLine: 'underline',
+                    fontWeight: '500',
+                  }}>
+                  Get direction
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+          {data?.posts && (
             <>
               <View
                 style={{
@@ -639,7 +622,7 @@ const RestaurantsDetail = ({navigation, route}) => {
                   </TouchableOpacity>
                 </View>
                 <FlatList
-                  data={item?.posts}
+                  data={data?.posts}
                   renderItem={renderItem}
                   horizontal
                 />
@@ -671,7 +654,7 @@ const RestaurantsDetail = ({navigation, route}) => {
                 </View>
                 <View>
                   <FlatList
-                    data={item.reviews}
+                    data={data?.reviews}
                     horizontal
                     renderItem={renderItems}
                   />
@@ -682,16 +665,17 @@ const RestaurantsDetail = ({navigation, route}) => {
           <View style={{height: 30}} />
         </View>
       </ScrollView>
-      {/* </ImageBackground> */}
+
       {ImageModal(
         showModal,
         `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${
-          item.photos ? item?.photos[0]?.photo_reference : null
+          data?.photos ? data?.photos[0]?.photo_reference : null
         }&key=${config}`,
         alter,
       )}
+      {MyModal(showLoader)}
       {ReviewModal()}
     </SafeAreaView>
   );
 };
-export default RestaurantsDetail;
+export default RestaurantsDetailBackend;

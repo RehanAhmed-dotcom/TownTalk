@@ -22,7 +22,7 @@ const Explore = ({navigation}) => {
   const {darkmode, userData} = useSelector(({USER}) => USER);
 
   const dummy = [1, 2, 3, 4, 5];
-  const render = ({item}) => <Hotspot item={item} />;
+  const render = ({item}) => <Hotspot item={item} navigation={navigation} />;
   const renders = ({item}) => (
     <TouchableOpacity
       onPress={() => navigation.navigate('ExploreTowns', {city: item})}
@@ -55,25 +55,31 @@ const Explore = ({navigation}) => {
     return unique;
   };
   useEffect(() => {
-    trending_town()
-      .then(res => {
-        console.log('res of trending town', res);
-        setTrending(res.data);
-      })
-      .catch(err => {
-        console.log('err in trending town', err);
-      });
-    hotspots({Auth: userData.token})
-      .then(res => {
-        // console.log('res of hotspot', res);
-        // console.log('unique array', );
-        setHotSpot(getUnique(res.data, 'name'));
-        setSearchedHotSpot(getUnique(res.data, 'name'));
-      })
-      .catch(err => {
-        console.log('err in hotspot', err);
-      });
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      trending_town()
+        .then(res => {
+          console.log('res of trending town', res);
+          setTrending(res.data);
+        })
+        .catch(err => {
+          console.log('err in trending town', err);
+        });
+      hotspots({Auth: userData.token})
+        .then(res => {
+          // console.log('res of hotspot', res);
+          // console.log('unique array', );
+          setHotSpot(getUnique(res.data, 'name'));
+          setSearchedHotSpot(getUnique(res.data, 'name'));
+        })
+        .catch(err => {
+          console.log('err in hotspot', err);
+        });
+    });
+
+    // Return the function to unsubscribe from the event so it gets removed on unmount
+    return unsubscribe;
+  }, [navigation]);
+  useEffect(() => {}, []);
   const searchTextReceive = e => {
     let filteredName = [];
     // if (e) {

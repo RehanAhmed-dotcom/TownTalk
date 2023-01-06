@@ -160,6 +160,20 @@ const updateLocation = payload => {
       throw e;
     });
 };
+
+const reviewPost = payload => {
+  const request = `/review`;
+  authorizedHeaders.Authorization = `Bearer ${payload.Auth}`;
+  return axios
+    .post(request, payload, {headers: authorizedHeaders})
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in change password', e);
+      throw e;
+    });
+};
 const changePassword = payload => {
   const request = `/change-password`;
   authorizedHeaders.Authorization = `Bearer ${payload.Auth}`;
@@ -350,6 +364,24 @@ const likeDislike = payload => {
     })
     .catch(e => {
       console.log('in likedislike', e);
+    });
+};
+const businessDetail = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/business_detail/${payload.id}`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in businessDetail', e);
     });
 };
 const blockUserList = payload => {
@@ -628,6 +660,7 @@ export {
   login,
   register,
   submitEmail,
+  reviewPost,
   changePassword,
   verifyEmail,
   editProfile,
@@ -661,5 +694,6 @@ export {
   unBlockUser,
   city_posts,
   hotspots,
+  businessDetail,
   trending_town,
 };

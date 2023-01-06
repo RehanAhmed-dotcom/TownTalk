@@ -5,6 +5,7 @@ import {
   Image,
   Linking,
   ImageBackground,
+  Share,
   Alert,
   Text,
   TouchableOpacity,
@@ -170,7 +171,25 @@ const Setting = ({navigation}) => {
     </TouchableOpacity>
   );
   // console.log('county', Counties.Alabama[1]);
-
+  // const onShare = async () => {
+  //   try {
+  //     const result = await Share.share({
+  //       message:
+  //         'React Native | A framework for building native apps using React',
+  //     });
+  //     if (result.action === Share.sharedAction) {
+  //       if (result.activityType) {
+  //         // shared with activity type of result.activityType
+  //       } else {
+  //         // shared
+  //       }
+  //     } else if (result.action === Share.dismissedAction) {
+  //       // dismissed
+  //     }
+  //   } catch (error) {
+  //     Alert.alert(error.message);
+  //   }
+  // };
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
@@ -228,6 +247,9 @@ const Setting = ({navigation}) => {
           }
         />
       </View>
+      {/* <TouchableOpacity
+        style={{height: 50, backgroundColor: 'red'}}
+        onPress={onShare}></TouchableOpacity> */}
       <FlatList
         data={settings}
         renderItem={renderItem}

@@ -1,9 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
   FlatList,
   ScrollView,
+  Keyboard,
+  TextInput,
   TouchableOpacity,
   Platform,
   Image,
@@ -13,21 +15,116 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
+import Icon3 from 'react-native-vector-icons/FontAwesome';
 import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import LikeDislike from './LikeDislike';
 import Icons from 'react-native-vector-icons/AntDesign';
 import Video from 'react-native-video';
+import moment from 'moment';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Entypo';
 import Icon2 from 'react-native-vector-icons/Feather';
 import Swiper from 'react-native-swiper';
 import Icon1 from 'react-native-vector-icons/EvilIcons';
+import {createComment} from '../lib/api';
 const SwiperPosts = props => {
   const {item, swipe, navigation, onShare, onPress, hashPress, press} = props;
   const {userData, darkmode} = useSelector(({USER}) => USER);
   const [paused, setPaused] = useState(false);
   const [show, setShow] = useState(false);
-  console.log('checking item', item);
+  const [change, setChange] = useState(false);
+  const [comment, setComment] = useState('');
+  const [keyboardStatus, setKeyboardStatus] = useState('');
+  const renderItems = ({item}) => (
+    <View
+      style={{
+        marginTop: 0,
+        borderBottomColor: 'grey',
+        borderBottomWidth: 1,
+        paddingBottom: 10,
+      }}>
+      {/* <Text
+      style={{
+        fontSize: 16,
+        fontFamily: 'MontserratAlternates-SemiBold',
+      }}>
+      Comments
+    </Text> */}
+      <View
+        style={{
+          marginTop: 20,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+        <View style={{alignItems: 'center', flexDirection: 'row'}}>
+          <Image
+            source={
+              item.user.image
+                ? {uri: item.user.image}
+                : require('../assets/Images/girl.jpg')
+            }
+            style={{width: 50, height: 50, borderRadius: 50}}
+          />
+          <View style={{marginLeft: 10}}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                fontSize: 14,
+                color: darkmode ? 'white' : 'black',
+              }}>
+              {`${item.user.firstname}`}
+            </Text>
+            {/* <Text
+         style={{
+           fontSize: 12,
+           fontFamily: 'MontserratAlternates-Regular',
+           marginTop: 5,
+         }}>
+         Today, 03:24 PM
+       </Text> */}
+          </View>
+        </View>
+        <Text
+          style={{
+            fontSize: 12,
+            fontFamily: 'MontserratAlternates-Regular',
+          }}>
+          {moment(item.created_at).format('MMM DD YYYY')}
+        </Text>
+      </View>
+      <Text
+        style={{
+          fontFamily: 'MontserratAlternates-Regular',
+          marginTop: 10,
+          color: darkmode ? 'white' : 'black',
+        }}>
+        {item.comment}
+      </Text>
+    </View>
+  );
+  const send = () => {
+    setComment('');
+    createComment({Auth: userData.token, post_id: item.id, comment}).then(
+      res => {
+        setChange(!change);
+        press();
+      },
+    );
+  };
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   return (
     <ScrollView>
       <View
@@ -43,6 +140,7 @@ const SwiperPosts = props => {
           // minWidth: 100,
           marginLeft: 3,
           marginVertical: 3,
+          marginBottom: 80,
           marginTop: 10,
           padding: 12,
           borderRadius: 5,
@@ -96,28 +194,7 @@ const SwiperPosts = props => {
           style={{bottom: 10}}
         /> */}
         </TouchableOpacity>
-        {/* <View
-        style={{
-          marginTop: 10,
-          width: '100%',
-          flexDirection: 'row',
-          // alignItems: 'center',
-          // backgroundColor: 'red',
-          overflow: 'hidden',
-        }}>
-        {item?.hashtag?.map(element => (
-          <Text
-            style={{
-              marginRight: 5,
-              fontSize: 13,
-              fontFamily: 'MontserratAlternates-Medium',
-              color: '#5F95F0',
-            }}>
-            #{element}
-          </Text>
-        ))}
-       
-      </View> */}
+
         <View style={{marginTop: 10}}>
           <View>
             <MentionHashtagTextView
@@ -131,15 +208,6 @@ const SwiperPosts = props => {
               {item.description}
             </MentionHashtagTextView>
           </View>
-
-          {/* <Text
-          style={{
-            fontSize: 13,
-            color: 'black',
-            fontFamily: 'MontserratAlternates-Regular',
-          }}>
-          {item?.description}
-        </Text> */}
           {swipe.length > 0 && (
             <View style={{width: '100%', marginTop: 10, height: 350}}>
               <Swiper
@@ -247,15 +315,6 @@ const SwiperPosts = props => {
               </Swiper>
             </View>
           )}
-
-          {/* <Image
-          source={
-            item?.media[0]?.media
-              ? {uri: item?.media[0]?.media}
-              : require('../assets/Images/social.jpg')
-          }
-          style={{height: 150, borderRadius: 10, width: '100%', marginTop: 10}}
-        /> */}
         </View>
         <View
           style={{
@@ -276,81 +335,6 @@ const SwiperPosts = props => {
               marginTop: 10,
             }}>
             <LikeDislike item={item} press={press} />
-            {/* <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() => {
-              setLike(!like);
-              setDislike(false);
-              // press();
-              likeDislike({
-                Auth: userData.token,
-                creator_id: item?.user?.id,
-                post_id: item?.id,
-                is_like: 1,
-              })
-                .then(res => {
-                  console.log('res', res);
-                  press();
-                })
-                .catch(err => {
-                  console.log('err', err);
-                });
-            }}
-            style={{flexDirection: 'row', alignItems: 'center'}}>
-            <Icon
-              name="thumbs-up"
-              size={20}
-              color={like ? '#5F95F0' : 'grey'}
-            />
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                fontSize: 13,
-                marginLeft: 5,
-                color: 'black',
-              }}>
-              {likecount}
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setDislike(!dislike);
-              setLike(false);
-              press();
-              likeDislike({
-                Auth: userData.token,
-                creator_id: item?.user?.id,
-                post_id: item?.id,
-                is_like: 0,
-              })
-                .then(res => {
-                  console.log('res', res);
-                })
-                .catch(err => {
-                  console.log('err', err);
-                });
-            }}
-            style={{
-              flexDirection: 'row',
-              marginLeft: 10,
-              alignItems: 'center',
-            }}>
-            <Icon
-              name="thumbs-down"
-              size={20}
-              color={dislike ? '#5F95F0' : 'grey'}
-            />
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                fontSize: 13,
-                marginLeft: 5,
-                color: 'black',
-              }}>
-              {dislikecount}
-            </Text>
-          </TouchableOpacity>
-        </View> */}
           </View>
           <View
             style={{
@@ -389,49 +373,63 @@ const SwiperPosts = props => {
                   }}>
                   {item.comment_count}
                 </Text>
-                {/* <Text
-                style={{
-                  fontFamily: 'MontserratAlternates-Regular',
-                  marginLeft: 5,
-                  color: 'black',
-                  fontSize: 13,
-                }}>
-                Comments
-              </Text> */}
               </TouchableOpacity>
             )}
             <TouchableOpacity
               onPress={() => {
                 onShare();
               }}
-              //   setLike(!like);
-              //   setDislike(false);
-              // }}
               style={{
                 flexDirection: 'row',
                 width: 30,
                 justifyContent: 'space-between',
                 alignItems: 'center',
               }}>
-              {/* <Image
-              source={require('../assets/Images/share.png')}
-              style={{height: 10, width: 10}}
-            /> */}
               <Icon2 name="send" size={16} color={'grey'} />
-              {/* <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                marginLeft: 5,
-                fontSize: 13,
-                color: 'black',
-              }}>
-              Share
-            </Text> */}
             </TouchableOpacity>
           </View>
         </View>
 
-        {/* <Text style={{color: '#5F95F0', fontWeight: 'bold'}}>#{item}</Text> */}
+        <FlatList data={item.comments} renderItem={renderItems} />
+      </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          position: 'absolute',
+          width: '100%',
+          zIndex: 3,
+          bottom: 0,
+          left: 0,
+          backgroundColor: darkmode ? '#242527' : 'white',
+          height: 70,
+          marginBottom:
+            Platform.OS == 'android'
+              ? 0
+              : keyboardStatus == 'Keyboard Shown'
+              ? 20
+              : 0,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+        <TextInput
+          placeholder={'Add your comment'}
+          placeholderTextColor={'grey'}
+          value={comment}
+          onChangeText={text => {
+            setComment(text);
+          }}
+          style={{
+            width: '85%',
+            height: 50,
+            borderRadius: 30,
+            color: 'black',
+            paddingHorizontal: 10,
+            backgroundColor: '#ccc',
+          }}
+        />
+        <TouchableOpacity onPress={() => send()} style={{marginLeft: 10}}>
+          <Icon3 name="send" size={25} color="#5F95F0" />
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
