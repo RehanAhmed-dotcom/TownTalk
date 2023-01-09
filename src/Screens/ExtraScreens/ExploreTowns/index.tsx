@@ -131,7 +131,7 @@ const ExploreTowns = ({navigation, route}) => {
               fontWeight: 'bold',
               color: darkmode ? 'white' : 'black',
             }}>
-            2,334 <Text style={{color: 'grey', fontSize: 14}}>Checkins</Text>
+            <Text style={{color: 'grey', fontSize: 14}}>Checkins</Text>
           </Text>
           <Text
             style={{
@@ -140,7 +140,7 @@ const ExploreTowns = ({navigation, route}) => {
               marginLeft: 30,
               color: darkmode ? 'white' : 'black',
             }}>
-            7:30pm{' '}
+            {' '}
             <Text style={{color: 'grey', fontSize: 14}}>Hottest time</Text>
           </Text>
         </View>
@@ -170,9 +170,9 @@ const ExploreTowns = ({navigation, route}) => {
             fontSize: 16,
             color: darkmode ? 'white' : 'black',
           }}>
-          Posts mentioning Middlesex County
+          Posts mentioning {city}
         </Text>
-        <View>
+        <View style={{height: '75%'}}>
           <FlatList data={posts} renderItem={renderItem1} />
         </View>
       </View>

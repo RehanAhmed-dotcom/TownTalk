@@ -29,6 +29,7 @@ const Posts = props => {
     blockuser,
     onPress,
     hashPress,
+    focusMedia,
     deletePost,
     tagPress,
     handleReport,
@@ -202,7 +203,7 @@ const Posts = props => {
       </TouchableOpacity>
 
       <View style={{marginTop: 10, zIndex: -2}}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => focusMedia(item?.media[0].media)}>
           {item?.media[0]?.media &&
             (item?.media[0]?.media_type == 'image' ? (
               <Image

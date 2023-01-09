@@ -208,32 +208,37 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
         <View
           style={{
             marginLeft: 10,
+            width: '65%',
+            // flexWrap: 'wrap',
             // backgroundColor: 'blue',
             justifyContent: 'space-between',
           }}>
-          <Text
-            style={{
-              fontFamily: 'MontserratAlternates-SemiBold',
-              fontSize: 16,
-              color: darkmode ? 'white' : 'black',
-            }}>
-            {`${item?.user?.firstname}`}
-            {item?.business_tag && (
-              <Text style={{color: 'grey'}}>
-                {' '}
-                tagged{' '}
-                <Text
-                  // onPress={tagPress}
-                  style={{
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                    fontSize: 16,
-                    color: darkmode ? 'white' : 'black',
-                  }}>
-                  {item?.business_tag}
+          <View style={{width: '100%'}}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                fontSize: 16,
+                color: darkmode ? 'white' : 'black',
+              }}>
+              {`${item?.user?.firstname}`}
+              {item?.business_tag && (
+                <Text style={{color: 'grey'}}>
+                  {' '}
+                  tagged{' '}
+                  <Text
+                    // onPress={tagPress}
+                    style={{
+                      fontFamily: 'MontserratAlternates-SemiBold',
+                      fontSize: 16,
+                      color: darkmode ? 'white' : 'black',
+                    }}>
+                    {item?.business_tag}
+                  </Text>
                 </Text>
-              </Text>
-            )}
-          </Text>
+              )}
+            </Text>
+          </View>
+
           <View style={{marginTop: 2}}>
             {/* <Text>{item?.description}</Text> */}
             <MentionHashtagTextView
@@ -366,10 +371,10 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
-      <View
+      {/* <View
         style={{
           height: 80,
-          backgroundColor: darkmode ? '#242527' : 'white',
+          backgroundColor: 'transparent',
           elevation: 3,
           zIndex: 3,
           flexDirection: 'row',
@@ -377,18 +382,7 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
           paddingHorizontal: 15,
           // justifyContent: 'space-between',
         }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#ccc',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 5,
-            height: 30,
-            width: 30,
-          }}
-          onPress={() => navigation.goBack()}>
-          <Icon1 name="arrowleft" color="black" size={20} />
-        </TouchableOpacity>
+       
         <View style={{marginLeft: 20}}>
           <Text
             style={{
@@ -400,7 +394,7 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
             Detail
           </Text>
         </View>
-      </View>
+      </View> */}
       <ScrollView nestedScrollEnabled={true}>
         <TouchableOpacity
           onPress={() => {
@@ -411,14 +405,28 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
           style={{height: 200, width: '100%'}}>
           <Image
             source={
-              data?.photos
+              data?.image
                 ? {
-                    uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${item.photos[0].photo_reference}&key=${config}`,
+                    uri: data?.image,
                   }
                 : require('../../../assets/Images/imagePlaceholder.png')
             }
             style={{height: 200, width: '100%'}}
           />
+          <View style={{position: 'absolute', top: 5, left: 5}}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#ccc',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 5,
+                height: 30,
+                width: 30,
+              }}
+              onPress={() => navigation.goBack()}>
+              <Icon1 name="arrowleft" color="black" size={20} />
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
 
         <View

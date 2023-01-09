@@ -16,6 +16,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import Axios from 'axios';
+import VideoCompModal from '../../../Components/VideoCompModal';
 import PushNotification from 'react-native-push-notification';
 // import GooglePlacesAutocomplete, {
 //   geocodeByAddress,
@@ -31,6 +32,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Icon1 from 'react-native-vector-icons/EvilIcons';
 import Icon2 from 'react-native-vector-icons/AntDesign';
 import Icon3 from 'react-native-vector-icons/Feather';
+import CrossIcon from 'react-native-vector-icons/Entypo';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateToken} from '../../../lib/api';
 import {
@@ -59,6 +61,8 @@ const Home = ({navigation}) => {
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [testArr, setTestArr] = useState([]);
   const [hash, setHash] = useState([]);
+  const [focusMedia, setFocusMedia] = useState(false);
+  const [media, setMedia] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [showfilter, setShowFilter] = useState(false);
   const [reportId, setReportId] = useState('');
@@ -662,120 +666,122 @@ const Home = ({navigation}) => {
           <Wrapper
             behavior="padding"
             style={{
-              height: '45%',
+              height: '50%',
               width: '100%',
               backgroundColor: 'white',
               borderTopLeftRadius: 30,
               borderTopRightRadius: 30,
               padding: 20,
             }}>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                fontSize: 16,
-                color: 'black',
-              }}>
-              Report this post
-            </Text>
-            <Text
-              style={{
-                fontFamily: 'MontserratAlternates-Regular',
-                fontSize: 14,
-                color: 'grey',
-                marginTop: 10,
-              }}>
-              If someone is in immediate danger, get help before reporting to
-              Towntalk. Don't wait.
-            </Text>
-            <TextInput
-              value={reportReason}
-              onChangeText={text => setReportReason(text)}
-              style={{
-                backgroundColor: '#ccc',
-                height: 100,
-                borderRadius: 10,
-                color: 'black',
-                padding: 10,
-                marginTop: 15,
-              }}
-              placeholder="Why do you want to report this post?"
-              placeholderTextColor="grey"
-              numberOfLines={4}
-              multiline
-              textAlignVertical="top"
-            />
+            <TouchableOpacity onPress={() => console.log('hello')}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
+                  color: 'black',
+                }}>
+                Report this post
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  fontSize: 14,
+                  color: 'grey',
+                  marginTop: 10,
+                }}>
+                If someone is in immediate danger, get help before reporting to
+                Towntalk. Don't wait.
+              </Text>
+              <TextInput
+                value={reportReason}
+                onChangeText={text => setReportReason(text)}
+                style={{
+                  backgroundColor: '#ccc',
+                  height: 100,
+                  borderRadius: 10,
+                  color: 'black',
+                  padding: 10,
+                  marginTop: 15,
+                }}
+                placeholder="Why do you want to report this post?"
+                placeholderTextColor="grey"
+                numberOfLines={4}
+                multiline
+                textAlignVertical="top"
+              />
 
-            <TouchableOpacity
-              onPress={() => {
-                reportUser({
-                  Auth: userData.token,
-                  message: reportReason,
-                  post_id: reportId,
-                })
-                  .then(res => {
-                    console.log('res of report', res);
+              <TouchableOpacity
+                onPress={() => {
+                  reportUser({
+                    Auth: userData.token,
+                    message: reportReason,
+                    post_id: reportId,
                   })
-                  .catch(err => {
-                    console.log('err in report', err);
-                  });
-                setShowReportModal(false);
-              }}
-              style={{
-                width: '100%',
-                height: 50,
-                backgroundColor: '#5F95F0',
-                marginTop: 15,
-                borderRadius: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text
+                    .then(res => {
+                      console.log('res of report', res);
+                    })
+                    .catch(err => {
+                      console.log('err in report', err);
+                    });
+                  setShowReportModal(false);
+                }}
                 style={{
-                  color: 'white',
-                  fontFamily: 'MontserratAlternates-SemiBold',
+                  width: '100%',
+                  height: 50,
+                  backgroundColor: '#5F95F0',
+                  marginTop: 15,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                Report
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                reportUser({
-                  Auth: userData.token,
-                  message: reportReason,
-                  post_id: reportId,
-                })
-                  .then(res => {
-                    console.log('res of report', res);
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Report
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  reportUser({
+                    Auth: userData.token,
+                    message: reportReason,
+                    post_id: reportId,
                   })
-                  .catch(err => {
-                    console.log('err in report', err);
-                  });
-                blockUser({Auth: userData.token, block_user_id: blockuserId})
-                  .then(res => {
-                    console.log('res of block', res);
-                    setChange(!change);
-                  })
-                  .catch(err => {
-                    console.log('err in block', err);
-                  });
-                setShowReportModal(false);
-              }}
-              style={{
-                width: '100%',
-                height: 50,
-                backgroundColor: '#200E32',
-                marginTop: 15,
-                borderRadius: 10,
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <Text
+                    .then(res => {
+                      console.log('res of report', res);
+                    })
+                    .catch(err => {
+                      console.log('err in report', err);
+                    });
+                  blockUser({Auth: userData.token, block_user_id: blockuserId})
+                    .then(res => {
+                      console.log('res of block', res);
+                      setChange(!change);
+                    })
+                    .catch(err => {
+                      console.log('err in block', err);
+                    });
+                  setShowReportModal(false);
+                }}
                 style={{
-                  color: 'white',
-                  fontFamily: 'MontserratAlternates-SemiBold',
+                  width: '100%',
+                  height: 50,
+                  backgroundColor: '#200E32',
+                  marginTop: 15,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}>
-                Report & block user
-              </Text>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Report & block user
+                </Text>
+              </TouchableOpacity>
             </TouchableOpacity>
           </Wrapper>
         </TouchableOpacity>
@@ -901,6 +907,10 @@ const Home = ({navigation}) => {
       </Modal>
     );
   };
+  const focusModalOpener = media => {
+    setFocusMedia(!focusMedia);
+    setMedia(media);
+  };
   const renderItem1 = ({item}) => (
     <Posts
       item={item}
@@ -917,6 +927,9 @@ const Home = ({navigation}) => {
       tagPress={text => {
         navigation.navigate('Hashes', {tag: item.business_tag});
         console.log('tag press');
+      }}
+      focusMedia={text => {
+        focusModalOpener(text);
       }}
       hashPress={text => {
         console.log('text of hash tag', text);
@@ -1005,6 +1018,65 @@ const Home = ({navigation}) => {
     // setRefreshing(false);
     // setLoading(false);
     // });
+  };
+  const mediaModal = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={focusMedia}
+        onRequestClose={() => {
+          setFocusMedia(false);
+        }}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#000000',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '90%',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableOpacity
+              onPress={() => setFocusMedia(false)}
+              style={{
+                height: 30,
+                width: 30,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <CrossIcon color={'white'} size={25} name="squared-cross" />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              height: '85%',
+              width: '100%',
+              // backgroundColor: 'red',
+              alignItems: 'center',
+              justifyContent: 'center',
+              // backgroundColor: 'red',
+              // borderRadius: 25,
+            }}>
+            {media.substring(media.length - 4) == '.jpg' ? (
+              <Image
+                source={{uri: media}}
+                style={{height: '100%', width: '100%'}}
+                resizeMode="contain"
+              />
+            ) : (
+              <VideoCompModal source={media} />
+            )}
+
+            {/* <ActivityIndicator size="small" color="black" /> */}
+          </View>
+        </View>
+      </Modal>
+    );
   };
   // const long = 73.0525821;
   // console.log('test arr length', testArr.length);
@@ -1344,6 +1416,7 @@ const Home = ({navigation}) => {
       {ReportModal()}
       {DeleteModal()}
       {CountiesModal(countyModal)}
+      {mediaModal()}
     </SafeAreaView>
   );
 };

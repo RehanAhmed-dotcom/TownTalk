@@ -324,44 +324,7 @@ const RestaurantsDetail = ({navigation, route}) => {
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
-      <View
-        style={{
-          height: 80,
-          backgroundColor: darkmode ? '#242527' : 'white',
-          elevation: 3,
-          zIndex: 3,
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingHorizontal: 15,
-          // justifyContent: 'space-between',
-        }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: '#ccc',
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderRadius: 5,
-            height: 30,
-            width: 30,
-          }}
-          onPress={() => navigation.goBack()}>
-          <Icon1 name="arrowleft" color="black" size={20} />
-        </TouchableOpacity>
-        <View style={{marginLeft: 20}}>
-          <Text
-            style={{
-              fontSize: 16,
 
-              fontFamily: 'MontserratAlternates-SemiBold',
-              color: darkmode ? 'white' : 'black',
-            }}>
-            Detail
-          </Text>
-          {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
-              Chicago, IL 60611, USA
-            </Text> */}
-        </View>
-      </View>
       <ScrollView nestedScrollEnabled={true}>
         <TouchableOpacity
           onPress={() => {
@@ -372,7 +335,9 @@ const RestaurantsDetail = ({navigation, route}) => {
           style={{height: 200, width: '100%'}}>
           <Image
             source={
-              item.photos
+              item?.image
+                ? {uri: item?.image}
+                : item.photos
                 ? {
                     uri: `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${item.photos[0].photo_reference}&key=${config}`,
                   }
@@ -380,6 +345,20 @@ const RestaurantsDetail = ({navigation, route}) => {
             }
             style={{height: 200, width: '100%'}}
           />
+          <View style={{position: 'absolute', left: 5, top: 5}}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#ccc',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: 5,
+                height: 30,
+                width: 30,
+              }}
+              onPress={() => navigation.goBack()}>
+              <Icon1 name="arrowleft" color="black" size={20} />
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
         {/* <Image
             source={require('../../../assets/Images/restaurants.jpg')}
