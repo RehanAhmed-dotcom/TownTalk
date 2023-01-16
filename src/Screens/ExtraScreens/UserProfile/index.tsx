@@ -9,9 +9,15 @@ import {
   Text,
   Alert,
 } from 'react-native';
+import Icon3 from 'react-native-vector-icons/Ionicons';
 
 import Icon1 from 'react-native-vector-icons/Entypo';
-import {likeDislikeProfile, blockUser, profile} from '../../../lib/api';
+import {
+  likeDislikeProfile,
+  blockUser,
+  deletePostApi,
+  profile,
+} from '../../../lib/api';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {useSelector} from 'react-redux';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -37,6 +43,131 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
   const [list, setList] = useState([]);
   const [change, setChange] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [reportId, setReportId] = useState('');
+  const [deleteModal, setDeleteModal] = useState(false);
+  const DeleteModal = () => {
+    const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={deleteModal}
+        onRequestClose={() => setDeleteModal(false)}>
+        <TouchableOpacity
+          onPress={() => setDeleteModal(false)}
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <Wrapper
+            behavior="padding"
+            style={{
+              height: '45%',
+              width: '100%',
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              padding: 20,
+            }}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                fontSize: 16,
+                color: 'black',
+              }}>
+              Delete this post
+            </Text>
+            <View style={{alignItems: 'center', marginVertical: 15}}>
+              <Icon3 name="trash-bin-sharp" size={50} color="red" />
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 18,
+                  fontFamily: 'MontserratAlternates-Bold',
+                }}>
+                Are you sure?
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 14,
+                color: 'grey',
+                marginTop: 0,
+              }}>
+              Once deleted, you will not be able to recover this Post!
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                deletePostApi({
+                  Auth: userData.token,
+                  post_id: reportId,
+                })
+                  .then(res => {
+                    console.log('res of delete', res);
+                    setChange(!change);
+                  })
+                  .catch(err => {
+                    console.log('err in delete', err);
+                  });
+                setDeleteModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: 'red',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Delete Post
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setDeleteModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: '#200E32',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </Wrapper>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+  const deletePost = id => {
+    setReportId(id);
+    setDeleteModal(true);
+  };
   const renders = ({item}) => (
     <View>
       {select == 'Groups' ? (
@@ -57,6 +188,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
             setSpecific(item);
             setShowModal(true);
           }}
+          deletePost={deletePost}
           press={alter}
           navigation={navigation}
           hashPress={text => {
@@ -540,6 +672,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
       </View>
       {/* </ImageBackground> */}
       {MyModal(showModal)}
+      {DeleteModal()}
     </View>
   );
 };

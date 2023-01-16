@@ -5,15 +5,17 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Icons from 'react-native-vector-icons/EvilIcons';
 import {useSelector} from 'react-redux';
 import {config} from '../../config';
-const Hotspot = ({item, navigation}) => {
+const Hotspot = ({item, hottest, checkedIn, check, navigation}) => {
+  // console.log('item', item);
   const {darkmode} = useSelector(({USER}) => USER);
   return (
     <TouchableOpacity
-      onPress={() => {
-        item.id
-          ? navigation.navigate('RestaurantsDetailBackend', {id: item.id})
-          : navigation.navigate('RestaurantsDetail', {item});
-      }}
+      onPress={check}
+      // onPress={() => {
+      //   item.id
+      //     ? navigation.navigate('RestaurantsDetailBackend', {id: item.name})
+      //     : navigation.navigate('RestaurantsDetail', {item});
+      // }}
       style={{
         marginRight: 30,
         marginTop: 15,
@@ -53,32 +55,37 @@ const Hotspot = ({item, navigation}) => {
           justifyContent: 'space-between',
           width: '100%',
         }}>
-        <TouchableOpacity
-          style={{
-            height: 40,
-            width: 100,
-            borderRadius: 100,
-            backgroundColor: 'white',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Text style={{color: 'black'}}>Open now</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            height: 40,
-            // width: 100,
-            borderRadius: 100,
-            backgroundColor: '#FF6060',
-            paddingHorizontal: 10,
-            alignItems: 'center',
-            flexDirection: 'row',
-            // alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <Icon name="local-fire-department" size={15} color="white" />
-          <Text style={{color: 'white'}}>Hottest of them all</Text>
-        </TouchableOpacity>
+        {item?.opening_hours && (
+          <TouchableOpacity
+            style={{
+              height: 40,
+              width: 100,
+              borderRadius: 100,
+              backgroundColor: 'white',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text style={{color: 'black'}}>Open now</Text>
+          </TouchableOpacity>
+        )}
+
+        {hottest && (
+          <TouchableOpacity
+            style={{
+              height: 40,
+              // width: 100,
+              borderRadius: 100,
+              backgroundColor: '#FF6060',
+              paddingHorizontal: 10,
+              alignItems: 'center',
+              flexDirection: 'row',
+              // alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Icon name="local-fire-department" size={15} color="white" />
+            <Text style={{color: 'white'}}>Hottest of them all</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <View
         style={{
@@ -100,15 +107,18 @@ const Hotspot = ({item, navigation}) => {
           </View>
         </View>
         <TouchableOpacity
+          onPress={checkedIn}
           style={{
             height: 40,
             width: 100,
             borderRadius: 100,
-            backgroundColor: '#5F95F0',
+            backgroundColor: item.checkIn ? '#200E32' : '#5F95F0',
             alignItems: 'center',
             justifyContent: 'center',
           }}>
-          <Text style={{color: 'white'}}>Check in</Text>
+          <Text style={{color: 'white'}}>
+            {item.checkIn ? 'Checked In' : 'Check In'}
+          </Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>

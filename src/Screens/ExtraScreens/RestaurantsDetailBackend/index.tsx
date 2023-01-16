@@ -367,7 +367,7 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
       </View>
     </TouchableOpacity>
   );
-  // console.log('item', item);
+  // console.log('item', data);
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>

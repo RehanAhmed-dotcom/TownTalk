@@ -321,10 +321,6 @@ const RestaurantsDetail = ({navigation, route}) => {
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
-      {/* <ImageBackground
-        style={{flex: 1}}
-        source={require('../../../assets/Images/back.png')}> */}
-
       <ScrollView nestedScrollEnabled={true}>
         <TouchableOpacity
           onPress={() => {
@@ -360,10 +356,7 @@ const RestaurantsDetail = ({navigation, route}) => {
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
-        {/* <Image
-            source={require('../../../assets/Images/restaurants.jpg')}
-            style={{height: 200, width: '100%'}}
-          /> */}
+
         <View
           style={{
             marginTop: 0,
@@ -427,43 +420,8 @@ const RestaurantsDetail = ({navigation, route}) => {
             </View>
           )}
 
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {/* {item.types.map(element => (
-                <Text
-                  style={{
-                    fontSize: 12,
-                    fontFamily: 'MontserratAlternates-Medium',
-                    // marginTop: 5,
-                    color: 'black',
-                  }}>
-                  {element},{' '}
-                </Text>
-              ))} */}
-          </View>
-          {/* <View style={{width: 100, marginTop: 10}}>
-            <Text
-              style={{
-                fontSize: 16,
-                marginTop: 10,
-                color: darkmode ? 'white' : 'black',
-                fontFamily: 'MontserratAlternates-Medium',
-                marginBottom: 10,
-              }}>
-              Rating
-            </Text>
-            <StarRating
-              disabled={true}
-              maxStars={5}
-              rating={item.rating}
-              starSize={20}
-              fullStarColor={darkmode ? 'white' : 'black'}
-              // style={{marginTop: 10}}
-              // selectedStar={(rating) => this.onStarRatingPress(rating)}
-            />
-            <Text style={{marginTop: 10, color: darkmode ? 'white' : 'black'}}>
-              {item.rating}
-            </Text>
-          </View> */}
+          <View style={{flexDirection: 'row', alignItems: 'center'}}></View>
+
           {item?.types && (
             <>
               <Text
@@ -482,11 +440,6 @@ const RestaurantsDetail = ({navigation, route}) => {
                     marginTop: 5,
                     alignItems: 'center',
                   }}>
-                  {/* <Image
-               resizeMode="contain"
-               source={require('../../../assets/Images/drink.png')}
-               style={{width: 15, height: 15}}
-             /> */}
                   <Text
                     style={{
                       fontSize: 12,
@@ -505,21 +458,6 @@ const RestaurantsDetail = ({navigation, route}) => {
           <View style={{height: 10}} />
         </View>
         <View style={{marginTop: 20, paddingHorizontal: 15}}>
-          {/* <Text
-              style={{
-                fontFamily: 'MontserratAlternates-SemiBold',
-                color: 'black',
-              }}>
-              Restaurants address
-            </Text> */}
-          {/* <Text
-              style={{
-                fontSize: 13,
-                color: 'black',
-                fontFamily: 'MontserratAlternates-Medium',
-              }}>
-              {item.vicinity}
-            </Text> */}
           <View
             style={{
               backgroundColor: '#ccc',
@@ -661,7 +599,7 @@ const RestaurantsDetail = ({navigation, route}) => {
           <View style={{height: 30}} />
         </View>
       </ScrollView>
-      {/* </ImageBackground> */}
+
       {ImageModal(
         showModal,
         `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${

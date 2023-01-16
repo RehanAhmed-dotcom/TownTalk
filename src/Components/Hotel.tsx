@@ -14,11 +14,12 @@ import {config} from '../../config';
 import {useSelector} from 'react-redux';
 // import Comments from '../../../Components/Comments';
 import Icon from 'react-native-vector-icons/Fontisto';
-const Hotel = ({item, navigation}) => {
+const Hotel = ({item, checkPlace, navigation}) => {
   const {darkmode} = useSelector(({USER}) => USER);
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('RestaurantsDetail', {item})}
+      onPress={checkPlace}
+      // onPress={() => navigation.navigate('RestaurantsDetail', {item})}
       style={{
         // height: 30,
         backgroundColor: darkmode ? '#242527' : 'white',

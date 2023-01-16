@@ -19,6 +19,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Hotspot from '../../../Components/Hotspot';
 import Icons from 'react-native-vector-icons/Feather';
 import Slider from '@react-native-community/slider';
+import {business_check} from '../../../lib/api';
 import {useSelector} from 'react-redux';
 import IconFire from 'react-native-vector-icons/MaterialIcons';
 import {config} from '../../../../config';
@@ -26,7 +27,7 @@ const dummy = [1, 2, 3, 4, 5];
 
 const HotspotsNearby = ({navigation}) => {
   const [search, setSearch] = useState('');
-  const {darkmode} = useSelector(({USER}) => USER);
+  const {darkmode, userData} = useSelector(({USER}) => USER);
   const [selected, setSelected] = useState('Shopping');
   const [slideStartingValue, setslideStartingValue] = useState(1);
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -58,7 +59,32 @@ const HotspotsNearby = ({navigation}) => {
       ),
     },
   ];
-  const render = ({item}) => <Hotspot item={item} navigation={navigation} />;
+  const checkPlace = place => {
+    business_check({name: place.name, Auth: userData.token})
+      .then(res => {
+        // setShowModal(false);
+        console.log('res', res);
+        if (res.status == 'success') {
+          if (res.check) {
+            navigation.navigate('RestaurantsDetailBackend', {id: place.name});
+          } else {
+            navigation.navigate('RestaurantsDetail', {item: place});
+          }
+        }
+      })
+      .catch(err => {
+        // setShowModal(false);
+        console.log('err in check', err);
+      });
+  };
+  const render = ({item, index}) => (
+    <Hotspot
+      item={item}
+      hottest={index == 0 ? true : false}
+      check={() => checkPlace(item)}
+      navigation={navigation}
+    />
+  );
   const handleRestaurantSearch = (lat: Number, long: Number) => {
     setShowModal(true);
     // console.log('here');

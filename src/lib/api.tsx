@@ -236,8 +236,27 @@ const addgroup = (payload, data) => {
       throw e;
     });
 };
+const business_check = payload => {
+  // console.log('data of payload for View all post', payload);
+  const request = `/business_check/${payload.name}`;
+  return axios
+    .get(request, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in business_check', e);
+      throw e;
+    });
+};
 const viewAllPost = payload => {
-  console.log('data of payload for View all post', payload);
+  // console.log('data of payload for View all post', payload);
   const request = `/view-post?page=${payload.page}`;
   return axios
     .post(request, payload, {
@@ -548,6 +567,24 @@ const updateToken = payload => {
       console.log('in update token', e);
     });
 };
+const checkIn = payload => {
+  // console.log('data of payload', JSON.stringify(data));
+  const request = `/checkIn`;
+  return axios
+    .post(request, payload, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in checkIn', e);
+    });
+};
 const viewComment = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/view-post-comments/${payload.id}`;
@@ -566,6 +603,7 @@ const viewComment = payload => {
       console.log('in viewComment', e);
     });
 };
+
 const singleGroup = payload => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/view-group/${payload.id}`;
@@ -692,8 +730,10 @@ export {
   reportUser,
   getCountiesList,
   unBlockUser,
+  checkIn,
   city_posts,
   hotspots,
   businessDetail,
   trending_town,
+  business_check,
 };

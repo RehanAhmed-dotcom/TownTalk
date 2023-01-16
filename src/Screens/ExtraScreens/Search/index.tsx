@@ -28,6 +28,7 @@ import Icon4 from 'react-native-vector-icons/Fontisto';
 import Icon7 from 'react-native-vector-icons/MaterialIcons';
 import MyModal from '../../../Components/MyModal';
 import {cityAdd} from '../../../redux/actions';
+import {business_check} from '../../../lib/api';
 const Search = ({navigation}) => {
   const [sel, setSel] = useState('All');
   const [city, setCity] = useState('');
@@ -35,10 +36,28 @@ const Search = ({navigation}) => {
   const [list, setList] = useState([]);
   const [searchList, setSearchList] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const {CityAdd, darkmode} = useSelector(({USER}) => USER);
+  const {CityAdd, userData, darkmode} = useSelector(({USER}) => USER);
   console.log('cityadd', CityAdd);
+  const check = place => {
+    setShowModal(true);
+    business_check({name: place.name, Auth: userData.token})
+      .then(res => {
+        setShowModal(false);
+        if (res.status == 'success') {
+          if (res.check) {
+            navigation.navigate('RestaurantsDetailBackend', {id: place.name});
+          } else {
+            navigation.navigate('RestaurantsDetail', {item: place});
+          }
+        }
+      })
+      .catch(err => {
+        setShowModal(false);
+        console.log('err in check', err);
+      });
+  };
   const renderItem1 = ({item}: {item: any}) => (
-    <Hotel item={item} navigation={navigation} />
+    <Hotel item={item} navigation={navigation} checkPlace={() => check(item)} />
   );
   useEffect(() => {
     // handleAddress('solo');

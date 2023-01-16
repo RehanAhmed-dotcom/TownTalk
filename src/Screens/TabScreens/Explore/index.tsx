@@ -13,16 +13,59 @@ import {
 import {useSelector} from 'react-redux';
 import Hotspot from '../../../Components/Hotspot';
 import Icon from 'react-native-vector-icons/Feather';
-import {hotspots, trending_town} from '../../../lib/api';
+import {
+  hotspots,
+  business_check,
+  checkIn,
+  trending_town,
+} from '../../../lib/api';
 const Explore = ({navigation}) => {
   const [search, setSearch] = useState('');
   const [hotSpots, setHotSpot] = useState([]);
   const [trending, setTrending] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [searchedHotSpot, setSearchedHotSpot] = useState([]);
   const {darkmode, userData} = useSelector(({USER}) => USER);
-
+  const checkPlace = place => {
+    business_check({name: place.name, Auth: userData.token})
+      .then(res => {
+        // setShowModal(false);
+        console.log('res', res);
+        if (res.status == 'success') {
+          if (res.check) {
+            navigation.navigate('RestaurantsDetailBackend', {id: place.name});
+          } else {
+            navigation.navigate('RestaurantsDetail', {item: place});
+          }
+        }
+      })
+      .catch(err => {
+        // setShowModal(false);
+        console.log('err in check', err);
+      });
+  };
   const dummy = [1, 2, 3, 4, 5];
-  const render = ({item}) => <Hotspot item={item} navigation={navigation} />;
+  const checked = place => {
+    checkIn({Auth: userData.token, business_name: place.name})
+      .then(res => {
+        console.log('res of checkedin', res);
+        if (res.status == 'success') {
+          setRefresh(!refresh);
+        }
+      })
+      .catch(err => {
+        console.log('err in checkedin', err);
+      });
+  };
+  const render = ({item, index}) => (
+    <Hotspot
+      item={item}
+      hottest={index == 0 ? true : false}
+      check={() => checkPlace(item)}
+      checkedIn={() => checked(item)}
+      navigation={navigation}
+    />
+  );
   const renders = ({item}) => (
     <TouchableOpacity
       onPress={() => navigation.navigate('ExploreTowns', {city: item})}
@@ -66,7 +109,7 @@ const Explore = ({navigation}) => {
         });
       hotspots({Auth: userData.token})
         .then(res => {
-          // console.log('res of hotspot', res);
+          console.log('res of hotspot', res);
           // console.log('unique array', );
           setHotSpot(getUnique(res.data, 'name'));
           setSearchedHotSpot(getUnique(res.data, 'name'));
@@ -79,7 +122,26 @@ const Explore = ({navigation}) => {
     // Return the function to unsubscribe from the event so it gets removed on unmount
     return unsubscribe;
   }, [navigation]);
-  useEffect(() => {}, []);
+  useEffect(() => {
+    trending_town()
+      .then(res => {
+        console.log('res of trending town', res);
+        setTrending(res.data);
+      })
+      .catch(err => {
+        console.log('err in trending town', err);
+      });
+    hotspots({Auth: userData.token})
+      .then(res => {
+        // console.log('res of hotspot', res);
+        // console.log('unique array', );
+        setHotSpot(getUnique(res.data, 'name'));
+        setSearchedHotSpot(getUnique(res.data, 'name'));
+      })
+      .catch(err => {
+        console.log('err in hotspot', err);
+      });
+  }, [refresh]);
   const searchTextReceive = e => {
     let filteredName = [];
     // if (e) {
@@ -191,7 +253,7 @@ const Explore = ({navigation}) => {
             }}>
             #Trendingtowns
           </Text>
-          <View>
+          <View style={{height: '30%'}}>
             <FlatList
               data={trending}
               renderItem={renders}
