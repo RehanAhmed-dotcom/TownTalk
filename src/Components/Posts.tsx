@@ -116,14 +116,22 @@ const Posts = props => {
             </Text>
           </View>
         </View>
-
-        <Icon2
-          name="dots-three-vertical"
-          size={20}
-          color={darkmode ? 'white' : 'black'}
-          style={{bottom: 10}}
+        <TouchableOpacity
           onPress={() => setShow(!show)}
-        />
+          style={{
+            height: 30,
+            width: 30,
+            // backgroundColor: 'red',
+            alignItems: 'flex-end',
+            bottom: 10,
+          }}>
+          <Icon2
+            name="dots-three-vertical"
+            size={20}
+            color={darkmode ? 'white' : 'black'}
+            style={{}}
+          />
+        </TouchableOpacity>
         {show && (
           <View
             // onPress={() => Alert.alert('hello')}
@@ -407,7 +415,7 @@ const Posts = props => {
               style={{
                 fontSize: 14,
                 color: darkmode ? 'white' : 'black',
-                fontFamily: 'MontserratAlternates-Bold',
+                fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               {item?.comment_count}
             </Text>{' '}
@@ -427,7 +435,7 @@ const Posts = props => {
               style={{
                 fontSize: 14,
                 color: darkmode ? 'white' : 'black',
-                fontFamily: 'MontserratAlternates-Bold',
+                fontFamily: 'MontserratAlternates-SemiBold',
               }}>
               {item?.recentcomments?.user.firstname}
             </Text>{' '}

@@ -26,7 +26,7 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import MyModal from '../../../Components/MyModal';
 // import { useSelector } from 'react-redux';
-import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
+// import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
 import {logged} from '../../../redux/actions';
 const Login = ({navigation}: {navigation: any}) => {
   const {darkmode} = useSelector(({USER}) => USER);
@@ -742,7 +742,7 @@ const Login = ({navigation}: {navigation: any}) => {
                 }}>
                 <TouchableOpacity
                   onPress={() => {
-                    Faceboologin();
+                    // Faceboologin();
                   }}>
                   <Image
                     source={require('../../../assets/Images/facebook.png')}

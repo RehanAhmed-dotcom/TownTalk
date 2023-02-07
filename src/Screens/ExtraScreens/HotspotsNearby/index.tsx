@@ -19,7 +19,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Hotspot from '../../../Components/Hotspot';
 import Icons from 'react-native-vector-icons/Feather';
 import Slider from '@react-native-community/slider';
-import {business_check} from '../../../lib/api';
+import {business_check, checkIn} from '../../../lib/api';
 import {useSelector} from 'react-redux';
 import IconFire from 'react-native-vector-icons/MaterialIcons';
 import {config} from '../../../../config';
@@ -77,11 +77,24 @@ const HotspotsNearby = ({navigation}) => {
         console.log('err in check', err);
       });
   };
+  const checked = place => {
+    checkIn({Auth: userData.token, business_name: place.name})
+      .then(res => {
+        console.log('res of checkedin', res);
+        if (res.status == 'success') {
+          // setRefresh(!refresh);
+        }
+      })
+      .catch(err => {
+        console.log('err in checkedin', err);
+      });
+  };
   const render = ({item, index}) => (
     <Hotspot
       item={item}
       hottest={index == 0 ? true : false}
       check={() => checkPlace(item)}
+      checkedIn={() => checked(item)}
       navigation={navigation}
     />
   );

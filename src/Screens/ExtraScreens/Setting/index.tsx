@@ -6,6 +6,7 @@ import {
   Linking,
   ImageBackground,
   Share,
+  StatusBar,
   Alert,
   Text,
   TouchableOpacity,
@@ -242,6 +243,9 @@ const Setting = ({navigation}) => {
             value => {
               setCheck(!check);
               darkMode()(dispatch);
+              darkmode
+                ? StatusBar.setBarStyle('dark-content', true)
+                : StatusBar.setBarStyle('light-content', true);
             }
             // console.log(`Value has been updated to ${value}`)
           }

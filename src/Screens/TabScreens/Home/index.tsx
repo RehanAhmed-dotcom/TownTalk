@@ -6,16 +6,21 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  StatusBar,
+  Share,
   Modal,
+  Keyboard,
   TextInput,
   Text,
   Platform,
   KeyboardAvoidingView,
+  Alert,
   PermissionsAndroid,
   SafeAreaView,
   ImageBackground,
 } from 'react-native';
 import Axios from 'axios';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import VideoCompModal from '../../../Components/VideoCompModal';
 import PushNotification from 'react-native-push-notification';
 // import GooglePlacesAutocomplete, {
@@ -58,6 +63,7 @@ const Home = ({navigation}) => {
   const [datas, setData] = useState([]);
   const [location, setLocation] = useState('');
   const [specific, setSpecific] = useState({});
+  const [keyboardStatus, setKeyboardStatus] = useState('');
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [testArr, setTestArr] = useState([]);
   const [hash, setHash] = useState([]);
@@ -79,6 +85,50 @@ const Home = ({navigation}) => {
   const [searchCounty, setSearchCounty] = useState('');
   const [countyModal, setCountyModal] = useState(false);
   // console.log('lat long in redux', countyList);
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+  const onShare = async () => {
+    try {
+      const link = await dynamicLinks().buildLink({
+        link: `https://towntalkapp.page.link/${specific.id}`,
+
+        // domainUriPrefix is created in your Firebase console
+        domainUriPrefix: 'https://towntalkapp.page.link',
+        // optional setup which updates Firebase analytics campaign
+        // "banner". This also needs setting up before hand
+        analytics: {
+          campaign: 'banner',
+        },
+      });
+      console.log('::::----', link);
+
+      const result = await Share.share({
+        message: `TownTalk: Post link ${link}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+  };
   const searchTextGiven = e => {
     let filteredName = [];
     // if (e) {
@@ -190,7 +240,9 @@ const Home = ({navigation}) => {
   };
   useEffect(() => {
     getToken();
-
+    darkmode
+      ? StatusBar.setBarStyle('light-content', true)
+      : StatusBar.setBarStyle('dark-content', true);
     // PushNotification.cancelAllLocalNotifications();
   }, []);
   const getToken = async () => {
@@ -316,7 +368,9 @@ const Home = ({navigation}) => {
         setShowModal(false);
         navigation.navigate('SingleChat', {
           item: item.user,
-          image: specific.media[0].media,
+          image: specific?.media[0]?.media
+            ? specific?.media[0]?.media
+            : specific.description,
           items: specific,
         });
       }}
@@ -448,7 +502,7 @@ const Home = ({navigation}) => {
             onPress={() => console.log('hello')}
             style={{
               // height: '45%',
-              maxHeight: '40%',
+              maxHeight: '50%',
               minHeight: '20%',
               width: '100%',
               borderRadius: 10,
@@ -468,9 +522,30 @@ const Home = ({navigation}) => {
                 onPress={() => setShowModal(false)}
               /> */}
             </View>
+            <TouchableOpacity
+              onPress={() => onShare()}
+              style={{
+                width: '90%',
+                height: 50,
+                alignSelf: 'center',
+                backgroundColor: '#5F95F0',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Share
+              </Text>
+            </TouchableOpacity>
             <Text
               style={{
                 marginLeft: 10,
+                marginTop: 10,
                 fontSize: 16,
                 color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
@@ -500,7 +575,10 @@ const Home = ({navigation}) => {
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent:
+              keyboardStatus == 'Keyboard Shown' && Platform.OS == 'ios'
+                ? 'flex-start'
+                : 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -655,7 +733,10 @@ const Home = ({navigation}) => {
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent:
+              keyboardStatus == 'Keyboard Shown' && Platform.OS == 'ios'
+                ? 'center'
+                : 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -663,7 +744,9 @@ const Home = ({navigation}) => {
             bottom: 0,
             // position: 'absolute',
           }}>
+          {/* <ScrollView> */}
           <Wrapper
+            // behavior="padding"
             behavior="padding"
             style={{
               height: '50%',
@@ -673,7 +756,9 @@ const Home = ({navigation}) => {
               borderTopRightRadius: 30,
               padding: 20,
             }}>
-            <TouchableOpacity onPress={() => console.log('hello')}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => console.log('hello')}>
               <Text
                 style={{
                   fontFamily: 'MontserratAlternates-SemiBold',
@@ -755,7 +840,10 @@ const Home = ({navigation}) => {
                     .catch(err => {
                       console.log('err in report', err);
                     });
-                  blockUser({Auth: userData.token, block_user_id: blockuserId})
+                  blockUser({
+                    Auth: userData.token,
+                    block_user_id: blockuserId,
+                  })
                     .then(res => {
                       console.log('res of block', res);
                       setChange(!change);
@@ -784,6 +872,7 @@ const Home = ({navigation}) => {
               </TouchableOpacity>
             </TouchableOpacity>
           </Wrapper>
+          {/* </ScrollView> */}
         </TouchableOpacity>
       </Modal>
     );
@@ -814,7 +903,7 @@ const Home = ({navigation}) => {
           <Wrapper
             behavior="padding"
             style={{
-              height: '45%',
+              height: '50%',
               width: '100%',
               backgroundColor: 'white',
               borderTopLeftRadius: 30,
@@ -835,7 +924,7 @@ const Home = ({navigation}) => {
                 style={{
                   color: 'black',
                   fontSize: 18,
-                  fontFamily: 'MontserratAlternates-Bold',
+                  fontFamily: 'MontserratAlternates-SemiBold',
                 }}>
                 Are you sure?
               </Text>

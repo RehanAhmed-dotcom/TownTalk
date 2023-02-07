@@ -230,7 +230,8 @@ const Explore = ({navigation}) => {
               justifyContent: 'space-between',
             }}>
             <TouchableOpacity
-              onPress={() => navigation.navigate('HotspotsNearby')}>
+            // onPress={() => navigation.navigate('HotspotsNearby')}
+            >
               <Text style={{fontSize: 16, color: darkmode ? 'white' : 'black'}}>
                 Hotspots Nearby
               </Text>

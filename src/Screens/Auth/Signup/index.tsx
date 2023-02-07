@@ -29,7 +29,7 @@ import {
 import {logged, iphoneEmail} from '../../../redux/actions';
 import {validateEmail} from '../../../lib/functions';
 import {useDispatch, useSelector} from 'react-redux';
-import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
+// import {LoginButton, LoginManager, AccessToken} from 'react-native-fbsdk';
 import MyModal from '../../../Components/MyModal';
 import ImagePicker from 'react-native-image-crop-picker';
 const Signup = ({navigation}: {navigation: any}) => {
@@ -360,30 +360,30 @@ const Signup = ({navigation}: {navigation: any}) => {
       }
     }
   };
-  const Faceboologin = async () => {
-    LoginManager.logOut();
-    LoginManager.setLoginBehavior('web_only');
-    LoginManager.logInWithPermissions(['email', 'public_profile']).then(
-      function (result) {
-        if (result.isCancelled) {
-          console.log('cancled');
-        } else {
-          AccessToken.getCurrentAccessToken().then(data => {
-            console.log('userdata', data.permissions);
-            // const {accessToken} = data;
-            // initUser(accessToken);
-            const accessToken = data.accessToken.toString();
-            getInfoFromToken(accessToken);
-          });
-        }
-      },
+  // const Faceboologin = async () => {
+  //   LoginManager.logOut();
+  //   LoginManager.setLoginBehavior('web_only');
+  //   LoginManager.logInWithPermissions(['email', 'public_profile']).then(
+  //     function (result) {
+  //       if (result.isCancelled) {
+  //         console.log('cancled');
+  //       } else {
+  //         AccessToken.getCurrentAccessToken().then(data => {
+  //           console.log('userdata', data.permissions);
+  //           // const {accessToken} = data;
+  //           // initUser(accessToken);
+  //           const accessToken = data.accessToken.toString();
+  //           getInfoFromToken(accessToken);
+  //         });
+  //       }
+  //     },
 
-      function (error) {
-        alert(error);
-        console.log('error', error);
-      },
-    );
-  };
+  //     function (error) {
+  //       alert(error);
+  //       console.log('error', error);
+  //     },
+  //   );
+  // };
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardStatus(true);

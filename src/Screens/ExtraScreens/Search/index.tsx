@@ -193,7 +193,10 @@ const Search = ({navigation}) => {
   ];
   const renderItem = ({item}) => (
     <TouchableOpacity
-      onPress={() => setSel(item.name)}
+      onPress={() => {
+        setSel(item.name);
+        setCity('');
+      }}
       style={{
         height: 30,
         backgroundColor: sel == item.name ? '#5F95F0' : 'white',
@@ -323,7 +326,7 @@ const Search = ({navigation}) => {
               fontFamily: 'MontserratAlternates-Regular',
             }}
           />
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={{
               // backgroundColor: 'red',
               height: '100%',
@@ -344,7 +347,7 @@ const Search = ({navigation}) => {
               source={require('../../../assets/Images/search.png')}
               style={{height: 15, width: 15}}
             />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
         <FlatList horizontal data={arr} renderItem={renderItem} />
 

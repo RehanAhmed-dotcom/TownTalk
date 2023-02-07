@@ -3,6 +3,7 @@ const axios = Axios.create({
   baseURL: 'https://towntalkapp.com/app/api',
   headers: {Accept: 'application/json', 'Content-Type': 'application/json'},
 });
+const baseUrl = 'https://towntalkapp.com/app/api';
 const authorizedHeaders = {
   'Content-Type': 'application/json',
   Accept: 'application/json',
@@ -198,8 +199,26 @@ const verify = (payload: object) => {
       console.log('in catch verify', e);
     });
 };
+const addPosts = async (payload, data) => {
+  try {
+    const request = baseUrl + `/create-post`;
+    const response = await fetch(request, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${payload.Auth}`,
+      },
+      body: data,
+    });
+    const json = await response.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+  }
+};
 const addPost = (payload, data) => {
-  console.log('data of payload', JSON.stringify(data));
+  console.log('data of payload add api', JSON.stringify(data));
   const request = `/create-post`;
   return axios
     .post(request, data, {
@@ -736,4 +755,5 @@ export {
   businessDetail,
   trending_town,
   business_check,
+  addPosts,
 };

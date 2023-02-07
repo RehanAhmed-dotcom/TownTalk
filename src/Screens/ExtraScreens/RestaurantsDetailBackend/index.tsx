@@ -9,6 +9,7 @@ import {
   Image,
   Modal,
   Platform,
+  Linking,
   KeyboardAvoidingView,
   Text,
   TextInput,
@@ -60,6 +61,20 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
         console.log('err in business detail', err);
       });
   }, [rerender]);
+  const [keyboardStatus, setKeyboardStatus] = useState('');
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   const ReviewModal = () => {
     const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
     return (
@@ -75,7 +90,8 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent:
+              keyboardStatus == 'Keyboard Shown' ? 'center' : 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -153,7 +169,7 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
                     Auth: userData.token,
                     feedback: review,
                     rating: stars,
-                    business_id: item.id,
+                    business_id: data.id,
                   })
                     .then(res => {
                       console.log('res of review', res);
@@ -584,7 +600,24 @@ const RestaurantsDetailBackend = ({navigation, route}) => {
               <Text style={{marginTop: 10}}>
                 {data?.vicinity ? data?.vicinity : data?.location}
               </Text>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  const scheme = Platform.select({
+                    ios: 'maps:0,0?q=',
+                    android: 'geo:0,0?q=',
+                  });
+                  const latLng = `${
+                    data.geometry ? data.geometry.location.lat : data.latitude
+                  },${
+                    data.geometry ? data.geometry.location.lng : data.longitude
+                  }`;
+                  const label = `Direction`;
+                  const url = Platform.select({
+                    ios: `${scheme}${label}@${latLng}`,
+                    android: `${scheme}${latLng}(${label})`,
+                  });
+                  Linking.openURL(url);
+                }}>
                 <Text
                   style={{
                     color: '#5F95F0',

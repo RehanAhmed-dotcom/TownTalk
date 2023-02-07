@@ -5,9 +5,15 @@ import {
   FlatList,
   Image,
   ImageBackground,
+  SafeAreaView,
+  Platform,
   TouchableOpacity,
+  Share,
+  Alert,
+  KeyboardAvoidingView,
   Text,
 } from 'react-native';
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Icon1 from 'react-native-vector-icons/Entypo';
 import {useSelector} from 'react-redux';
@@ -25,6 +31,39 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
   const [showModal, setShowModal] = useState(false);
   const [swipe, setSwiper] = useState([]);
   const [list, setList] = useState([]);
+  const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
+  console.log('item', item.id);
+  const onShare = async () => {
+    try {
+      const link = await dynamicLinks().buildLink({
+        link: `https://towntalkapp.page.link/${item.id}`,
+
+        // domainUriPrefix is created in your Firebase console
+        domainUriPrefix: 'https://towntalkapp.page.link',
+        // optional setup which updates Firebase analytics campaign
+        // "banner". This also needs setting up before hand
+        analytics: {
+          campaign: 'banner',
+        },
+      });
+      console.log('::::----', link);
+
+      const result = await Share.share({
+        message: `TownTalk: Post link ${link}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
+        }
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error: any) {
+      Alert.alert(error.message);
+    }
+  };
   const _usersList = useCallback(async () => {
     try {
       // setLoading(true);
@@ -54,7 +93,9 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
         setShowModal(false);
         navigation.navigate('SingleChat', {
           item: item.user,
-          image: specific.media[0].media,
+          image: specific?.media[0]?.media
+            ? specific?.media[0]?.media
+            : specific.description,
           items: specific,
         });
       }}
@@ -157,7 +198,7 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
             onPress={() => console.log('hello')}
             style={{
               // height: '45%',
-              maxHeight: '40%',
+              maxHeight: '50%',
               minHeight: '20%',
               width: '100%',
               borderRadius: 10,
@@ -177,10 +218,31 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
                 onPress={() => setShowModal(false)}
               /> */}
             </View>
+            <TouchableOpacity
+              onPress={() => onShare()}
+              style={{
+                width: '90%',
+                height: 50,
+                alignSelf: 'center',
+                backgroundColor: '#5F95F0',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Share
+              </Text>
+            </TouchableOpacity>
             <Text
               style={{
                 marginLeft: 10,
                 fontSize: 16,
+                marginTop: 10,
                 color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-SemiBold',
               }}>
@@ -205,7 +267,8 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
   }, [change]);
   //   console.log('data', data);
   return (
-    <View style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
+    <SafeAreaView
+      style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
         style={{flex: 1}}
         source={require('../../../assets/Images/back.png')}> */}
@@ -244,24 +307,27 @@ const PostDetails = ({navigation, route}: {navigation: any; route: any}) => {
               Chicago, IL 60611, USA
             </Text> */}
       </View>
-      {check ? (
-        <SwiperPosts
-          item={data}
-          swipe={swipe}
-          onShare={() => {
-            setSpecific(item);
-            setShowModal(true);
-          }}
-          hashPress={text => {
-            navigation.navigate('Hashes', {text});
-          }}
-          press={alter}
-          navigation={navigation}
-        />
-      ) : null}
+      <Wrapper behavior="padding" style={{flex: 1}}>
+        {check ? (
+          <SwiperPosts
+            item={data}
+            swipe={swipe}
+            onShare={() => {
+              setSpecific(item);
+              setShowModal(true);
+            }}
+            hashPress={text => {
+              navigation.navigate('Hashes', {text});
+            }}
+            press={alter}
+            navigation={navigation}
+          />
+        ) : null}
+      </Wrapper>
+
       {/* </ImageBackground> */}
       {MyModal(showModal)}
-    </View>
+    </SafeAreaView>
   );
 };
 export default PostDetails;

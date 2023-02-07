@@ -362,7 +362,9 @@ const Profile = ({navigation}) => {
         setShowModal(false);
         navigation.navigate('SingleChat', {
           item: item.user,
-          image: specific?.media[0].media,
+          image: specific?.media[0]?.media
+            ? specific?.media[0]?.media
+            : specific.description,
           items: specific,
         });
       }}

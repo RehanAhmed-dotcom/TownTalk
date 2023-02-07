@@ -7,8 +7,10 @@
 #import <React/RCTAppSetupUtils.h>
 #import <UserNotifications/UserNotifications.h>
 #import <RNCPushNotificationIOS.h>
-#import <FBSDKCoreKit/FBSDKCoreKit.h> 
+// #import <FBSDKCoreKit/FBSDKCoreKit.h> 
 #import <RNGoogleSignin/RNGoogleSignin.h>
+#import <RNFBDynamicLinksAppDelegateInterceptor.h>
+// #if DEBUG
 #if RCT_NEW_ARCH_ENABLED
 #import <React/CoreModulesPlugins.h>
 #import <React/RCTCxxBridgeDelegate.h>
@@ -89,8 +91,8 @@ if ([UNUserNotificationCenter class] != nil) {
   [self.window makeKeyAndVisible];
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
-  [[FBSDKApplicationDelegate sharedInstance] application:application
-                            didFinishLaunchingWithOptions:launchOptions];
+//  [[FBSDKApplicationDelegate sharedInstance] application:application
+//                            didFinishLaunchingWithOptions:launchOptions];
   return YES;
 }
 - (void)messaging:(FIRMessaging *)messaging didReceiveRegistrationToken:(NSString *)fcmToken {
@@ -156,6 +158,13 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 {
   [RNCPushNotificationIOS didReceiveNotificationResponse:response];
   completionHandler();
+}
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+return [[RNFBDynamicLinksAppDelegateInterceptor sharedInstance] application:app openURL:url options:options];
+}
+
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray<id> * _Nullable))restorationHandler {
+return [[RNFBDynamicLinksAppDelegateInterceptor sharedInstance] application:application continueUserActivity:userActivity restorationHandler:restorationHandler];
 }
 // -(void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler
 // {
@@ -238,30 +247,30 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
 // - (BOOL)application:(UIApplication *)application openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<NSString *,id> *)options {
 //   return [[FBSDKApplicationDelegate sharedInstance] application:application openURL:url options:options] || [RNGoogleSignin application:application openURL:url options:options];
 // }
-- (BOOL)application:(UIApplication *)application 
-            openURL:(NSURL *) url 
-            sourceApplication:(NSString *)sourceApplication annotation:(id)
-annotation {
-  BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
-   openURL:url
-    sourceApplication:sourceApplication
-    annotation:annotation
-  ];
-  return handled;
-}
-- (BOOL)application:(UIApplication *)application 
-            openURL:(NSURL *)url 
-            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
-
-   [[FBSDKApplicationDelegate sharedInstance] application:application
-    openURL:url
-    options:options
-    // sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
-    // annotation:options[UIApplicationOpenURLOptionsAnnotationKey]
-  ];
-  // Add any custom logic here.
-  return YES;
-}
+//- (BOOL)application:(UIApplication *)application 
+//            openURL:(NSURL *) url 
+//            sourceApplication:(NSString *)sourceApplication annotation:(id)
+//annotation {
+//  BOOL handled = [[FBSDKApplicationDelegate sharedInstance] application:application
+//   openURL:url
+//    sourceApplication:sourceApplication
+//    annotation:annotation
+//  ];
+//  return handled;
+//}
+//- (BOOL)application:(UIApplication *)application
+//            openURL:(NSURL *)url
+//            options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+//
+//   [[FBSDKApplicationDelegate sharedInstance] application:application
+//    openURL:url
+//    options:options
+//    // sourceApplication:options[UIApplicationOpenURLOptionsSourceApplicationKey]
+//    // annotation:options[UIApplicationOpenURLOptionsAnnotationKey]
+//  ];
+//  // Add any custom logic here.
+//  return YES;
+//}
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG

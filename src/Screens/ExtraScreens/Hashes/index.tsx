@@ -10,6 +10,9 @@ import {
   Text,
   Platform,
   PermissionsAndroid,
+  TextInput,
+  KeyboardAvoidingView,
+  Keyboard,
   SafeAreaView,
   ImageBackground,
 } from 'react-native';
@@ -28,7 +31,13 @@ import Icon from 'react-native-vector-icons/Entypo';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import {useSelector, useDispatch} from 'react-redux';
 import {updateToken} from '../../../lib/api';
-import {viewAllPost, hashTag} from '../../../lib/api';
+import {
+  viewAllPost,
+  deletePostApi,
+  reportUser,
+  blockUser,
+  hashTag,
+} from '../../../lib/api';
 import Geolocation from 'react-native-geolocation-service';
 import Posts from '../../../Components/Posts';
 import {lat, long} from '../../../redux/actions';
@@ -38,9 +47,15 @@ const Hashes = ({navigation, route}) => {
   const [latitude, setlatitude] = useState(0);
   const dispatch = useDispatch();
   const [longitude, setlongitude] = useState(0);
+  const [deleteModal, setDeleteModal] = useState(false);
   const [page, setPage] = useState(1);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [select, setSelect] = useState('');
+  const [blockuserId, setBlockuserId] = useState('');
+  const [reportId, setReportId] = useState('');
   const [datas, setData] = useState([]);
+  const [reportReason, setReportReason] = useState('');
+  const [keyboardStatus, setKeyboardStatus] = useState('');
   const [location, setLocation] = useState('');
   const [specific, setSpecific] = useState({});
   const [testArr, setTestArr] = useState([]);
@@ -69,7 +84,19 @@ const Hashes = ({navigation, route}) => {
         });
     } catch (error) {}
   }, []);
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
 
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   const alter = () => {
     // console.log('alter called');
     setChange(!change);
@@ -121,6 +148,129 @@ const Hashes = ({navigation, route}) => {
         // timeout: 15000,
         // maximumAge: 10000
       },
+    );
+  };
+  const blockUserComp = id => {
+    // console.log('block user id', id);
+    setBlockuserId(id);
+  };
+  const DeleteModal = () => {
+    const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={deleteModal}
+        onRequestClose={() => setDeleteModal(false)}>
+        <TouchableOpacity
+          onPress={() => setDeleteModal(false)}
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          <Wrapper
+            behavior="padding"
+            style={{
+              height: '50%',
+              width: '100%',
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              padding: 20,
+            }}>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-SemiBold',
+                fontSize: 16,
+                color: 'black',
+              }}>
+              Delete this post
+            </Text>
+            <View style={{alignItems: 'center', marginVertical: 15}}>
+              <Icon name="trash-bin-sharp" size={50} color="red" />
+              <Text
+                style={{
+                  color: 'black',
+                  fontSize: 18,
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Are you sure?
+              </Text>
+            </View>
+            <Text
+              style={{
+                fontFamily: 'MontserratAlternates-Regular',
+                fontSize: 14,
+                color: 'grey',
+                marginTop: 0,
+              }}>
+              Once deleted, you will not be able to recover this Post!
+            </Text>
+            <TouchableOpacity
+              onPress={() => {
+                deletePostApi({
+                  Auth: userData.token,
+                  post_id: reportId,
+                })
+                  .then(res => {
+                    console.log('res of delete', res);
+                    setChange(!change);
+                  })
+                  .catch(err => {
+                    console.log('err in delete', err);
+                  });
+                setDeleteModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: 'red',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Delete Post
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setDeleteModal(false);
+              }}
+              style={{
+                width: '100%',
+                height: 50,
+                backgroundColor: '#200E32',
+                marginTop: 15,
+                borderRadius: 10,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  color: 'white',
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                }}>
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </Wrapper>
+        </TouchableOpacity>
+      </Modal>
     );
   };
   useEffect(() => {
@@ -228,7 +378,9 @@ const Hashes = ({navigation, route}) => {
         setShowModal(false);
         navigation.navigate('SingleChat', {
           item: item.user,
-          image: specific.media[0].media,
+          image: specific?.media[0]?.media
+            ? specific?.media[0]?.media
+            : specific.description,
           items: specific,
         });
       }}
@@ -347,7 +499,170 @@ const Hashes = ({navigation, route}) => {
       </Modal>
     );
   };
-  console.log('page', page);
+  const ReportModal = () => {
+    const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showReportModal}
+        onRequestClose={() => setShowReportModal(false)}>
+        <TouchableOpacity
+          onPress={() => setShowReportModal(false)}
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent:
+              keyboardStatus == 'Keyboard Shown' && Platform.OS == 'ios'
+                ? 'center'
+                : 'flex-end',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          {/* <ScrollView> */}
+          <Wrapper
+            // behavior="padding"
+            behavior="padding"
+            style={{
+              height: '50%',
+              width: '100%',
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              padding: 20,
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => console.log('hello')}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
+                  color: 'black',
+                }}>
+                Report this post
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  fontSize: 14,
+                  color: 'grey',
+                  marginTop: 10,
+                }}>
+                If someone is in immediate danger, get help before reporting to
+                Towntalk. Don't wait.
+              </Text>
+              <TextInput
+                value={reportReason}
+                onChangeText={text => setReportReason(text)}
+                style={{
+                  backgroundColor: '#ccc',
+                  height: 100,
+                  borderRadius: 10,
+                  color: 'black',
+                  padding: 10,
+                  marginTop: 15,
+                }}
+                placeholder="Why do you want to report this post?"
+                placeholderTextColor="grey"
+                numberOfLines={4}
+                multiline
+                textAlignVertical="top"
+              />
+
+              <TouchableOpacity
+                onPress={() => {
+                  reportUser({
+                    Auth: userData.token,
+                    message: reportReason,
+                    post_id: reportId,
+                  })
+                    .then(res => {
+                      console.log('res of report', res);
+                    })
+                    .catch(err => {
+                      console.log('err in report', err);
+                    });
+                  setShowReportModal(false);
+                }}
+                style={{
+                  width: '100%',
+                  height: 50,
+                  backgroundColor: '#5F95F0',
+                  marginTop: 15,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Report
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  reportUser({
+                    Auth: userData.token,
+                    message: reportReason,
+                    post_id: reportId,
+                  })
+                    .then(res => {
+                      console.log('res of report', res);
+                    })
+                    .catch(err => {
+                      console.log('err in report', err);
+                    });
+                  blockUser({
+                    Auth: userData.token,
+                    block_user_id: blockuserId,
+                  })
+                    .then(res => {
+                      console.log('res of block', res);
+                      setChange(!change);
+                    })
+                    .catch(err => {
+                      console.log('err in block', err);
+                    });
+                  setShowReportModal(false);
+                }}
+                style={{
+                  width: '100%',
+                  height: 50,
+                  backgroundColor: '#200E32',
+                  marginTop: 15,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Report & block user
+                </Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </Wrapper>
+          {/* </ScrollView> */}
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+  // console.log('page', page);
+  const deletePost = id => {
+    setReportId(id);
+    setDeleteModal(true);
+  };
   const renderItem1 = ({item}) => (
     <Posts
       item={item}
@@ -359,7 +674,17 @@ const Hashes = ({navigation, route}) => {
         navigation.navigate('PostDetails', {item});
       }}
       press={alter}
+      deletePost={deletePost}
       navigation={navigation}
+      tagPress={text => {
+        navigation.navigate('Hashes', {tag: item.business_tag});
+        console.log('tag press');
+      }}
+      // focusMedia={text => {
+      //   focusModalOpener(text);
+      // }}
+      // handleReport={handleReport}
+      blockuser={blockUserComp}
       hashPress={text => {
         console.log('text of hash tag', text);
         navigation.navigate('Hashes', {text});
@@ -540,6 +865,8 @@ const Hashes = ({navigation, route}) => {
 
       {/* <Text>Home</Text> */}
       {MyModal(showModal)}
+      {ReportModal()}
+      {DeleteModal()}
     </SafeAreaView>
   );
 };

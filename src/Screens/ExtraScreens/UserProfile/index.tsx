@@ -5,10 +5,15 @@ import {
   Image,
   FlatList,
   Modal,
+  KeyboardAvoidingView,
   TouchableOpacity,
+  Keyboard,
   Text,
+  Platform,
   Alert,
+  TextInput,
 } from 'react-native';
+import VideoCompModal from '../../../Components/VideoCompModal';
 import Icon3 from 'react-native-vector-icons/Ionicons';
 
 import Icon1 from 'react-native-vector-icons/Entypo';
@@ -17,6 +22,7 @@ import {
   blockUser,
   deletePostApi,
   profile,
+  reportUser,
 } from '../../../lib/api';
 import Icons from 'react-native-vector-icons/AntDesign';
 import {useSelector} from 'react-redux';
@@ -38,13 +44,32 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
   );
   const [select, setSelect] = useState('Posts');
   const [specific, setSpecific] = useState({});
+  const [reportReason, setReportReason] = useState('');
   const [posts, setPosts] = useState([]);
+  const [focusMedia, setFocusMedia] = useState(false);
   const {userData, darkmode} = useSelector(({USER}) => USER);
   const [list, setList] = useState([]);
+  const [media, setMedia] = useState('');
   const [change, setChange] = useState(false);
+  const [blockuserId, setBlockuserId] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [reportId, setReportId] = useState('');
+  const [showReportModal, setShowReportModal] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
+  const [keyboardStatus, setKeyboardStatus] = useState('');
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   const DeleteModal = () => {
     const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
     return (
@@ -92,7 +117,7 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
                 style={{
                   color: 'black',
                   fontSize: 18,
-                  fontFamily: 'MontserratAlternates-Bold',
+                  fontFamily: 'MontserratAlternates-SemiBold',
                 }}>
                 Are you sure?
               </Text>
@@ -168,6 +193,18 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
     setReportId(id);
     setDeleteModal(true);
   };
+  const blockUserComp = id => {
+    // console.log('block user id', id);
+    setBlockuserId(id);
+  };
+  const handleReport = id => {
+    setReportId(id);
+    setShowReportModal(true);
+  };
+  const focusModalOpener = media => {
+    setFocusMedia(!focusMedia);
+    setMedia(media);
+  };
   const renders = ({item}) => (
     <View>
       {select == 'Groups' ? (
@@ -191,10 +228,19 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
           deletePost={deletePost}
           press={alter}
           navigation={navigation}
+          tagPress={text => {
+            navigation.navigate('Hashes', {tag: item.business_tag});
+            console.log('tag press');
+          }}
+          focusMedia={text => {
+            focusModalOpener(text);
+          }}
           hashPress={text => {
             console.log('text of hash tag', text);
             navigation.navigate('Hashes', {text});
           }}
+          handleReport={handleReport}
+          blockuser={blockUserComp}
         />
       )}
     </View>
@@ -228,7 +274,9 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
         setShowModal(false);
         navigation.navigate('SingleChat', {
           item: item.user,
-          image: specific.media[0].media,
+          image: specific?.media[0]?.media
+            ? specific?.media[0]?.media
+            : specific.description,
           items: specific,
         });
       }}
@@ -304,13 +352,14 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
     //   console.log('show', show);
     return (
       <Modal animationType="slide" transparent={true} visible={show}>
-        <View
+        <TouchableOpacity
+          onPress={() => setShowModal(false)}
           style={{
             flex: 1,
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -318,12 +367,16 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
             bottom: 0,
             // position: 'absolute',
           }}>
-          <View
+          <TouchableOpacity
+            activeOpacity={1}
+            onPress={() => console.log('hello')}
             style={{
-              height: '60%',
-              width: '90%',
+              // height: '45%',
+              maxHeight: '40%',
+              minHeight: '20%',
+              width: '100%',
               borderRadius: 10,
-              backgroundColor: 'white',
+              backgroundColor: darkmode ? 'black' : 'white',
             }}>
             <View
               style={{
@@ -339,11 +392,20 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
                 onPress={() => setShowModal(false)}
               />
             </View>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 16,
+                color: darkmode ? 'white' : 'black',
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Share with contacts
+            </Text>
             <View style={{paddingHorizontal: 10}}>
               <FlatList data={list} renderItem={render} />
             </View>
-          </View>
-        </View>
+          </TouchableOpacity>
+        </TouchableOpacity>
       </Modal>
     );
   };
@@ -355,6 +417,224 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
       setProfileObject(res.data);
     });
   }, [change]);
+  const mediaModal = () => {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={focusMedia}
+        onRequestClose={() => {
+          setFocusMedia(false);
+        }}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: '#000000',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '90%',
+              justifyContent: 'flex-end',
+            }}>
+            <TouchableOpacity
+              onPress={() => setFocusMedia(false)}
+              style={{
+                height: 30,
+                width: 30,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Icon1 color={'white'} size={25} name="squared-cross" />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              height: '85%',
+              width: '100%',
+              // backgroundColor: 'red',
+              alignItems: 'center',
+              justifyContent: 'center',
+              // backgroundColor: 'red',
+              // borderRadius: 25,
+            }}>
+            {media.substring(media.length - 4) == '.jpg' ? (
+              <Image
+                source={{uri: media}}
+                style={{height: '100%', width: '100%'}}
+                resizeMode="contain"
+              />
+            ) : (
+              <VideoCompModal source={media} />
+            )}
+
+            {/* <ActivityIndicator size="small" color="black" /> */}
+          </View>
+        </View>
+      </Modal>
+    );
+  };
+  const ReportModal = () => {
+    const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={showReportModal}
+        onRequestClose={() => setShowReportModal(false)}>
+        <TouchableOpacity
+          onPress={() => setShowReportModal(false)}
+          style={{
+            flex: 1,
+            // height: hp(100),
+            backgroundColor: '#00000088',
+            alignItems: 'center',
+            justifyContent:
+              keyboardStatus == 'Keyboard Shown' && Platform.OS == 'ios'
+                ? 'center'
+                : 'flex-end',
+            zIndex: 200,
+            left: 0,
+            top: 0,
+            right: 0,
+            bottom: 0,
+            // position: 'absolute',
+          }}>
+          {/* <ScrollView> */}
+          <Wrapper
+            // behavior="padding"
+            behavior="padding"
+            style={{
+              height: '50%',
+              width: '100%',
+              backgroundColor: 'white',
+              borderTopLeftRadius: 30,
+              borderTopRightRadius: 30,
+              padding: 20,
+            }}>
+            <TouchableOpacity
+              activeOpacity={1}
+              onPress={() => console.log('hello')}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
+                  color: 'black',
+                }}>
+                Report this post
+              </Text>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-Regular',
+                  fontSize: 14,
+                  color: 'grey',
+                  marginTop: 10,
+                }}>
+                If someone is in immediate danger, get help before reporting to
+                Towntalk. Don't wait.
+              </Text>
+              <TextInput
+                value={reportReason}
+                onChangeText={text => setReportReason(text)}
+                style={{
+                  backgroundColor: '#ccc',
+                  height: 100,
+                  borderRadius: 10,
+                  color: 'black',
+                  padding: 10,
+                  marginTop: 15,
+                }}
+                placeholder="Why do you want to report this post?"
+                placeholderTextColor="grey"
+                numberOfLines={4}
+                multiline
+                textAlignVertical="top"
+              />
+
+              <TouchableOpacity
+                onPress={() => {
+                  reportUser({
+                    Auth: userData.token,
+                    message: reportReason,
+                    post_id: reportId,
+                  })
+                    .then(res => {
+                      console.log('res of report', res);
+                    })
+                    .catch(err => {
+                      console.log('err in report', err);
+                    });
+                  setShowReportModal(false);
+                }}
+                style={{
+                  width: '100%',
+                  height: 50,
+                  backgroundColor: '#5F95F0',
+                  marginTop: 15,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Report
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  reportUser({
+                    Auth: userData.token,
+                    message: reportReason,
+                    post_id: reportId,
+                  })
+                    .then(res => {
+                      console.log('res of report', res);
+                    })
+                    .catch(err => {
+                      console.log('err in report', err);
+                    });
+                  blockUser({
+                    Auth: userData.token,
+                    block_user_id: blockuserId,
+                  })
+                    .then(res => {
+                      console.log('res of block', res);
+                      setChange(!change);
+                    })
+                    .catch(err => {
+                      console.log('err in block', err);
+                    });
+                  setShowReportModal(false);
+                }}
+                style={{
+                  width: '100%',
+                  height: 50,
+                  backgroundColor: '#200E32',
+                  marginTop: 15,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontFamily: 'MontserratAlternates-SemiBold',
+                  }}>
+                  Report & block user
+                </Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </Wrapper>
+          {/* </ScrollView> */}
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
   return (
     <View style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
       {/* <ImageBackground
@@ -673,6 +953,8 @@ const UserProfile = ({navigation, route}: {navigation: any; route: any}) => {
       {/* </ImageBackground> */}
       {MyModal(showModal)}
       {DeleteModal()}
+      {ReportModal()}
+      {mediaModal()}
     </View>
   );
 };

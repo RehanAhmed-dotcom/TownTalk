@@ -18,7 +18,8 @@ import {
   Platform,
   ImageBackground,
 } from 'react-native';
-import {AudioRecorder, AudioUtils} from 'react-native-audio';
+import Message from '../../../Components/Message';
+// import {AudioRecorder, AudioUtils} from 'react-native-audio';
 import Axios from 'axios';
 import moment from 'moment';
 import {getfcm} from '../../../lib/api';
@@ -42,6 +43,7 @@ import Icon2 from 'react-native-vector-icons/Ionicons';
 import Geolocation from 'react-native-geolocation-service';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import AudioComp from '../../../Components/AudioComp';
+import VideoComp from '../../../Components/VideoComp';
 const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const {item, fcm_token} = route.params;
   const image = route?.params?.image;
@@ -59,7 +61,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const [recordingState, setRecordingState] = useState('');
   const [timer, setTimer] = useState(0);
   const timerInterval = useRef(null);
-  const audioPath = AudioUtils.DocumentDirectoryPath + '/test.aac';
+  // const audioPath = AudioUtils.DocumentDirectoryPath + '/test.aac';
   const mapRef = useRef(null);
   // const audioRecorderPlayer = new AudioRecorderPlayer();
   const {userData, darkmode} = useSelector(({USER}) => USER);
@@ -201,47 +203,47 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
     } catch (error) {}
     return result === true || result === PermissionsAndroid.RESULTS.GRANTED;
   };
-  const recordAudio = async () => {
-    console.log('i came in record start');
-    try {
-      console.log('i came in record start try function');
-      prepareRecordingPath(audioPath);
-      const filePath = await AudioRecorder.startRecording();
-    } catch (error) {}
-  };
-  const prepareRecordingPath = audioPath => {
-    console.log('i came in preparerecording path');
-    AudioRecorder.prepareRecordingAtPath(audioPath, {
-      SampleRate: 22050,
-      Channels: 1,
-      AudioQuality: 'Low',
-      AudioEncoding: 'aac',
-      AudioEncodingBitRate: 32000,
-    });
-  };
-  const stopRecording = async () => {
-    const filePath = await AudioRecorder.stopRecording();
-    if (Platform.OS === 'ios') {
-      AudioRecorder.onFinished = ({audioFileURL}) => {
-        // Android callback comes in the form of a promise instead.
-        // devLogger('Audio', audioFileURL);
-        if (audioFileURL) {
-          //verify that audio on ios saving bucket
-          goForFetch(audioFileURL);
-        }
-      };
-    } else {
-      goForFetch(filePath);
-    }
-    // AudioRecorder.onFinished = (data) => {
-    //   // Android callback comes in the form of a promise instead.
-    //   console.log('sfs', data);
-    //   goForFetch(data.audioFileURL);
-    // };
-    // AudioRecorder.o
+  // const recordAudio = async () => {
+  //   console.log('i came in record start');
+  //   try {
+  //     console.log('i came in record start try function');
+  //     prepareRecordingPath(audioPath);
+  //     const filePath = await AudioRecorder.startRecording();
+  //   } catch (error) {}
+  // };
+  // const prepareRecordingPath = audioPath => {
+  //   console.log('i came in preparerecording path');
+  //   AudioRecorder.prepareRecordingAtPath(audioPath, {
+  //     SampleRate: 22050,
+  //     Channels: 1,
+  //     AudioQuality: 'Low',
+  //     AudioEncoding: 'aac',
+  //     AudioEncodingBitRate: 32000,
+  //   });
+  // };
+  // const stopRecording = async () => {
+  //   const filePath = await AudioRecorder.stopRecording();
+  //   if (Platform.OS === 'ios') {
+  //     AudioRecorder.onFinished = ({audioFileURL}) => {
+  //       // Android callback comes in the form of a promise instead.
+  //       // devLogger('Audio', audioFileURL);
+  //       if (audioFileURL) {
+  //         //verify that audio on ios saving bucket
+  //         goForFetch(audioFileURL);
+  //       }
+  //     };
+  //   } else {
+  //     goForFetch(filePath);
+  //   }
+  //   // AudioRecorder.onFinished = (data) => {
+  //   //   // Android callback comes in the form of a promise instead.
+  //   //   console.log('sfs', data);
+  //   //   goForFetch(data.audioFileURL);
+  //   // };
+  //   // AudioRecorder.o
 
-    // console.log('the file chat created', filePath);
-  };
+  //   // console.log('the file chat created', filePath);
+  // };
   const createFormData = audio => {
     const data1 = new FormData();
     data1.append('audio', {
@@ -289,9 +291,24 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
           <View
             style={{
               height: 58,
+              flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'center',
+              justifyContent: 'space-between',
+              marginHorizontal: 10,
             }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#ccc',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: 30,
+                width: 30,
+                borderRadius: 5,
+              }}
+              onPress={() => setShowLocationModal(!showLocationModal)}>
+              <Icon1 name="arrowleft" color="black" size={20} />
+            </TouchableOpacity>
+
             <Text
               style={{
                 fontSize: 14,
@@ -300,7 +317,9 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
               }}>
               Send location
             </Text>
+            <View style={{width: 30}} />
           </View>
+
           <View style={{height: keyboardStatus == 'Keyboard Shown' ? 300 : 60}}>
             <GooglePlacesAutocomplete
               placeholder="Search or enter address"
@@ -376,32 +395,59 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
             {location}
           </Text>
         </View>
-
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'purple',
-            width: '90%',
-            alignSelf: 'center',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 20,
-            height: 50,
-            borderRadius: 10,
-          }}
-          onPress={() => {
-            handleSendLocation();
-            setShowLocationModal(!showLocationModal);
-          }}>
-          <Text
+        <View>
+          <TouchableOpacity
             style={{
-              margin: 15,
-              color: 'white',
-
-              fontFamily: 'MontserratAlternates-SemiBold',
+              backgroundColor: 'purple',
+              width: '90%',
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 20,
+              height: 50,
+              borderRadius: 10,
+            }}
+            onPress={() => {
+              handleSendLocation();
+              setShowLocationModal(!showLocationModal);
             }}>
-            Send this location
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={{
+                margin: 15,
+                color: 'white',
+
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Send this location
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{
+              backgroundColor: '#5F95F0',
+              width: '90%',
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 20,
+              height: 50,
+              borderRadius: 10,
+            }}
+            onPress={() => {
+              // handleSendLocation();
+              setShowLocationModal(!showLocationModal);
+            }}>
+            <Text
+              style={{
+                margin: 15,
+                color: 'white',
+
+                fontFamily: 'MontserratAlternates-SemiBold',
+              }}>
+              Cancel
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </Modal>
   );
@@ -724,6 +770,12 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
         return true;
       }
     };
+    const checkVideo = word => {
+      if (word?.substring(word.length - 4) == '.mp4') {
+        return true;
+      }
+    };
+
     return (
       <View
         style={{
@@ -747,6 +799,8 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
               style={{height: 300, width: 300, borderRadius: 5}}
             />
           </TouchableOpacity>
+        ) : checkVideo(item.msg) ? (
+          <VideoComp item={item} navigation={navigation} />
         ) : item.latitude ? (
           <TouchableOpacity
             onPress={() => {
@@ -762,7 +816,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
               });
               Linking.openURL(url);
             }}
-            style={{width: '90%'}}>
+            style={{width: '90%', zIndex: 2}}>
             <View
               style={{
                 backgroundColor: '#EBEBEB',
@@ -787,6 +841,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                 scrollEnabled={false}
                 style={{
                   flex: 1,
+                  zIndex: -1,
                   // borderBottomLeftRadius: 10,
                   // borderBottomRightRadius: 10,
                 }}
@@ -820,46 +875,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
             }
           />
         ) : (
-          <View
-            style={{
-              padding: 10,
-              borderRadius: 5,
-              maxWidth: '90%',
-              // lineSpacing:1,
-
-              backgroundColor:
-                item.sendBy ==
-                userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, '')
-                  ? '#200E32'
-                  : '#EBEBEB',
-            }}>
-            <Text
-              style={{
-                lineHeight: 20,
-                fontFamily: 'MontserratAlternates-Regular',
-                color:
-                  item.sendBy ==
-                  userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, '')
-                    ? 'white'
-                    : 'black',
-              }}>
-              {item.msg}
-            </Text>
-            <View style={{alignItems: 'flex-end'}}>
-              <Text
-                style={{
-                  fontSize: 10,
-                  fontFamily: 'MontserratAlternates-Regular',
-                  color:
-                    item.sendBy ==
-                    userData.userdata.email.replace(/[^a-zA-Z0-9 ]/g, '')
-                      ? 'white'
-                      : 'grey',
-                }}>
-                {moment(item.date).format('MM/DD/YYYY hh:mm a')}
-              </Text>
-            </View>
-          </View>
+          <Message item={item} navigation={navigation} />
         )}
       </View>
     );
@@ -1073,18 +1089,18 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                   style={{height: 20, width: 20, resizeMode: 'contain'}}
                 /> */}
                 </TouchableOpacity>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   // disabled={recordingState === 'uploading'}
-                  onLongPress={() => {
-                    recordAudio();
-                    setRecordingState('recording');
-                  }}
-                  onPressOut={() => {
-                    if (recordingState === 'recording') {
-                      stopRecording();
-                      setRecordingState('uploading');
-                    }
-                  }}
+                  // onLongPress={() => {
+                  //   recordAudio();
+                  //   setRecordingState('recording');
+                  // }}
+                  // onPressOut={() => {
+                  //   if (recordingState === 'recording') {
+                  //     stopRecording();
+                  //     setRecordingState('uploading');
+                  //   }
+                  // }}
                   // onPress={() => Record()}
                   style={{
                     height: 30,
@@ -1096,11 +1112,8 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                     justifyContent: 'center',
                   }}>
                   <Icon2 name="mic" size={20} color="white" />
-                  {/* <Image
-                  source={require('../../../../assets/Icons/Mic.png')}
-                  style={{height: 20, width: 20, resizeMode: 'contain'}}
-                /> */}
-                </TouchableOpacity>
+                 
+                </TouchableOpacity> */}
               </View>
             )}
           </View>

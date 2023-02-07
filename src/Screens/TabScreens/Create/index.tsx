@@ -7,6 +7,7 @@ import {
   ScrollView,
   Platform,
   SafeAreaView,
+  Keyboard,
   TouchableOpacity,
   Alert,
   Modal,
@@ -17,12 +18,13 @@ import {
   PermissionsAndroid,
 } from 'react-native';
 import Tags from 'react-native-tags';
+import {createThumbnail} from 'react-native-create-thumbnail';
 import Axios from 'axios';
 import MentionHashtagTextView from 'react-native-mention-hashtag-text';
 import {config} from '../../../../config';
 import Geolocation from 'react-native-geolocation-service';
 import MapView from 'react-native-maps';
-import {addPost} from '../../../lib/api';
+import {addPost, addPosts} from '../../../lib/api';
 import MyModal from '../../../Components/MyModal';
 import LikeDislike from '../../../Components/LikeDislike';
 import Comments from '../../../Components/Comments';
@@ -44,17 +46,76 @@ const Create = ({navigation}) => {
   const [tagedBusiness, setTagedBusiness] = useState('');
   const [description, setDescription] = useState('');
   const [businessList, setBusinessList] = useState([]);
+  // console.log('b list ', businessList);
+  const [businessListf, setBusinessListf] = useState([]);
+
   const [tagBusinessModal, setTagBusinessModal] = useState(false);
   // const [hash, setHash] = useState([]);
+  const [thumbnail, setThumbnail] = useState('');
   const [count, setCount] = useState(0);
   const [video, setVideo] = useState(true);
   const [wholeTagedBusiness, setWholeTagedBusiness] = useState({});
   const [search, setSearch] = useState('');
+  const [arr, setArr] = useState([]);
+  const [bars, setBars] = useState([]);
+  const [bank, setBank] = useState([]);
+  const [club, setClub] = useState([]);
+  const [entertainment, setEntertainment] = useState([]);
+  const [gas, setGas] = useState([]);
+  const [gym, setGym] = useState([]);
+  const [mall, setMall] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
+  const [shop, setShop] = useState([]);
+  const [supers, setSuper] = useState([]);
+
+  console.log(
+    'lengths',
+    bars.length,
+    bank.length,
+    club.length,
+    entertainment.length,
+    gas.length,
+    gym.length,
+    mall.length,
+  );
+
+  // console.log('busienssss', businessList);
+  // useEffect(() => {
+  //   setTimeout(function () {
+
+  //   }, 5000);
+  // }, []);
+
   const [latitude, setlatitude] = useState(0);
   const [longitude, setlongitude] = useState(0);
+  const [keyboardStatus, setKeyboardStatus] = useState('');
+  const searchTextReceive = e => {
+    let filteredName = [];
+    // if (e) {
+    filteredName = businessList.filter(item => {
+      return item?.name?.toLowerCase().includes(`${e.toLowerCase()}`);
+      // return item.name.toLowerCase().includes(`${e.toLowerCase()}`);
+    });
+    setBusinessListf(filteredName);
+    // filteredName = [];
+    // }
+  };
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   const d = new Date();
   // console.log('whole', wholeTagedBusiness.photos);
-  console.log('date', moment(d).format('MM-DD-YYYY hh:mm a'));
+  // console.log('date', moment(d).format('MM-DD-YYYY hh:mm a'));
   // console.log('userdata', hash);
   const picker = (camera: string) => {
     camera == 'Gallery'
@@ -73,6 +134,12 @@ const Create = ({navigation}) => {
           console.log(video);
           setImg([...img, {video: video.path}]);
           setVideo(false);
+          createThumbnail({
+            url: video.path,
+            timeStamp: 1000,
+          })
+            .then(response => setThumbnail(response.path))
+            .catch(err => console.log({err}));
         })
       : ImagePicker.openCamera({
           width: 1500,
@@ -83,7 +150,7 @@ const Create = ({navigation}) => {
           setCount(count + 1);
         });
   };
-  console.log('img has video?', img);
+  // console.log('img has video?', img);
   const add = () => {
     // if (zip && latitude) {
     if (latitude) {
@@ -141,7 +208,7 @@ const Create = ({navigation}) => {
           // data.append('media_type', 'video')
         });
 
-        addPost({Auth: userData.token}, data)
+        addPosts({Auth: userData.token}, data)
           .then(res => {
             setShowModal(false);
             console.log('res', res);
@@ -159,7 +226,7 @@ const Create = ({navigation}) => {
           })
           .catch(err => {
             setShowModal(false);
-            console.log('err', err.response.data);
+            console.log('err in add post', err);
             Alert.alert('Something went wrong, please try again!');
           });
       } else {
@@ -173,7 +240,73 @@ const Create = ({navigation}) => {
       Alert.alert('Location required');
     }
   };
-  const handleRestaurantSearch = (lat: Number, long: Number) => {
+
+  const handleSearchBars = (lat: Number, long: Number) => {
+    // console.log('here');
+    let Arr = [];
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Bars`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setBars(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        // setShowModal(false);
+      });
+    setTimeout(function () {
+      setBusinessList(Arr);
+    }, 3000);
+  };
+  // console.log('business arr', businessList);
+  const handleSearchBank = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=banks`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setBank(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        // setShowModal(false);
+      });
+  };
+  const handleSearchClub = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Clubs`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setClub(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        // setShowModal(false);
+      });
+  };
+  const handleSearchEntertainment = (lat: Number, long: Number) => {
     // console.log('here');
     const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
     const location = `location=${lat},${long}`;
@@ -181,14 +314,133 @@ const Create = ({navigation}) => {
     const type = `&keyword=Entertainment`;
     const key = `&key=${config}`;
     const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
     fetch(restaurantSearchUrl)
       .then(response => response.json())
       .then(result => {
-        // console.log('result', result.results);
-        setBusinessList(result.results);
-        // setList(result.results);
+        setEntertainment(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
         // setShowModal(false);
-        // console.log('results', result.results);
+      });
+  };
+  const handleSearchGas = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Gas Stations`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setGas(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        // setShowModal(false);
+      });
+  };
+  const handleSearchGym = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Gyms`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        console.log('res of gym', result.results.length);
+        setGym(result.results);
+        //
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err in gym', e);
+        // setShowModal(false);
+      });
+  };
+  const handleSearchMall = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Malls`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setMall(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        // setShowModal(false);
+      });
+  };
+  const handleSearchRestaurants = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Restaurants`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setRestaurants(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        // setShowModal(false);
+      });
+  };
+  const handleSearchShop = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Shopping`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setShop(result.results);
+      })
+      // .then(result => this.setState({restaurantList: result}))
+      .catch(e => {
+        console.log('err', e);
+        // setShowModal(false);
+      });
+  };
+  const handleSearchSuper = (lat: Number, long: Number) => {
+    // console.log('here');
+    const url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?';
+    const location = `location=${lat},${long}`;
+    const radius = '&radius=2000';
+    const type = `&keyword=Supermarkets`;
+    const key = `&key=${config}`;
+    const restaurantSearchUrl = url + location + radius + type + key;
+    // console.log('url', restaurantSearchUrl);
+    fetch(restaurantSearchUrl)
+      .then(response => response.json())
+      .then(result => {
+        setSuper(result.results);
       })
       // .then(result => this.setState({restaurantList: result}))
       .catch(e => {
@@ -241,6 +493,22 @@ const Create = ({navigation}) => {
         setlatitude(position.coords.latitude);
         setlongitude(position.coords.longitude);
         getPlace(position.coords.latitude, position.coords.longitude);
+        handleSearchGym(position.coords.latitude, position.coords.longitude);
+        handleSearchMall(position.coords.latitude, position.coords.longitude);
+        handleSearchRestaurants(
+          position.coords.latitude,
+          position.coords.longitude,
+        );
+        handleSearchShop(position.coords.latitude, position.coords.longitude);
+        handleSearchBank(position.coords.latitude, position.coords.longitude);
+        handleSearchClub(position.coords.latitude, position.coords.longitude);
+        handleSearchEntertainment(
+          position.coords.latitude,
+          position.coords.longitude,
+        );
+        handleSearchGas(position.coords.latitude, position.coords.longitude);
+        handleSearchBars(position.coords.latitude, position.coords.longitude);
+        handleSearchSuper(position.coords.latitude, position.coords.longitude);
       },
       error => {
         console.log('error in loc', error);
@@ -252,7 +520,7 @@ const Create = ({navigation}) => {
       },
     );
   };
-  console.log('lat', latitude, longitude);
+  // console.log('lat', latitude, longitude);
   const requestLocationPermission = async () => {
     try {
       const granted = await PermissionsAndroid.request(
@@ -277,14 +545,14 @@ const Create = ({navigation}) => {
     Platform.OS == 'ios'
       ? Geolocation.requestAuthorization('always').then(res => {
           cuRRentlocation();
-          console.log('res', res);
+          // console.log('res', res);
         })
       : requestLocationPermission();
   }, []);
   const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
   const render = ({item}) => (
     <Image
-      source={{uri: item.image ? item.image : item.video}}
+      source={{uri: item.image ? item.image : thumbnail}}
       style={{width: 130, height: 150, marginRight: 10, borderRadius: 10}}
     />
   );
@@ -316,8 +584,10 @@ const Create = ({navigation}) => {
       <View
         style={{
           flex: 1,
+          paddingTop: 30,
           backgroundColor: '#00000088',
-          justifyContent: 'flex-end',
+          justifyContent:
+            keyboardStatus == 'Keyboard Shown' ? 'flex-start' : 'flex-end',
         }}>
         <View
           style={{
@@ -363,7 +633,10 @@ const Create = ({navigation}) => {
             <Icon name="search" color="#5F95F0" size={20} />
             <TextInput
               value={search}
-              onChangeText={text => setSearch(text)}
+              onChangeText={text => {
+                setSearch(text);
+                searchTextReceive(text);
+              }}
               placeholder="Search by name or zipcode"
               placeholderTextColor={'grey'}
               style={{color: 'black', flex: 1}}
@@ -374,13 +647,13 @@ const Create = ({navigation}) => {
               maxHeight: '75%',
               minHeight: '20%',
             }}>
-            <FlatList data={businessList} renderItem={renders} />
+            <FlatList data={businessListf} renderItem={renders} />
           </View>
         </View>
       </View>
     </Modal>
   );
-  console.log('video', video);
+  // console.log('video', video);
   return (
     <SafeAreaView
       style={{flex: 1, backgroundColor: darkmode ? 'black' : 'white'}}>
@@ -398,14 +671,43 @@ const Create = ({navigation}) => {
             <Icon1 name="left" size={20} />
           </TouchableOpacity> */}
         <View style={{marginLeft: 10}}>
-          <Text
+          {tagedBusiness || description || img.length > 0 ? (
+            <TouchableOpacity
+              onPress={() => {
+                setTagedBusiness('');
+                setDescription('');
+                setImg([]);
+                setCount(0);
+                setVideo(true);
+              }}
+              style={{
+                backgroundColor: '#5F95F0',
+                alignItems: 'center',
+                height: 50,
+                paddingHorizontal: 20,
+                borderRadius: 5,
+                marginTop: 0,
+                elevation: 3,
+                justifyContent: 'center',
+              }}>
+              <Text
+                style={{
+                  fontFamily: 'MontserratAlternates-SemiBold',
+                  fontSize: 16,
+                  color: 'white',
+                }}>
+                Discard
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+          {/* <Text
             style={{
               fontSize: 16,
               fontFamily: 'MontserratAlternates-SemiBold',
               color: darkmode ? 'white' : 'black',
             }}>
             Add Post
-          </Text>
+          </Text> */}
           {/* <Text style={{fontFamily: 'MontserratAlternates-Regular'}}>
               Chicago, IL 60611, USA
             </Text> */}
@@ -491,6 +793,7 @@ const Create = ({navigation}) => {
                   numberOfLines={5}
                   onChangeText={text => {
                     setDescription(text);
+
                     // setEmailErr('');
                   }}
                   style={{
@@ -608,8 +911,25 @@ const Create = ({navigation}) => {
               {!tagedBusiness && (
                 <TouchableOpacity
                   onPress={() => {
+                    console.log(' data', supers.length);
                     setTagBusinessModal(true);
-                    handleRestaurantSearch(latitude, longitude);
+                    let newArr = [];
+                    let d = newArr.concat(
+                      bars,
+                      bank,
+                      club,
+                      entertainment,
+                      gas,
+                      gym,
+                      mall,
+                      restaurants,
+                      shop,
+                      supers,
+                    );
+                    console.log('d in d', d.length);
+                    setBusinessList(d);
+                    setBusinessListf(d);
+                    // handleRestaurantSearch(latitude, longitude);
                   }}
                   style={{
                     width: 80,
@@ -696,34 +1016,6 @@ const Create = ({navigation}) => {
               </Text>
             </View> */}
             <View style={{height: 50}} />
-            {tagedBusiness || description || img.length > 0 ? (
-              <TouchableOpacity
-                onPress={() => {
-                  setTagedBusiness('');
-                  setDescription('');
-                  setImg([]);
-                  setCount(0);
-                  setVideo(true);
-                }}
-                style={{
-                  backgroundColor: '#5F95F0',
-                  alignItems: 'center',
-                  height: 50,
-                  borderRadius: 10,
-                  marginTop: 70,
-                  elevation: 3,
-                  justifyContent: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontFamily: 'MontserratAlternates-SemiBold',
-                    fontSize: 16,
-                    color: 'white',
-                  }}>
-                  Discard
-                </Text>
-              </TouchableOpacity>
-            ) : null}
 
             {/* <View style={{marginTop: 30, marginBottom: 20}}>
                 <Text

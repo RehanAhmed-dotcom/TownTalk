@@ -202,7 +202,7 @@ const SwiperPosts = props => {
               mentionHashtagColor={'#5F95F0'}
               style={{
                 fontSize: 13,
-                color: 'black',
+                color: darkmode ? 'white' : 'black',
                 fontFamily: 'MontserratAlternates-Regular',
               }}>
               {item.description}

@@ -9,11 +9,14 @@ import 'react-native-gesture-handler';
  * @format
  */
 //  import android.os.Bundle;
+import dynamicLinks from '@react-native-firebase/dynamic-links';
 import React, {useEffect} from 'react';
 import {
   StyleSheet,
   Platform,
   Text,
+  Alert,
+  StatusBar,
   View,
   FlatList,
   TouchableOpacity,
@@ -86,6 +89,32 @@ const App = () => {
       //   PushNotificationIOS.setApplicationIconBadgeNumber(1);
     });
     return unsubscribe;
+  }, []);
+  const handleDynamicLink = link => {
+    // Alert.alert('hello');
+    console.log('come here');
+    // Handle dynamic link inside your own application
+    // if (link.url === 'https://invertase.io/offer') {
+    //   // ...navigate to your offers screen
+    // }
+  };
+  useEffect(() => {
+    const unsubscribe = dynamicLinks().onLink(handleDynamicLink);
+    // When the component is unmounted, remove the listener
+    return () => unsubscribe();
+  }, []);
+  useEffect(() => {
+    dynamicLinks()
+      .getInitialLink()
+      .then(link => {
+        // const id_data = link.url.match(/[0-9]+/);
+        // Alert.alert('hello');
+        console.log('came here', link);
+        //  navigate('Signup')
+      })
+      .catch(err => {
+        console.log('error in dynamic link', err);
+      });
   }, []);
   return (
     // <SafeAreaView style={{flex: 1}}>

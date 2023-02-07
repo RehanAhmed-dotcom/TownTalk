@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 
 import {
   View,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Image,
+  Linking,
   Modal,
   Platform,
   KeyboardAvoidingView,
@@ -42,6 +43,20 @@ const RestaurantsDetail = ({navigation, route}) => {
   const alter = () => {
     setShowModal(!showModal);
   };
+  const [keyboardStatus, setKeyboardStatus] = useState('');
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardStatus('Keyboard Shown');
+    });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardStatus('Keyboard Hidden');
+    });
+
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
   const ReviewModal = () => {
     const Wrapper = Platform.OS == 'ios' ? KeyboardAvoidingView : View;
     return (
@@ -57,7 +72,8 @@ const RestaurantsDetail = ({navigation, route}) => {
             // height: hp(100),
             backgroundColor: '#00000088',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            justifyContent:
+              keyboardStatus == 'Keyboard Shown' ? 'center' : 'flex-end',
             zIndex: 200,
             left: 0,
             top: 0,
@@ -510,7 +526,24 @@ const RestaurantsDetail = ({navigation, route}) => {
             <Text style={{marginTop: 10}}>
               {item.vicinity ? item.vicinity : item.location}
             </Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                const scheme = Platform.select({
+                  ios: 'maps:0,0?q=',
+                  android: 'geo:0,0?q=',
+                });
+                const latLng = `${
+                  item.geometry ? item.geometry.location.lat : item.latitude
+                },${
+                  item.geometry ? item.geometry.location.lng : item.longitude
+                }`;
+                const label = `Direction`;
+                const url = Platform.select({
+                  ios: `${scheme}${label}@${latLng}`,
+                  android: `${scheme}${latLng}(${label})`,
+                });
+                Linking.openURL(url);
+              }}>
               <Text
                 style={{
                   color: '#5F95F0',
