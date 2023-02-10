@@ -236,6 +236,25 @@ const addPost = (payload, data) => {
       throw e;
     });
 };
+const audioConvert = (payload,data) => {
+  // console.log('data of payload', JSON.stringify(payload));
+  const request = `/audioPath`;
+  return axios
+    .post(request, data, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${payload.Auth}`,
+        },
+    })
+    .then(({data, status}) => {
+      return status === 200 || status === 201 ? data : null;
+    })
+    .catch(e => {
+      console.log('in audio api', e);
+      throw e;
+    });
+};
 const addgroup = (payload, data) => {
   // console.log('data of payload', JSON.stringify(data));
   const request = `/create-group`;
@@ -752,6 +771,7 @@ export {
   checkIn,
   city_posts,
   hotspots,
+  audioConvert,
   businessDetail,
   trending_town,
   business_check,

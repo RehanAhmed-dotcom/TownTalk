@@ -101,7 +101,10 @@ const Home = ({navigation}) => {
   const onShare = async () => {
     try {
       const link = await dynamicLinks().buildLink({
-        link: `https://towntalkapp.page.link/${specific.id}`,
+        link:
+          Platform.OS == 'ios'
+            ? `https://towntalkapp.page.link/${specific.id}`
+            : `https://towntalkapp.page.link/iGuj`,
 
         // domainUriPrefix is created in your Firebase console
         domainUriPrefix: 'https://towntalkapp.page.link',
@@ -116,6 +119,7 @@ const Home = ({navigation}) => {
       const result = await Share.share({
         message: `TownTalk: Post link ${link}`,
       });
+      // setShowModal(false);
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
           // shared with activity type of result.activityType

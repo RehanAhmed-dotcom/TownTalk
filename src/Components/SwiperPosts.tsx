@@ -88,6 +88,7 @@ const SwiperPosts = props => {
         <Text
           style={{
             fontSize: 12,
+            color: darkmode ? 'white' : 'black',
             fontFamily: 'MontserratAlternates-Regular',
           }}>
           {moment(item.created_at).format('MMM DD YYYY')}

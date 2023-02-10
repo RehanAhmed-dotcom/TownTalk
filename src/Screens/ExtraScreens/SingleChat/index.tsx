@@ -19,10 +19,11 @@ import {
   ImageBackground,
 } from 'react-native';
 import Message from '../../../Components/Message';
+
 // import {AudioRecorder, AudioUtils} from 'react-native-audio';
 import Axios from 'axios';
 import moment from 'moment';
-import {getfcm} from '../../../lib/api';
+import {getfcm,audioConvert} from '../../../lib/api';
 import {mapKey, config} from '../../../../config';
 import MapView, {Marker} from 'react-native-maps';
 import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
@@ -44,6 +45,7 @@ import Geolocation from 'react-native-geolocation-service';
 import Icon1 from 'react-native-vector-icons/AntDesign';
 import AudioComp from '../../../Components/AudioComp';
 import VideoComp from '../../../Components/VideoComp';
+const audioRecorderPlayer = new AudioRecorderPlayer();
 const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   const {item, fcm_token} = route.params;
   const image = route?.params?.image;
@@ -66,6 +68,31 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   // const audioRecorderPlayer = new AudioRecorderPlayer();
   const {userData, darkmode} = useSelector(({USER}) => USER);
   const Wrapper = Platform.OS == 'android' ? View : KeyboardAvoidingView;
+
+  const onStartRecord = async () => {
+    const result = await audioRecorderPlayer.startRecorder();
+    audioRecorderPlayer.addRecordBackListener(e => {
+      // console.log('audio object', e);
+      // this.setState({
+      //   recordSecs: e.currentPosition,
+      //   recordTime: this.audioRecorderPlayer.mmssss(
+      //     Math.floor(e.currentPosition),
+      //   ),
+      // });
+      return;
+    });
+    console.log('audio object result', result);
+  };
+  const onStopRecord = async () => {
+    const result = await audioRecorderPlayer.stopRecorder();
+    audioRecorderPlayer.removeRecordBackListener();
+    // this.setState({
+    //   recordSecs: 0,
+    // });
+    console.log('audio path on audio record stop', result);
+    goForFetch(result)
+  };
+
   // const onStartRecord = async () => {
   //   const result = await audioRecorderPlayer.startRecorder();
   //   audioRecorderPlayer.addRecordBackListener(e => {
@@ -256,20 +283,35 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
   };
   const goForFetch = async voice => {
     console.log('voice Link', voice);
-    await fetch('https://towntalkapp.com/app/api/audioPath', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body: createFormData(voice),
-    })
-      .then(response => response.json())
-      .then(responseJson => {
-        console.log('the return voice file', JSON.stringify(responseJson));
+    const data1 = new FormData();
+    data1.append('audio', {
+      uri: Platform.OS === 'android' ? 'file://' + voice : voice,
+      name: `${Date.now()}test.aac`,
+      type: 'audio/aac',
+    });
+    audioConvert({ Auth: userData.token},data1).then(res=>{
+      console.log("audio convert back res",res);
+      if(res.status=="success"){
         setRecordingState('');
-        handleSendVoice(responseJson.Path);
-      })
-      .catch(error => {});
+        handleSendVoice(res.Path);
+      }
+    }).catch(err=>{
+      console.log("audio convert back err",err);
+    })
+    // await fetch('https://towntalkapp.com/app/api/audioPath', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'multipart/form-data',
+    //   },
+    //   body: createFormData(voice),
+    // })
+    //   .then(response => response.json())
+    //   .then(responseJson => {
+    //     console.log('the return voice file', JSON.stringify(responseJson));
+    //     setRecordingState('');
+    //     handleSendVoice(responseJson.Path);
+    //   })
+    //   .catch(error => {console.log("error in audio",error)});
   };
   const locationModal = () => (
     <Modal
@@ -866,6 +908,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
           </TouchableOpacity>
         ) : item.audio ? (
           <AudioComp
+          date={item.date}
             audio={item.audio}
             me={
               item.sendBy ==
@@ -1089,19 +1132,20 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                   style={{height: 20, width: 20, resizeMode: 'contain'}}
                 /> */}
                 </TouchableOpacity>
-                {/* <TouchableOpacity
-                  // disabled={recordingState === 'uploading'}
-                  // onLongPress={() => {
-                  //   recordAudio();
-                  //   setRecordingState('recording');
-                  // }}
-                  // onPressOut={() => {
-                  //   if (recordingState === 'recording') {
-                  //     stopRecording();
-                  //     setRecordingState('uploading');
-                  //   }
-                  // }}
-                  // onPress={() => Record()}
+                <TouchableOpacity
+                  disabled={recordingState === 'uploading'}
+                  onLongPress={() => {
+                    onStartRecord();
+                    // recordAudio();
+                    setRecordingState('recording');
+                  }}
+                  onPressOut={() => {
+                    if (recordingState === 'recording') {
+                      onStopRecord();
+                      setRecordingState('uploadings');
+                    }
+                  }}
+                  // onPress={() => onStopRecord()}
                   style={{
                     height: 30,
                     width: 30,
@@ -1112,8 +1156,7 @@ const SingleChat = ({navigation, route}: {navigation: any; route: any}) => {
                     justifyContent: 'center',
                   }}>
                   <Icon2 name="mic" size={20} color="white" />
-                 
-                </TouchableOpacity> */}
+                </TouchableOpacity>
               </View>
             )}
           </View>

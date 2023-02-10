@@ -92,7 +92,7 @@ const App = () => {
   }, []);
   const handleDynamicLink = link => {
     // Alert.alert('hello');
-    console.log('come here');
+    console.log('come here',link);
     // Handle dynamic link inside your own application
     // if (link.url === 'https://invertase.io/offer') {
     //   // ...navigate to your offers screen

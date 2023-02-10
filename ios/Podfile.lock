@@ -392,7 +392,7 @@ PODS:
     - React-perflogger (= 0.68.1)
   - RNAppleAuthentication (2.2.2):
     - React-Core
-  - RNAudioRecorderPlayer (3.5.1):
+  - RNAudioRecorderPlayer (3.5.3):
     - React-Core
   - RNCAsyncStorage (1.17.5):
     - React-Core
@@ -690,7 +690,7 @@ SPEC CHECKSUMS:
   React-runtimeexecutor: 7285b499d0339104b2813a1f58ad1ada4adbd6c0
   ReactCommon: bf2888a826ceedf54b99ad1b6182d1bc4a8a3984
   RNAppleAuthentication: 0571c08da8c327ae2afc0261b48b4a515b0286a6
-  RNAudioRecorderPlayer: 308940de4f9d1448a064874fd9d83479ae47c7a7
+  RNAudioRecorderPlayer: 6638283925b46808310c9fdf803ebabc3abdbadc
   RNCAsyncStorage: 81187912cc9a5c2591ddb161e03e587688afb764
   RNCMaskedView: c298b644a10c0c142055b3ae24d83879ecb13ccd
   RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
